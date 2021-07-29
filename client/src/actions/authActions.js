@@ -1,0 +1,83 @@
+
+import AuthRequest from '../requests/authRequests';
+import { globalErrorHandler, responseToJson } from '../utils';
+
+export const AuthActionsTypes = {
+    AUTH_REGISTER_REQUEST: 'AUTH_REGISTER_REQUEST',
+    AUTH_REGISTER_REQUEST_SUCCESS: 'AUTH_REGISTER_REQUEST_SUCCESS',
+    AUTH_REGISTER_REQUEST_ERROR: 'AUTH_REGISTER_REQUEST_ERROR',
+
+    AUTH_LOGIN_REQUEST: 'AUTH_LOGIN_REQUEST',
+    AUTH_LOGIN_REQUEST_SUCCESS: 'AUTH_LOGIN_REQUEST_SUCCESS',
+    AUTH_LOGIN_REQUEST_ERROR: 'AUTH_LOGIN_REQUEST_ERROR',
+};
+
+export function registerBegin() {
+    return {
+        type: AuthActionsTypes.AUTH_REGISTER_REQUEST
+    };
+}
+
+export function registerSuccess(data) {
+    return {
+        type: AuthActionsTypes.AUTH_REGISTER_REQUEST_SUCCESS,
+        data
+    };
+}
+
+export function registerError() {
+    return {
+        type: AuthActionsTypes.AUTH_REGISTER_REQUEST_ERROR,
+    };
+}
+
+// Request Posts
+export function register(data) {
+    return dispatch => {
+        dispatch(registerBegin());
+
+        return AuthRequest.register(data)
+            .then(response => responseToJson(response))
+            .then(json => dispatch(registerSuccess(json)))
+            .catch(error => {
+                dispatch(registerError());
+                return globalErrorHandler(error);
+            });
+    };
+}
+
+//login
+export function loginBegin() {
+    return {
+        type: AuthActionsTypes.AUTH_LOGIN_REQUEST
+    };
+}
+
+export function loginSuccess(data) {
+    return {
+        type: AuthActionsTypes.AUTH_LOGIN_REQUEST_SUCCESS,
+        data
+    };
+}
+
+export function loginError() {
+    return {
+        type: AuthActionsTypes.AUTH_LOGIN_REQUEST_ERROR,
+    };
+}
+
+// Request Posts
+export function login(data) {
+    return dispatch => {
+        dispatch(loginBegin());
+
+        return AuthRequest.login(data)
+            .then(response => responseToJson(response))
+            .then(json => dispatch(loginSuccess(json)))
+            .catch(error => {
+                console.log(error)
+                dispatch(loginError());
+                return globalErrorHandler(error);
+            });
+    };
+}
