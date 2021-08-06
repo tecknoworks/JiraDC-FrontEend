@@ -15,7 +15,7 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
-
+import { useHistory } from 'react-router-dom';
 // Actions
 import { login } from '../actions';
 
@@ -54,17 +54,34 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(3, 0, 2),
   },
 }));
+const LogIn=(props)=> {
 
-export function LogIn(props) {
+  //const [cookies, setCookie] = useCookies(['user']);
+ const history=useHistory();
+  if(props.isAuthUser===true){
+    history.push("/");
+  }else{
+   history.push("/login");
+  }
   const classes = useStyles();
+  const[email,setEmail]=useState("");
+   const[password,setPassword]=useState("");
+  
   const submit = () => {
     const payload = {
-      email:props.user.email,
-      password: props.user.password
+      email:email,
+      password:password
     }
-     //console.log(payload)
      props.login(payload);
-  }
+     console.log(props.isAuthUser)
+     
+  };
+  const setEmailText = event => {
+    setEmail(event.target.value)
+  };
+  const setPasswordText = event => {
+    setPassword(event.target.value)
+  };
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
@@ -86,6 +103,7 @@ export function LogIn(props) {
             name="email"
             autoComplete="email"
             autoFocus
+            onChange={setEmailText}
            // defaultValue={props.user.email}
           />
           <TextField
@@ -98,6 +116,7 @@ export function LogIn(props) {
             type="password"
             id="password"
             autoComplete="current-password"
+            onChange={setPasswordText}
            // defaultValue={props.user.password}
           />
           <FormControlLabel
@@ -136,7 +155,8 @@ export function LogIn(props) {
 }
 const mapStateToProps = state => ({
   user: state.login.user,
-  loading: state.login.loading
+  loading: state.login.loading,
+  isAuthUser: state.login.isAuthUser
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({

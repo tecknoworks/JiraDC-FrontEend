@@ -1,4 +1,5 @@
 import { AuthActionsTypes } from '../actions';
+import { getLoggedUser } from '../utils/persistance';
 
 const registerInitialState = {
     loading: false,
@@ -12,8 +13,10 @@ const loginInitialState = {
     loading: false,
     user: {
         email:'dam@yahooo.com',
-        password: 'catalina'
-    }
+        password: 'catalina',
+        
+    },
+    isAuthUser: getLoggedUser().isAuthUser
 }
 export function register(state = registerInitialState, action) {
     switch (action.type) {
@@ -33,9 +36,30 @@ export function login(state = loginInitialState, action) {
         case AuthActionsTypes.AUTH_LOGIN_REQUEST:
             return { ...state, loading: true };
         case AuthActionsTypes.AUTH_LOGIN_REQUEST_SUCCESS:
-            return { ...state, loading: false };
+            localStorage.setItem("userData", JSON.stringify(action.data));
+            //console.log(action.data)
+            return { ...state, isAuthUser: true, user: action.data.token, loading: false };
         case AuthActionsTypes.AUTH_LOGIN_REQUEST_ERROR:
-            return { ...state , loading: false };
+            return { ...state , loading: false }; 
+    }
+
+    return state;
+}
+
+//logout
+export function logout(state = loginInitialState, action) {
+    switch (action.type) {
+        case AuthActionsTypes.AUTH_LOGOUT_REQUEST:
+            console.log("request")
+            localStorage.removeItem("userData",JSON.stringify(action.data));
+            return { ...state, isAuthUser:false, loading: true };
+        case AuthActionsTypes.AUTH_LOGOUT_REQUEST_SUCCESS:
+            console.log("hey")
+            localStorage.removeItem("userData",JSON.stringify(action.data));
+            return { ...state, isAuthUser: false, loading: false };
+        case AuthActionsTypes.AUTH_LOGOUT_REQUEST_ERROR:
+            console.log("err")
+            return { ...state , loading: false }; 
     }
 
     return state;

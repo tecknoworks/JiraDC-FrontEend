@@ -15,6 +15,7 @@ import { ConfirmProvider } from 'material-ui-confirm';
 import { ThemeProvider } from '@material-ui/core';
 import { createTheme } from '@material-ui/core/styles'
 import CssBaseline from "@material-ui/core/CssBaseline";
+import { CookiesProvider } from 'react-cookie';
 
 // App Component
 import App from './App';
@@ -28,9 +29,9 @@ const store = createStore(rootReducer, applyMiddleware(thunk));
 // Matrial UI theme
 const theme = createTheme({
   palette: {
-    type: 'dark',
+    type: 'light',
     primary: {
-      main: 'rgb(249, 104, 84)',
+      main: '#597ef7',
     },
     secondary: {
       main: '#34a8eb',
@@ -39,16 +40,18 @@ const theme = createTheme({
 });
 
 ReactDOM.render(
-  <Provider store={store}>
-    <React.StrictMode>
-      <ThemeProvider theme={theme}>
-        <ConfirmProvider>
-          <CssBaseline />
-          <App />
-        </ConfirmProvider>
-      </ThemeProvider>
-    </React.StrictMode>
-  </Provider>,
+  <CookiesProvider>
+    <Provider store={store}>
+      <React.StrictMode>
+        <ThemeProvider theme={theme}>
+          <ConfirmProvider>
+            <CssBaseline />
+            <App />
+          </ConfirmProvider>
+        </ThemeProvider>
+      </React.StrictMode>
+    </Provider>
+  </CookiesProvider>,
   document.getElementById('root')
 );
 

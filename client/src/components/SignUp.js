@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { Component, useEffect, useState} from 'react';
 import { bindActionCreators, compose } from 'redux';
 import { connect, useDispatch, useSelector } from 'react-redux';
 import { withStyles } from '@material-ui/core';
@@ -55,18 +55,30 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export function SignUp(props) {
+const SignUp=(props)=>
+{
+   const[username,setUsername]=useState("");
+   const[email,setEmail]=useState("");
+   const[password,setPassword]=useState("");
   const classes = useStyles();
   const submit = () => {
     const payload = {
-      username: props.user.username,
-      email:props.user.email,
-      password: props.user.password
+      username: username,
+      email:email,
+      password:password
     }
-     //console.log(payload)
+     console.log(payload)
      props.register(payload);
-  }
-
+  };
+ const setUsernameText = event => {
+    setUsername(event.target.value)
+  };
+  const setEmailText = event => {
+    setEmail(event.target.value)
+  };
+  const setPasswordText = event => {
+    setPassword(event.target.value)
+  };
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
@@ -89,7 +101,8 @@ export function SignUp(props) {
                 id="username"
                 label="Username"
                 autoFocus
-                defaultValue={props.user.username}
+                onChange={setUsernameText}
+               // defaultValue={props.user.username}
               />
             </Grid>
             <Grid item xs={12}>
@@ -101,7 +114,8 @@ export function SignUp(props) {
                 label="Email Address"
                 name="email"
                 autoComplete="email"
-                defaultValue={props.user.email}
+                onChange={setEmailText}
+               // defaultValue={props.user.email}
               />
             </Grid>
             <Grid item xs={12}>
@@ -114,7 +128,8 @@ export function SignUp(props) {
                 type="password"
                 id="password"
                 autoComplete="current-password"
-                defaultValue={props.user.username}
+                onChange={setPasswordText}
+              //  defaultValue={props.user.username}
               />
             </Grid>
           </Grid>

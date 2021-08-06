@@ -19,7 +19,20 @@ const login = (data) => {
         body: JSON.stringify(data)
     });
 }
+
+const logout = (data) => {
+    console.log(data)
+    return fetch(`${BASE_API_URL}/signout`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    });
+}
+
 export default {
     register,
-    login
+    login,
+    logout
 };

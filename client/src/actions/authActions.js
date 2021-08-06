@@ -1,6 +1,9 @@
-
 import AuthRequest from '../requests/authRequests';
 import { globalErrorHandler, responseToJson } from '../utils';
+
+export function getCurrentUser(){
+    
+}
 
 export const AuthActionsTypes = {
     AUTH_REGISTER_REQUEST: 'AUTH_REGISTER_REQUEST',
@@ -10,6 +13,10 @@ export const AuthActionsTypes = {
     AUTH_LOGIN_REQUEST: 'AUTH_LOGIN_REQUEST',
     AUTH_LOGIN_REQUEST_SUCCESS: 'AUTH_LOGIN_REQUEST_SUCCESS',
     AUTH_LOGIN_REQUEST_ERROR: 'AUTH_LOGIN_REQUEST_ERROR',
+
+    AUTH_LOGOUT_REQUEST: 'AUTH_LOGOUT_REQUEST',
+    AUTH_LOGOUT_REQUEST_SUCCESS: 'AUTH_LOGOUT_REQUEST_SUCCESS',
+    AUTH_LOGOUT_REQUEST_ERROR: 'AUTH_LOGOUT_REQUEST_ERROR',
 };
 
 export function registerBegin() {
@@ -77,6 +84,40 @@ export function login(data) {
             .catch(error => {
                 console.log(error)
                 dispatch(loginError());
+                return globalErrorHandler(error);
+            });
+    };
+}
+
+//LOGOUT
+export function logoutBegin() {
+    return {
+        type: AuthActionsTypes.AUTH_LOGOUT_REQUEST
+    };
+}
+
+export function logoutSuccess(data) {
+    return {
+        type: AuthActionsTypes.AUTH_LOGOUT_REQUEST_SUCCESS,
+        data
+    };
+}
+
+export function logoutError() {
+    return {
+        type: AuthActionsTypes.AUTH_LOGOUT_REQUEST_ERROR,
+    };
+}
+
+export function logout(data) {
+    return dispatch => {
+        dispatch(logoutBegin());
+        return AuthRequest.logout(data)
+            .then(response => responseToJson(response))
+            .then(json => dispatch(logoutSuccess(json)))
+            .catch(error => {
+                console.log(error)
+                dispatch(logoutError());
                 return globalErrorHandler(error);
             });
     };

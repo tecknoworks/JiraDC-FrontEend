@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators, compose } from 'redux';
-import StartPage from '../images/startpage.jpg';
+import StartPage from '../images/welcome.png';
 // Material Imports
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { Box, Container, Card, CardActionArea, CardMedia, CardContent, Typography, CardActions, Button, withStyles, Fab } from '@material-ui/core';
@@ -11,7 +11,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 // Actions
 import { fetchPages, removePage } from '../actions';
 import { AvatarImage } from './AvatarImage';
-
+import Grid from '@material-ui/core/Grid';
 const styles = (theme) => ({
     root: {
         position: 'relative'
@@ -29,30 +29,34 @@ const styles = (theme) => ({
         top: -10,
         zIndex: 10
     },
-    StartPage:{
-        position:'absolute',
-        right:'100px',
-        top:'20%'
+    MainImage: {
     },
-    WelcomeText:{
+ 
+    WelcomeText: {
+        "width": "660px",
+        "margin-left": "auto",
+        "margin-right": "auto",
+        "padding-top": "50px",
+        // "padding-left": "250px",
         "text-align": "left",
-        "top":"20px",
-        "display": "inline-block",
-        "float":"left",
-        "top": "50%",
-        "left": "50%",
-        "margin-top": "400px",
-        "margin-left": "60px"
+        "fontFamily": 'Cochin-Bold',
+        "fontSize": 35
     },
-    TextDiv:{
-        "width":"500px",
-        "height":"200px",
+    TextDiv: {
+        "width": "700px",
+        "height": "200px",
         "top": "50%",
         "left": "50%",
         "margin-top": "-100px",
         "margin-left": "-100px",
-      
-        
+    },
+    AdditionalText: {
+        "text-align": "left",
+        "fontFamily": 'Cochin-Bold',
+        "fontSize": 25
+    },
+    HomeContainer: {
+        "padding-top": "80px",
     }
 });
 
@@ -85,13 +89,24 @@ class PageList extends React.Component {
         let { loadingPages, pages, classes } = this.props;
 
         return (
-            <Container fixed>
-                <div className={classes.TextDiv}>
-                <div className={classes.WelcomeText}>
-               <h1>Welcome to Jira DC!</h1>
-               </div></div>
-            <img src={StartPage} alt="startpage" className={classes.StartPage}/>
-            </Container>
+            <div className={classes.HomeContainer}>
+                <Grid container spacing={3}>
+                    <Grid item xs={6}>
+                        <div className={classes.WelcomeText}>
+                            <h1>Welcome to Jira DC!</h1>
+                            <div className={classes.AdditionalText}>
+                                <p>The #1 software develompment used by agile teams.</p>
+                                <p>Jira DC is buid for every member of your software team to plan,
+                                    <p>track, and release great software.</p></p>
+                            </div>
+                        </div>
+ 
+                    </Grid>
+                    <Grid className={classes.MainImage} item xs={6}>
+                        <img src={StartPage} alt="startpage" />
+                    </Grid>
+                </Grid>
+            </div>
             
         ) 
     }

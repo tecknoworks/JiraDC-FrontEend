@@ -1,8 +1,8 @@
 import { PageActionTypes, fetchPages, fetchPage, addPage, removePage } from './pageActions';
 import { TierActions, addTier, requestTiersByPage, activateTier, removeTier } from './tierActions';
 import { PostActions, addPost, requestPostsByPage, removePost } from './postActions';
-import { AuthActionsTypes, register ,login } from './authActions';
-
+import { AuthActionsTypes, register ,login, logout } from './authActions';
+import { ProjectActionsTypes, postProject, getProject , getKanbanProject,getScrumProject, getBugtrackingProject} from './projectActions';
 export {
     PageActionTypes,
     TierActions,
@@ -25,5 +25,14 @@ export {
     // Auth
     AuthActionsTypes,
     register,
-    login
+    login,
+    logout,
+
+    //Project
+    ProjectActionsTypes,
+    postProject,
+    getProject,
+    getKanbanProject,
+    getScrumProject,
+    getBugtrackingProject,
 };
