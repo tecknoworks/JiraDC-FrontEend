@@ -11,6 +11,7 @@ import ProjectsContent from './ProjectsContent';
 import ProjectsHeader from './ProjectsHeader';
 import CreateProjectPage from './CreateProjectPage';
 import ReactDOM from "react-dom";
+import BacklogContent from './BacklogContent';
 
 import {
     BrowserRouter as Router,
@@ -195,6 +196,9 @@ function ProjectPage(props) {
     }else if(location.pathname==="/projects/create/kanban"){
         content= <span><KanbanTemplate /></span>
     }
+    else if(location.pathname==="/backlog"){
+      content= <span><BacklogContent /></span>
+  }
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);

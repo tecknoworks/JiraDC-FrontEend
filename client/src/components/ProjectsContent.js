@@ -55,10 +55,13 @@ const styles = (theme) => ({
 function ProjectsContent(props) {
   const { classes } = props;
   const projects= props.project
-  useEffect(() => {
-    props.getProject()
-  }, [projects]);
-  
+
+  let one=true
+    useEffect(() => {
+      props.getProject()
+      console.log(props.project)
+      one=false
+    }, [one]);
   const cardsArray = projects.map(project => (
     <Grid item xs={2.5}>
       <Card className={classes.root}>
