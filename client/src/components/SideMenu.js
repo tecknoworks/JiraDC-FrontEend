@@ -21,6 +21,7 @@ import PhonelinkSetupIcon from '@material-ui/icons/PhonelinkSetup';
 import DehazeIcon from '@material-ui/icons/Dehaze';
 import WorkIcon from '@material-ui/icons/Work';
 import { createTheme, ThemeProvider} from '@material-ui/core/styles';
+import { useHistory } from 'react-router-dom';
 import {
   BrowserRouter as Router,
   Switch,
@@ -119,10 +120,11 @@ const styles = (theme) => ({
 
 function SideMenu(props) {
   const { classes, ...other } = props;
+  const history=useHistory();
   let categories=" "
     let location=useLocation()
     let content=" "
-    if(location.pathname==="/projects"){
+    if(location.pathname==="/projects" || location.pathname==="/backlog" ||  location.pathname==="/allprojects"){
        categories=categoriesProject
        content=<span>
          
@@ -133,6 +135,31 @@ function SideMenu(props) {
     }else if(location.pathname==="/projects/create" || location.pathname==="/projects/create/kanban" || location.pathname==="/projects/create/scrum" || location.pathname==="/projects/create/bugtracking"){
         categories=categoriesCreate
         content=<span></span>
+    }
+ const selectedChildren=(id) =>{
+    //console.log(categoriesProject[0].children)
+    console.log(id)
+    if(id==="Projects")
+    {
+      categoriesProject[0].children[0].active=true
+      categoriesProject[0].children[1].active=false
+      categoriesProject[0].children[2].active=false
+      history.push('/allprojects')
+    }
+    else  if(id==="Backlog")
+    {
+      categoriesProject[0].children[0].active=false
+      categoriesProject[0].children[1].active=true
+      categoriesProject[0].children[2].active=false
+      history.push('/backlog')
+    }
+    else  if(id==="Active sprints")
+    {
+      categoriesProject[0].children[0].active=false
+      categoriesProject[0].children[1].active=false
+      categoriesProject[0].children[2].active=true
+      history.push('/')
+    }
     }
   return (
     <ThemeProvider theme={theme}>
@@ -159,6 +186,7 @@ function SideMenu(props) {
                 key={childId}
                 button
                 className={clsx(classes.item, active && classes.itemActiveItem)}
+                onClick={() => selectedChildren(childId)}
               >
                 <ListItemIcon className={classes.itemIcon}>{icon}</ListItemIcon>
                 <ListItemText

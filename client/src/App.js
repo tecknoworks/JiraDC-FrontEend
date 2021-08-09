@@ -21,6 +21,7 @@ import Footer from './components/Footer';
 import ProjectPage from './components/ProjectPage';
 import CreateProjectPage from './components/CreateProjectPage';
 import AllProjectsContent from './components/AllProjectsContent';
+import BacklogContent from './components/BacklogContent';
 function App(props) {
 
   let routes=" "
@@ -58,6 +59,7 @@ function App(props) {
         <Route path="/signup" component={SignUp} />
         <Route path="/projects" component={ProjectPage} />
         <Route path="/allprojects" component={AllProjectsContent} />
+        <Route path="/backlog" component={BacklogContent} />
       </Switch>
       <Footer />
     </Router>

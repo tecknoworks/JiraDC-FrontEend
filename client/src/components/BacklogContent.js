@@ -87,7 +87,7 @@ const styles = (theme) => ({
 
 });
 
-function AllProjectsContent(props) {
+function BacklogContent(props) {
     const [type, setType] = useState('All Types');
     var projects = props.project
     const handleChange = (event) => {
@@ -201,7 +201,7 @@ function AllProjectsContent(props) {
   );
 }
 
-AllProjectsContent.propTypes = {
+BacklogContent.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
@@ -218,4 +218,4 @@ const mapDispatchToProps = dispatch => bindActionCreators({
 
 }, dispatch);
 
-export default compose(connect(mapStateToProps, mapDispatchToProps), withStyles(styles))(AllProjectsContent);
+export default compose(connect(mapStateToProps, mapDispatchToProps), withStyles(styles))(BacklogContent);
