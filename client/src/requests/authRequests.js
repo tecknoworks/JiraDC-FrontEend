@@ -30,9 +30,17 @@ const logout = (data) => {
         body: JSON.stringify(data)
     });
 }
-
+const getAllUsers = () => {
+    return fetch(`${BASE_API_URL}/allusers`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+    });
+}
 export default {
     register,
     login,
-    logout
+    logout,
+    getAllUsers
 };

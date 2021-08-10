@@ -17,6 +17,10 @@ export const AuthActionsTypes = {
     AUTH_LOGOUT_REQUEST: 'AUTH_LOGOUT_REQUEST',
     AUTH_LOGOUT_REQUEST_SUCCESS: 'AUTH_LOGOUT_REQUEST_SUCCESS',
     AUTH_LOGOUT_REQUEST_ERROR: 'AUTH_LOGOUT_REQUEST_ERROR',
+
+    AUTH_GETUSERS_REQUEST: 'AUTH_GETUSERS_REQUEST',
+    AUTH_GETUSERS_REQUEST_SUCCESS: 'AUTH_GETUSERS_REQUEST_SUCCESS',
+    AUTH_GETUSERS_REQUEST_ERROR: 'AUTH_GETUSERS_REQUEST_ERROR',
 };
 
 export function registerBegin() {
@@ -118,6 +122,41 @@ export function logout(data) {
             .catch(error => {
                 console.log(error)
                 dispatch(logoutError());
+                return globalErrorHandler(error);
+            });
+    };
+}
+
+//GetAllUsers
+
+export function getAllUsersBegin() {
+    return {
+        type: AuthActionsTypes.AUTH_GETUSERS_REQUEST
+    };
+}
+
+export function getAllUsersSuccess(data) {
+    return {
+        type: AuthActionsTypes.AUTH_GETUSERS_REQUEST_SUCCESS,
+        data
+    };
+}
+
+export function getAllUsersError() {
+    return {
+        type: AuthActionsTypes.AUTH_GETUSERS_REQUEST_ERROR,
+    };
+}
+
+export function getAllUsers() {
+    return dispatch => {
+        console.log("hey")
+        dispatch(getAllUsersBegin());
+        return AuthRequest.getAllUsers()
+            .then(response => responseToJson(response))
+            .then(json => dispatch(getAllUsersSuccess(json)))
+            .catch(error => {
+                dispatch(getAllUsersError());
                 return globalErrorHandler(error);
             });
     };

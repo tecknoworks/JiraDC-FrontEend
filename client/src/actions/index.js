@@ -1,8 +1,10 @@
 import { PageActionTypes, fetchPages, fetchPage, addPage, removePage } from './pageActions';
 import { TierActions, addTier, requestTiersByPage, activateTier, removeTier } from './tierActions';
 import { PostActions, addPost, requestPostsByPage, removePost } from './postActions';
-import { AuthActionsTypes, register ,login, logout } from './authActions';
+import { AuthActionsTypes, register ,login, logout,getAllUsers } from './authActions';
 import { ProjectActionsTypes, postProject, getProject , getKanbanProject,getScrumProject, getBugtrackingProject} from './projectActions';
+import {  PriorityActionsTypes,getPriority } from './priorityActions';
+import {  ComponentActionsTypes,getComponent } from './componentActions';
 export {
     PageActionTypes,
     TierActions,
@@ -27,6 +29,7 @@ export {
     register,
     login,
     logout,
+    getAllUsers,
 
     //Project
     ProjectActionsTypes,
@@ -35,4 +38,12 @@ export {
     getKanbanProject,
     getScrumProject,
     getBugtrackingProject,
+    
+    //Priority
+    PriorityActionsTypes,
+    getPriority,
+
+     //Component
+     ComponentActionsTypes,
+     getComponent,
 };
