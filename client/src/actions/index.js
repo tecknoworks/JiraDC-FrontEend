@@ -3,8 +3,11 @@ import { TierActions, addTier, requestTiersByPage, activateTier, removeTier } fr
 import { PostActions, addPost, requestPostsByPage, removePost } from './postActions';
 import { AuthActionsTypes, register ,login, logout,getAllUsers } from './authActions';
 import { ProjectActionsTypes, postProject, getProject , getKanbanProject,getScrumProject, getBugtrackingProject} from './projectActions';
+import { IssueActionsTypes, getIssue } from './issueActions';
+import { LabelActionsTypes, getLabel, postLabel } from './labelActions';
 import {  PriorityActionsTypes,getPriority } from './priorityActions';
 import {  ComponentActionsTypes,getComponent } from './componentActions';
+
 export {
     PageActionTypes,
     TierActions,
@@ -38,7 +41,17 @@ export {
     getKanbanProject,
     getScrumProject,
     getBugtrackingProject,
-    
+
+    //issue
+    IssueActionsTypes,
+    getIssue,
+
+    //label
+    LabelActionsTypes,
+    getLabel,
+    postLabel,
+
+        
     //Priority
     PriorityActionsTypes,
     getPriority,
