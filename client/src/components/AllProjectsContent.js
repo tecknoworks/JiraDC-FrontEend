@@ -20,7 +20,7 @@ import { alpha, makeStyles } from '@material-ui/core/styles';
 import SearchIcon from '@material-ui/icons/Search';
 import InputBase from '@material-ui/core/InputBase';
 import { AppBar } from '@material-ui/core';
-
+import { useHistory } from 'react-router-dom';
 const styles = (theme) => ({
   root: {
     width: '275px',
@@ -90,6 +90,7 @@ const styles = (theme) => ({
 function AllProjectsContent(props) {
     const [type, setType] = useState('All Types');
     var projects = props.project
+    const history=useHistory();
     const handleChange = (event) => {
       setType(event.target.value)
       if(event.target.value==="Kanban"){
@@ -125,6 +126,11 @@ function AllProjectsContent(props) {
     let Scrum = "Scrum"
     let Bugtrackinng = "Bug tracking"
 
+    const handleClick = (name) =>{
+      history.push({pathname: '/project',
+      search: '?name='+name,
+      state: { detail: name }})
+    }
   return (
 
     <Grid container spacing={7}>
@@ -184,7 +190,7 @@ function AllProjectsContent(props) {
             </TableHead>
             <TableBody>
               {rows.map((row) => (
-                <TableRow key={row.name}>
+                <TableRow  onClick={() => handleClick(row.name)} key={row.name}>
                   <TableCell component="th" scope="row">
                     {row.name}
                   </TableCell>
