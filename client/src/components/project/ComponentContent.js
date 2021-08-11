@@ -155,7 +155,7 @@ function ComponentContent(props) {
             </TableHead>
             <TableBody>
               {rows.map((row) => (
-                <TableRow onClick={() => handleClick(row.name)} key={row.name}>
+                <TableRow  key={row.name}>
                   <TableCell component="th" scope="row">
                     {row.name}
                   </TableCell>

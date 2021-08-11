@@ -1,4 +1,3 @@
-//const BASE_API_URL = process.env.BASE_API_URL;
 const BASE_API_URL = "http://localhost:8081";
 const postProject = (data) => {
     return fetch(`${BASE_API_URL}/project`, {
@@ -15,7 +14,6 @@ const getProject = () => {
         headers: {
             'Content-Type': 'application/json'
         },
-        //body: JSON.stringify(data)
     });
 }
 const getKanbanProject = () => {
@@ -24,7 +22,6 @@ const getKanbanProject = () => {
         headers: {
             'Content-Type': 'application/json'
         },
-        //body: JSON.stringify(data)
     });
 }
 const getScrumProject = () => {
@@ -33,7 +30,6 @@ const getScrumProject = () => {
         headers: {
             'Content-Type': 'application/json'
         },
-        //body: JSON.stringify(data)
     });
 }
 const getBugtrackingProject = () => {
@@ -42,7 +38,6 @@ const getBugtrackingProject = () => {
         headers: {
             'Content-Type': 'application/json'
         },
-        //body: JSON.stringify(data)
     });
 }
 export default {
