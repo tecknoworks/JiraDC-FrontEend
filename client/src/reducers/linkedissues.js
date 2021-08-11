@@ -5,7 +5,6 @@ const getLinkedissuesInitialState = {
     {
       id: "1",
       name: "default",
-
     },
   ],
 };

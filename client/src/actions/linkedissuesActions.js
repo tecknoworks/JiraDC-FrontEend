@@ -7,8 +7,6 @@ export const LinkedIssuesActionsTypes = {
     LINKEDISSUES_GET_REQUEST_ERROR: 'LINKEDISSUES_GET_REQUEST_ERROR',
 };
 
-
-
 //getlinkedissues
 export function getBegin() {
     return {
@@ -29,7 +27,6 @@ export function getError() {
     };
 }
 
-// Request gets
 export function getLinkedIssues() {
     return dispatch => {
         dispatch(getBegin());

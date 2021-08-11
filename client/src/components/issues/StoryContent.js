@@ -109,8 +109,8 @@ function StoryContent(props) {
   let users = props.user;
   let priorities = props.priority;
   let components = props.component;
-  let linkedissues=props.linkedissues;
-  let sprints=props.sprint;
+  let linkedissues = props.linkedissues;
+  let sprints = props.sprint;
 
   var projects = props.project
   var issues=props.issue
