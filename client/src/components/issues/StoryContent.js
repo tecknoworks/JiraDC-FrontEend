@@ -1,22 +1,33 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import Grid from "@material-ui/core/Grid";
-import { withStyles, makeStyles, MuiThemeProvider, } from "@material-ui/core/styles";
+import {
+  withStyles,
+  makeStyles,
+} from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import InputLabel from "@material-ui/core/InputLabel";
-import MenuItem from "@material-ui/core/MenuItem";
-import FormControl from "@material-ui/core/FormControl";
-import Select from "@material-ui/core/Select";
 import InputBase from "@material-ui/core/InputBase";
-import { Divider, Toolbar, TextField, Box, Card, Slide, Button, } from "@material-ui/core";
+import CloudUploadIcon from "@material-ui/icons/CloudUpload";
+import { connect, useDispatch, useSelector } from "react-redux";
+import { bindActionCreators, compose } from "redux";
+import Autocomplete from "@material-ui/lab/Autocomplete";
+import {
+  Divider,
+  TextField,
+  Box,
+  Button,
+} from "@material-ui/core";
 import { useDropzone } from "react-dropzone";
-import MUIRichTextEditor from "mui-rte";
 import { Editor } from "react-draft-wysiwyg";
 import { EditorState } from "draft-js";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { createMuiTheme } from "@material-ui/core/styles";
-import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import { BrowserRouter as Router, useLocation } from "react-router-dom";
+import { getIssue, getLabel, getProject, postLabel } from "../../actions";
+import { getAllUsers, getPriority ,getComponent} from "../../actions";
+import FormHelperText from '@material-ui/core/FormHelperText';
+
 const defaultTheme = createMuiTheme();
 const styles = (theme) => ({});
 const BootstrapInput = withStyles((theme) => ({
@@ -64,7 +75,7 @@ const useStyles = makeStyles((theme) => ({
   boxStyle: {
     "overflow-y": "scroll",
     "overflow-x": "hidden",
-
+    "height": "480px",
   },
   dropDown: {
     flex: "1",
@@ -79,16 +90,51 @@ const useStyles = makeStyles((theme) => ({
     color: "#bdbdbd",
     outline: "none",
     transition: "border .24s ease-in-out",
-    height: '50px'
+    height: "50px",
   },
-  formControl:{
-    minWidth:'300px',
-  }
+  formControl: {
+    minWidth: "300px",
+  },
+  header: {
 
+  },
+  mainBox: {
+    "overflow": "hidden",
+    "color": "#000",
+    "background-color": "#fff"
+  },
+  headerWorkItem: {
+    "padding-left": "24px"
+  },
+  footerWorkItem: {
+    "padding-left": "24px",
+    "padding-top": "10px"
+  }
 }));
 
 function StoryContent(props) {
-  let location = useLocation()
+  let location = useLocation();
+  let users = props.user;
+  let priorities = props.priority;
+  let components = props.component;
+
+  var projects = props.project
+  var issues=props.issue
+  var labels=props.label
+  var tbc=[]
+  let one = true;
+  useEffect(() => {
+    props.getProject()
+    props.getIssue()
+    props.getLabel()
+    props.getAllUsers()
+    props.getPriority()
+    props.getComponent()
+    console.log(props.project);
+    one = false;
+  }, [one]);
+  
+
   const [editorState, setEditorState] = useState(() =>
     EditorState.createEmpty()
   );
@@ -96,109 +142,60 @@ function StoryContent(props) {
     console.log(editorState);
   }, [editorState]);
   const classes = useStyles();
-  const [project, setProject] = useState("");
-  const [issuetype, setIssueType] = useState("");
-  const [priority, setPriority] = useState("");
-  const [component, setComponent] = useState("");
-  const [labels, setLabels] = useState("");
 
-  const [linkedissues, setLinkedIssues] = useState("");
-  const [issue, setIssue] = useState("");
-  const [assignee, setAssignee] = useState("");
-  const [epiclink, setEpicLink] = useState("");
-  const [sprint, setSprint] = useState("");
-
-  const handleChangeProject = (event) => {
-    setProject(event.target.value);
-  };
-  const handleChangeIssueType = (event) => {
-    setIssueType(event.target.value);
-  };
-  const handleChangeComponent = (event) => {
-    setComponent(event.target.value);
-  };
-  const handleChangePriority = (event) => {
-    setPriority(event.target.value);
-  };
-  const handleChangeLabels = (event) => {
-    setLabels(event.target.value);
-  };
-
-
-  const handleChangeLinkedIssues = (event) => {
-    setLinkedIssues(event.target.value);
-  };
-  const handleChangeIssue = (event) => {
-    setIssue(event.target.value);
-  };
-  const handleChangeAssignee = (event) => {
-    setAssignee(event.target.value);
-  };
-  const handleChangeEpicLink = (event) => {
-    setEpicLink(event.target.value);
-  };
-  const handleChangeSprint = (event) => {
-    setSprint(event.target.value);
-  };
   const { acceptedFiles, getRootProps, getInputProps } = useDropzone();
-
   const files = acceptedFiles.map((file) => (
     <li key={file.path}>
       {file.path} - {file.size} bytes
     </li>
   ));
+
+  const addLabel = e =>{
+    console.log(e.target.value)
+
+  }
   return (
-    <Box width="70%" className={classes.boxStyle} height="75%">
-      <Paper>
+    <Box width="70%" className={classes.mainBox} height="600px">
+      <Grid container spacing={3} className={classes.headerWorkItem}>
+        <Grid item sm={12}>
+          <h2 className={classes.header}>Create Issue</h2>
+        </Grid>
+      </Grid>
+      <Paper className={classes.boxStyle}>
         <Grid container spacing={3}>
           <Grid item xs={0.1}></Grid>
           <Grid item xs={11}>
-            <Grid item sm={12}>
-              <h2>Create Issue</h2>
-            </Grid>
-
+            <br></br>
             <Grid item xs={12}>
-              <FormControl className={classes.formControl}>
-                <InputLabel className={classes.label} shrink required={true}>
-                  Project
-                </InputLabel>
-                <Select
-                  labelId="demo-customized-select-label"
-                  id="demo-customized-select"
-                  value={project}
-                  onChange={handleChangeProject}
-                  input={<BootstrapInput />}
-                >
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
-                  <MenuItem value={10}>Ten</MenuItem>
-                  <MenuItem value={20}>Twenty</MenuItem>
-                  <MenuItem value={30}>Thirty</MenuItem>
-                </Select>
-              </FormControl>
+              <InputLabel fullWidth shrink required={true}>
+                Projects
+              </InputLabel>
+              <Autocomplete
+                id="combo-box-demo"
+                options={projects}
+                getOptionLabel={(option) => option.name}
+                style={{ width: 300 }}
+                required
+                renderInput={(params) => (
+                  <TextField {...params} variant="outlined" />
+                )}
+              />
             </Grid>
             <br></br>
             <Grid item sm={12} xs={6}>
-              <FormControl className={classes.formControl}>
-                <InputLabel fullWidth shrink required={true}>
-                  Issue Type
-                </InputLabel>
-                <Select
-                  labelId="demo-customized-select-label"
-                  id="demo-customized-select"
-                  value={issuetype}
-                  onChange={handleChangeIssueType}
-                  input={<BootstrapInput />}
-                >
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
-                  <MenuItem value={10}>Ten</MenuItem>
-                  <MenuItem value={20}>Twenty</MenuItem>
-                  <MenuItem value={30}>Thirty</MenuItem>
-                </Select>
-              </FormControl>
+            <InputLabel fullWidth shrink required={true}>
+                Issue Type
+              </InputLabel>
+              <Autocomplete
+                id="combo-box-demo"
+                options={issues}
+                getOptionLabel={(option) => option.name}
+                style={{ width: 300 }}
+                required
+                renderInput={(params) => (
+                  <TextField {...params} variant="outlined" />
+                )}
+              />
               <br></br>
               <br></br>
               <Divider />
@@ -221,30 +218,28 @@ function StoryContent(props) {
             </Grid>
             <br></br>
             <Grid item sm={12} xs={6}>
-              <FormControl className={classes.formControl}>
                 <InputLabel fullWidth shrink required={true}>
                   Components
                 </InputLabel>
-                <Select
-                  labelId="demo-customized-select-label"
-                  id="demo-customized-select"
-                  value={component}
-                  onChange={handleChangeComponent}
-                  input={<BootstrapInput />}
-                >
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
-                  <MenuItem value={10}>Ten</MenuItem>
-                  <MenuItem value={20}>Twenty</MenuItem>
-                  <MenuItem value={30}>Thirty</MenuItem>
-                </Select>
-              </FormControl>
-              <br></br>
+                <Autocomplete
+                  multiple
+                  id="combo-box-demo"
+                  limitTags={1}
+                  options={components}
+                  getOptionLabel={(option) => option.name}
+                  style={{ width: 300 }}
+                  required
+                  renderInput={(params) => <TextField {...params} variant="outlined" />}
+                />
+                <FormHelperText>Star typing to get a list of possible matches or press down to select.</FormHelperText>
+                <br></br>
             </Grid>
             <br></br>
 
             <Grid item sm={12}>
+            <InputLabel fullWidth shrink>
+                Description
+              </InputLabel>
               <div
                 style={{
                   border: "1px solid black",
@@ -252,6 +247,7 @@ function StoryContent(props) {
                   minHeight: "400px",
                 }}
               >
+                  
                 <Editor
                   editorState={editorState}
                   onEditorStateChange={setEditorState}
@@ -263,193 +259,150 @@ function StoryContent(props) {
             <Grid item sm={12} xs={6}></Grid>
 
             <Grid item sm={12} xs={6}>
-              <FormControl className={classes.formControl}>
                 <InputLabel fullWidth shrink required={true}>
                   Priority
                 </InputLabel>
-                <Select
-                  labelId="demo-customized-select-label"
-                  id="demo-customized-select"
-                  value={priority}
-                  onChange={handleChangePriority}
-                  input={<BootstrapInput />}
-                >
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
-                  <MenuItem value={10}>Ten</MenuItem>
-                  <MenuItem value={20}>Twenty</MenuItem>
-                  <MenuItem value={30}>Thirty</MenuItem>
-                </Select>
-              </FormControl>
+                <Autocomplete
+                  id="combo-box-demo"
+                  options={priorities}
+                  getOptionLabel={(option) => option.name}
+                  style={{ width: 300 }}
+                  required
+                  renderInput={(params) => <TextField {...params} variant="outlined" />}
+                />
+              <br></br>
             </Grid>
             <br></br>
             <Grid item sm={12} xs={6}>
-              <FormControl className={classes.formControl}>
                 <InputLabel fullWidth shrink required={true}>
                   Labels
                 </InputLabel>
-                <Select
-                  labelId="demo-customized-select-label"
-                  id="demo-customized-select"
-                  value={labels}
-                  onChange={handleChangeLabels}
-                  input={<BootstrapInput />}
-                >
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
-                  <MenuItem value={10}>Ten</MenuItem>
-                  <MenuItem value={20}>Twenty</MenuItem>
-                  <MenuItem value={30}>Thirty</MenuItem>
-                </Select>
-              </FormControl>
+                <Autocomplete
+                multiple
+                id="multiple-limit-tags"
+                limitTags={1}
+                options={labels}
+                getOptionLabel={(option) => option.name}
+                style={{ width: 300 }}
+                renderInput={(params) => (
+                  <TextField {...params} variant="outlined" />
+                )}
+                onClose={addLabel}
+              />
+              <br></br>
             </Grid>
             <br></br>
-            <Grid item sm={12} xs={6}></Grid>
-
             <Grid item sm={12} xs={6}>
               <br></br>
               Attachment
-
               <section className={classes.dropDown}>
-                <div {...getRootProps({ className: "dropzone" })}>
-                  <input {...getInputProps()} />
-                  <CloudUploadIcon />
-                  Drop files to attach, or browse.
-                </div>
-              </section>
-              <aside>
-                <h4>Files</h4>
-                <ul>{files}</ul>
-              </aside>
+                  <div {...getRootProps({ className: "dropzone" })}>
+                    <input {...getInputProps()} />
+                    <CloudUploadIcon />
+                    Drop files to attach, or browse.
+                  </div>
+                </section>
+                <aside>
+                  <h4>Files</h4>
+                  <ul>{files}</ul>
+                </aside>
               <br></br>
             </Grid>
             <br></br>
             <Grid item sm={12} xs={6}>
-              <FormControl className={classes.formControl}>
                 <InputLabel fullWidth shrink required={true}>
                   Linked Issues
                 </InputLabel>
-                <Select
-                  labelId="demo-customized-select-label"
-                  id="demo-customized-select"
-                  value={linkedissues}
-                  onChange={handleChangeLinkedIssues}
-                  input={<BootstrapInput />}
-                >
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
-                  <MenuItem value={10}>Ten</MenuItem>
-                  <MenuItem value={20}>Twenty</MenuItem>
-                  <MenuItem value={30}>Thirty</MenuItem>
-                </Select>
-              </FormControl>
+                <Autocomplete
+                id="combo-box-demo"
+                options={tbc}
+                getOptionLabel={(option) => option.name}
+                style={{ width: 300 }}
+                renderInput={(params) => (
+                  <TextField {...params} variant="outlined" />
+                )}
+              />
+              <br></br>
             </Grid>
             <br></br>
             <Grid item sm={12} xs={6}>
-              <FormControl className={classes.formControl}>
                 <InputLabel fullWidth shrink required={true}>
                   Issue
                 </InputLabel>
-                <Select
-                  labelId="demo-customized-select-label"
-                  id="demo-customized-select"
-                  value={issue}
-                  onChange={handleChangeIssue}
-                  input={<BootstrapInput />}
-                >
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
-                  <MenuItem value={10}>Ten</MenuItem>
-                  <MenuItem value={20}>Twenty</MenuItem>
-                  <MenuItem value={30}>Thirty</MenuItem>
-                </Select>
-              </FormControl>
+                <Autocomplete
+                id="combo-box-demo"
+                options={tbc}
+                getOptionLabel={(option) => option.name}
+                style={{ width: 300 }}
+                renderInput={(params) => (
+                  <TextField {...params} variant="outlined" />
+                )}
+              />
+              <br></br>
             </Grid>
             <br></br>
             <Grid item sm={12} xs={6}>
-              <FormControl className={classes.formControl}>
                 <InputLabel fullWidth shrink required={true}>
                   Assignee
                 </InputLabel>
-                <Select
-                  labelId="demo-customized-select-label"
-                  id="demo-customized-select"
-                  value={assignee}
-                  onChange={handleChangeAssignee}
-                  input={<BootstrapInput />}
-                >
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
-                  <MenuItem value={10}>Ten</MenuItem>
-                  <MenuItem value={20}>Twenty</MenuItem>
-                  <MenuItem value={30}>Thirty</MenuItem>
-                </Select>
-              </FormControl>
+                <Autocomplete
+                  id="combo-box-demo"
+                  options={users}
+                  getOptionLabel={(option) => option.username}
+                  style={{ width: 300 }}
+                  required
+                  renderInput={(params) => <TextField {...params} variant="outlined" />}
+                />
+              <br></br>
             </Grid>
             <br></br>
             <Grid item sm={12} xs={6}>
-              <FormControl className={classes.formControl}>
+              
                 <InputLabel fullWidth shrink required={true}>
                   Epic Link
                 </InputLabel>
-                <Select
-                  labelId="demo-customized-select-label"
-                  id="demo-customized-select"
-                  value={epiclink}
-                  onChange={handleChangeEpicLink}
-                  input={<BootstrapInput />}
-                >
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
-                  <MenuItem value={10}>Ten</MenuItem>
-                  <MenuItem value={20}>Twenty</MenuItem>
-                  <MenuItem value={30}>Thirty</MenuItem>
-                </Select>
-              </FormControl>
+                <Autocomplete
+                id="combo-box-demo"
+                options={tbc}
+                getOptionLabel={(option) => option.name}
+                style={{ width: 300 }}
+                renderInput={(params) => (
+                  <TextField {...params} variant="outlined" />
+                )}
+              />
+              <br></br>
             </Grid>
             <br></br>
             <Grid item sm={12} xs={6}>
-              <FormControl className={classes.formControl}>
                 <InputLabel fullWidth shrink required={true}>
                   Sprint
                 </InputLabel>
-                <Select
-                  labelId="demo-customized-select-label"
-                  id="demo-customized-select"
-                  value={sprint}
-                  onChange={handleChangeSprint}
-                  input={<BootstrapInput />}
-                >
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
-                  <MenuItem value={10}>Ten</MenuItem>
-                  <MenuItem value={20}>Twenty</MenuItem>
-                  <MenuItem value={30}>Thirty</MenuItem>
-                </Select>
-              </FormControl>
+                <Autocomplete
+                id="combo-box-demo"
+                options={tbc}
+                getOptionLabel={(option) => option.name}
+                style={{ width: 300 }}
+                renderInput={(params) => (
+                  <TextField {...params} variant="outlined" />
+                )}
+              />
+              <br></br>
             </Grid>
             <br></br>
-            <Grid container spacing={1}>
-              <Grid item xs={10}></Grid>
-              <Grid item xs={1}>
-                <Button variant="contained" color="primary">
-                  Create
-                </Button>
-              </Grid>
-              <Grid item xs={1}>
-                <Button href={location.pathname} color="primary">Cancel</Button>
-              </Grid>
-            </Grid>
           </Grid>
         </Grid>
       </Paper>
+      <Grid container spacing={1} className={classes.footerWorkItem}>
+        <Grid item xs={10}></Grid>
+        <Grid item xs={1}>
+          <Button variant="contained" color="primary">
+            Create
+          </Button>
+        </Grid>
+        <Grid item xs={1}>
+          <Button href={location.pathname} color="primary">Cancel</Button>
+        </Grid>
+      </Grid>
     </Box>
   );
 }
@@ -458,4 +411,32 @@ StoryContent.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default StoryContent;
+const mapStateToProps = (state) => ({
+  user: state.getAllUsers.user,
+  loading: state.getAllUsers.loading,
+  priority: state.getPriority.priority,
+  component: state.getComponent.component,
+  project: state.getProject.project,
+  loading: state.getProject.loading,
+  issue:state.getIssue.issue,
+  label:state.getLabel.label,
+});
+
+const mapDispatchToProps = (dispatch) =>
+  bindActionCreators(
+    {
+      getAllUsers: getAllUsers,
+      getPriority: getPriority,
+      getComponent : getComponent,
+      getProject: getProject,
+      getIssue: getIssue,
+      getLabel: getLabel,
+      postLabel: postLabel,
+    },
+    dispatch
+  );
+
+export default compose(
+  connect(mapStateToProps, mapDispatchToProps),
+  withStyles(styles)
+)(StoryContent);

@@ -30,6 +30,7 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.1",
     "react-scroll-box": "^0.3.5",
+    "react-sticky-header": "^0.2.0",
     "react-toastify": "^6.2.0",
     "redux": "^4.1.0",
     "redux-thunk": "^2.3.0"
