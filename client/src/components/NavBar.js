@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
         marginRight: theme.spacing(2),
     },
     title: {
-        width:"10%",
+        width:"20%",
     },
     Logo: {
         position: 'absolute',
@@ -74,17 +74,7 @@ function NavBar(props) {
     let location = useLocation()
     let content = " "
     if (location.pathname === "/") {
-        content = <span>
-
-            <Drawer open={drawerOpen} onClose={() => setDrawerOpen(false)}>
-                <List>
-                    <ListItem button href="/pages/add">
-                        <Button size="large" href="/pages/add" color="inherit">Add Page</Button>
-                    </ListItem>
-                </List>
-            </Drawer>
-
-        </span>
+        content = <span></span>
     } else {
         content = <span><Drawer open={drawerOpen} onClose={() => setDrawerOpen(false)}><SideMenu /></Drawer></span>
     }
@@ -108,7 +98,7 @@ function NavBar(props) {
         navMenu = <span>
         </span>
     } else {
-        navMenu = <span><Grid items xs={6} sm={12}>
+        navMenu = <span><Grid items xs={3} sm={12}>
         <Tabs value={value} textColor="inherit">
             <Tab href="/projects" textColor="inherit" label="Your work" />
             <Tab href="/allprojects" textColor="inherit" label="Projects" />
@@ -165,7 +155,7 @@ function NavBar(props) {
                    {logo}
                 </a>
                  {navMenu}
-                <Grid items  sm={11}>   
+                <Grid items  sm={10}>   
                   {logButton} 
                 </Grid>
             </Toolbar>

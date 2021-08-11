@@ -3,48 +3,50 @@ import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { withStyles } from '@material-ui/core/styles';
 import Divider from '@material-ui/core/Divider';
-import Drawer from '@material-ui/core/Drawer';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import HomeIcon from '@material-ui/icons/Home';
-import PeopleIcon from '@material-ui/icons/People';
 import DnsRoundedIcon from '@material-ui/icons/DnsRounded';
-import PermMediaOutlinedIcon from '@material-ui/icons/PhotoSizeSelectActual';
-import PublicIcon from '@material-ui/icons/Public';
-import SettingsEthernetIcon from '@material-ui/icons/SettingsEthernet';
-import SettingsInputComponentIcon from '@material-ui/icons/SettingsInputComponent';
-import TimerIcon from '@material-ui/icons/Timer';
 import SettingsIcon from '@material-ui/icons/Settings';
-import PhonelinkSetupIcon from '@material-ui/icons/PhonelinkSetup';
 import DehazeIcon from '@material-ui/icons/Dehaze';
 import WorkIcon from '@material-ui/icons/Work';
 import { createTheme, ThemeProvider} from '@material-ui/core/styles';
 import { useHistory } from 'react-router-dom';
+import CallToActionIcon from '@material-ui/icons/CallToAction';
 import {
   BrowserRouter as Router,
   Switch,
   useLocation
 } from "react-router-dom";
 
+const categoriesProjectDetails = [
+  {
+    id: 'Development',
+    children: [
+      { id: 'Backlog', icon: <DehazeIcon /> },
+      { id: 'Active sprints', icon: <DnsRoundedIcon />, active: true },
+    ],
+  },
+  {
+    id: 'Tools',
+    children: [
+      { id: 'Components', icon: <CallToActionIcon /> },
+      { id: 'Test sessions', icon: <SettingsIcon /> },
+    ],
+  },
+];
 const categoriesProject = [
   {
     id: 'Development',
     children: [
       { id: 'Projects', icon: <WorkIcon />, active: true },
-      { id: 'Backlog', icon: <DehazeIcon /> },
-      { id: 'Active sprints', icon: <DnsRoundedIcon /> },
     ],
   },
   {
     id: 'Settings',
     children: [
-      { id: 'Test sessions', icon: <SettingsIcon /> },
-      { id: 'Test sessions', icon: <SettingsIcon /> },
-      { id: 'Test sessions', icon: <SettingsIcon /> },
-      { id: 'Test sessions', icon: <SettingsIcon /> },
-        { id: 'Test sessions', icon: <SettingsIcon /> },
       { id: 'Test sessions', icon: <SettingsIcon /> },
     ],
   },
@@ -124,12 +126,20 @@ function SideMenu(props) {
   let categories=" "
     let location=useLocation()
     let content=" "
+    if(location.pathname==="/project" || location.pathname==="/components"){
+      categories=categoriesProjectDetails
+      content=<span>
+        <ListItem className={clsx(classes.item, classes.itemCategory)}>
+        <HomeIcon />{location.state.detail}
+        </ListItem>
+      </span>
+   }
     if(location.pathname==="/projects" || location.pathname==="/backlog" ||  location.pathname==="/allprojects"){
        categories=categoriesProject
        content=<span>
          
          <ListItem className={clsx(classes.item, classes.itemCategory)}>
-         <HomeIcon />Current Project
+         <HomeIcon />Home Page
          </ListItem>
        </span>
     }else if(location.pathname==="/projects/create" || location.pathname==="/projects/create/kanban" || location.pathname==="/projects/create/scrum" || location.pathname==="/projects/create/bugtracking"){
@@ -137,28 +147,35 @@ function SideMenu(props) {
         content=<span></span>
     }
  const selectedChildren=(id) =>{
-    //console.log(categoriesProject[0].children)
-    console.log(id)
     if(id==="Projects")
     {
       categoriesProject[0].children[0].active=true
-      categoriesProject[0].children[1].active=false
-      categoriesProject[0].children[2].active=false
       history.push('/allprojects')
     }
     else  if(id==="Backlog")
     {
-      categoriesProject[0].children[0].active=false
-      categoriesProject[0].children[1].active=true
-      categoriesProject[0].children[2].active=false
+      categoriesProjectDetails[0].children[0].active=true
+      categoriesProjectDetails[0].children[1].active=false
+      categoriesProjectDetails[1].children[0].active=false
+      categoriesProjectDetails[1].children[1].active=false
       history.push('/backlog')
     }
     else  if(id==="Active sprints")
     {
-      categoriesProject[0].children[0].active=false
-      categoriesProject[0].children[1].active=false
-      categoriesProject[0].children[2].active=true
+      categoriesProjectDetails[0].children[0].active=false
+      categoriesProjectDetails[0].children[1].active=true
+      categoriesProjectDetails[1].children[0].active=false
+      categoriesProjectDetails[1].children[1].active=false
       history.push('/')
+    }else  if(id==="Components")
+    {
+      categoriesProjectDetails[0].children[0].active=false
+      categoriesProjectDetails[0].children[1].active=false
+      categoriesProjectDetails[1].children[0].active=true
+      categoriesProjectDetails[1].children[1].active=false
+      history.push({pathname: '/components',
+      search: location.search,
+      state: { detail: location.state.detail }})
     }
     }
   return (

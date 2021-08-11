@@ -22,6 +22,8 @@ import ProjectPage from './components/ProjectPage';
 import CreateProjectPage from './components/CreateProjectPage';
 import AllProjectsContent from './components/AllProjectsContent';
 import BacklogContent from './components/BacklogContent';
+import ProjectDetails from './components/project/ProjectDetails';
+import ComponentContent from './components/project/ComponentContent';
 function App(props) {
 
   let routes=" "
@@ -60,6 +62,8 @@ function App(props) {
         <Route path="/projects" component={ProjectPage} />
         <Route path="/allprojects" component={AllProjectsContent} />
         <Route path="/backlog" component={BacklogContent} />
+        <Route path="/project/" component={ProjectDetails} />
+        <Route path="/components/" component={ComponentContent} />
       </Switch>
       <Footer />
     </Router>
