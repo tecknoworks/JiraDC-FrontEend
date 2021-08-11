@@ -1,10 +1,7 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import Grid from "@material-ui/core/Grid";
-import {
-  withStyles,
-  makeStyles,
-} from "@material-ui/core/styles";
+import {withStyles,makeStyles,} from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import InputLabel from "@material-ui/core/InputLabel";
 import InputBase from "@material-ui/core/InputBase";
@@ -12,12 +9,7 @@ import CloudUploadIcon from "@material-ui/icons/CloudUpload";
 import { connect, useDispatch, useSelector } from "react-redux";
 import { bindActionCreators, compose } from "redux";
 import Autocomplete from "@material-ui/lab/Autocomplete";
-import {
-  Divider,
-  TextField,
-  Box,
-  Button,
-} from "@material-ui/core";
+import {Divider,TextField,Box,Button,} from "@material-ui/core";
 import { useDropzone } from "react-dropzone";
 import { Editor } from "react-draft-wysiwyg";
 import { EditorState } from "draft-js";
@@ -25,7 +17,7 @@ import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { createMuiTheme } from "@material-ui/core/styles";
 import { BrowserRouter as Router, useLocation } from "react-router-dom";
 import { getIssue, getLabel, getProject, postLabel } from "../../actions";
-import { getAllUsers, getPriority ,getComponent} from "../../actions";
+import { getAllUsers, getPriority ,getComponent,getLinkedIssues,getSprint} from "../../actions";
 import FormHelperText from '@material-ui/core/FormHelperText';
 
 const defaultTheme = createMuiTheme();
@@ -117,6 +109,8 @@ function StoryContent(props) {
   let users = props.user;
   let priorities = props.priority;
   let components = props.component;
+  let linkedissues=props.linkedissues;
+  let sprints=props.sprint;
 
   var projects = props.project
   var issues=props.issue
@@ -130,6 +124,8 @@ function StoryContent(props) {
     props.getAllUsers()
     props.getPriority()
     props.getComponent()
+    props.getLinkedIssues()
+    props.getSprint()
     console.log(props.project);
     one = false;
   }, [one]);
@@ -315,7 +311,7 @@ function StoryContent(props) {
                 </InputLabel>
                 <Autocomplete
                 id="combo-box-demo"
-                options={tbc}
+                options={linkedissues}
                 getOptionLabel={(option) => option.name}
                 style={{ width: 300 }}
                 renderInput={(params) => (
@@ -379,7 +375,7 @@ function StoryContent(props) {
                 </InputLabel>
                 <Autocomplete
                 id="combo-box-demo"
-                options={tbc}
+                options={sprints}
                 getOptionLabel={(option) => option.name}
                 style={{ width: 300 }}
                 renderInput={(params) => (
@@ -420,6 +416,8 @@ const mapStateToProps = (state) => ({
   loading: state.getProject.loading,
   issue:state.getIssue.issue,
   label:state.getLabel.label,
+  linkedissues: state.getLinkedIssues.linkedissues,
+  sprint:state.getSprint.sprint,
 });
 
 const mapDispatchToProps = (dispatch) =>
@@ -432,6 +430,8 @@ const mapDispatchToProps = (dispatch) =>
       getIssue: getIssue,
       getLabel: getLabel,
       postLabel: postLabel,
+      getLinkedIssues:getLinkedIssues,
+      getSprint:getSprint,
     },
     dispatch
   );

@@ -7,7 +7,8 @@ import { IssueActionsTypes, getIssue } from './issueActions';
 import { LabelActionsTypes, getLabel, postLabel } from './labelActions';
 import {  PriorityActionsTypes,getPriority } from './priorityActions';
 import {  ComponentActionsTypes,getComponent } from './componentActions';
-
+import { LinkedIssuesActionsTypes, getLinkedIssues} from './linkedissuesActions';
+import {  SprintActionsTypes,getSprint } from './sprintActions';
 export {
     PageActionTypes,
     TierActions,
@@ -59,4 +60,13 @@ export {
      //Component
      ComponentActionsTypes,
      getComponent,
+
+    //LinkedIssues
+    LinkedIssuesActionsTypes,
+    getLinkedIssues,
+
+     //Sprint
+     SprintActionsTypes,
+     getSprint,
+ 
 };
