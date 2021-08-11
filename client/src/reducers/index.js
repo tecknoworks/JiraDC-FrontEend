@@ -8,6 +8,8 @@ import { getIssue } from './issue';
 import { getLabel, postLabel } from './label';
 import {  getPriority} from './priority';
 import {  getComponent} from './component';
+import {  getLinkedIssues} from './linkedissues';
+import {  getSprint} from './sprint';
 export default combineReducers({
     pages,
     page,
@@ -24,4 +26,6 @@ export default combineReducers({
     getAllUsers,
     getPriority,
     getComponent,
+    getLinkedIssues,
+    getSprint,
 });
