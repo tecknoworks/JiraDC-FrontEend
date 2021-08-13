@@ -11,7 +11,6 @@ import ProjectsContent from './ProjectsContent';
 import ProjectsHeader from './ProjectsHeader';
 import CreateProjectPage from './CreateProjectPage';
 import ReactDOM from "react-dom";
-import BacklogContent from './BacklogContent';
 
 import {
     BrowserRouter as Router,
@@ -20,6 +19,7 @@ import {
   } from "react-router-dom";
 import KanbanTemplate from './KanbanTemplate';
 import AllProjectsContent from './AllProjectsContent';
+import backlogContent from './project/backlogContent';
 
 function Copyright() {
   return (
@@ -197,7 +197,7 @@ function ProjectPage(props) {
         content= <span><KanbanTemplate /></span>
     }
     else if(location.pathname==="/backlog"){
-      content= <span><BacklogContent /></span>
+      content= <span><backlogContent /></span>
   }
 
   const handleDrawerToggle = () => {

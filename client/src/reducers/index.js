@@ -6,7 +6,8 @@ import { register , login,logout,getAllUsers} from './auth';
 import { postProject, getProject} from './project';
 import { getIssue } from './issue';
 import { getLabel, postLabel } from './label';
-import { getPriority} from './priority';
+import {  getPriority} from './priority';
+import { getWorkItem, postWorkItem } from './workItem'
 import { getComponent, postComponent} from './component';
 import { getLinkedIssues} from './linkedissues';
 import { getSprint} from './sprint';
@@ -28,5 +29,7 @@ export default combineReducers({
     getComponent,
     getLinkedIssues,
     getSprint,
+    getWorkItem,
+    postWorkItem,
     postComponent,
 });

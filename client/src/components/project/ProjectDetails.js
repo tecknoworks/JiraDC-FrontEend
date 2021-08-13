@@ -4,6 +4,7 @@ import { createTheme, ThemeProvider, withStyles } from '@material-ui/core/styles
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { BrowserRouter as Router, 
     useLocation } from "react-router-dom";
+import backlogContent from './backlogContent';
 
 let theme = createTheme({
   palette: {
@@ -62,6 +63,8 @@ function ProjectDetails(props) {
         content= <span><h2>hey</h2></span>
     }else if(location.pathname==="/components"){
         content= <span><ComponentContent/></span>
+    }else if(location.pathname==="/backlog"){
+      content= <span><backlogContent/></span>
     }
   return (
     <ThemeProvider theme={theme}>

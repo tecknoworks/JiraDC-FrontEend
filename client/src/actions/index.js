@@ -8,7 +8,8 @@ import { LabelActionsTypes, getLabel, postLabel } from './labelActions';
 import { PriorityActionsTypes, getPriority } from './priorityActions';
 import { ComponentActionsTypes, getComponent, postComponent} from './componentActions';
 import { LinkedIssuesActionsTypes, getLinkedIssues } from './linkedissuesActions';
-import { SprintActionsTypes, getSprint } from './sprintActions';
+import {  SprintActionsTypes,getSprint } from './sprintActions'
+import {  WorkItemActionsTypes, getWorkItem, postWorkItem, getWorkItemEpic } from './workItemActions'
 export {
     PageActionTypes,
     TierActions,
@@ -69,5 +70,11 @@ export {
      //Sprint
      SprintActionsTypes,
      getSprint,
+
+     //WorkItem
+     WorkItemActionsTypes,
+     getWorkItem,
+     postWorkItem,
+     getWorkItemEpic,
  
 };
