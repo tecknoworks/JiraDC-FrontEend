@@ -10,6 +10,7 @@ import {  getPriority} from './priority';
 import {  getComponent} from './component';
 import {  getLinkedIssues} from './linkedissues';
 import {  getSprint} from './sprint';
+import { getWorkItem, postWorkItem } from './workItem'
 export default combineReducers({
     pages,
     page,
@@ -28,4 +29,6 @@ export default combineReducers({
     getComponent,
     getLinkedIssues,
     getSprint,
+    getWorkItem,
+    postWorkItem,
 });

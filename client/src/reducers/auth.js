@@ -45,7 +45,6 @@ export function login(state = loginInitialState, action) {
             return { ...state, loading: true };
         case AuthActionsTypes.AUTH_LOGIN_REQUEST_SUCCESS:
             localStorage.setItem("userData", JSON.stringify(action.data));
-            //console.log(action.data)
             return { ...state, isAuthUser: true, user: action.data.token, loading: false };
         case AuthActionsTypes.AUTH_LOGIN_REQUEST_ERROR:
             return { ...state , loading: false }; 
@@ -58,15 +57,12 @@ export function login(state = loginInitialState, action) {
 export function logout(state = loginInitialState, action) {
     switch (action.type) {
         case AuthActionsTypes.AUTH_LOGOUT_REQUEST:
-            console.log("request")
             localStorage.removeItem("userData",JSON.stringify(action.data));
             return { ...state, isAuthUser:false, loading: true };
         case AuthActionsTypes.AUTH_LOGOUT_REQUEST_SUCCESS:
-            console.log("hey")
             localStorage.removeItem("userData",JSON.stringify(action.data));
             return { ...state, isAuthUser: false, loading: false };
         case AuthActionsTypes.AUTH_LOGOUT_REQUEST_ERROR:
-            console.log("err")
             return { ...state , loading: false }; 
     }
 

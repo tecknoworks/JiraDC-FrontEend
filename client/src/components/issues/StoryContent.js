@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import Grid from "@material-ui/core/Grid";
-import {withStyles,makeStyles,} from "@material-ui/core/styles";
+import { withStyles, makeStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import InputLabel from "@material-ui/core/InputLabel";
 import InputBase from "@material-ui/core/InputBase";
@@ -9,16 +9,32 @@ import CloudUploadIcon from "@material-ui/icons/CloudUpload";
 import { connect, useDispatch, useSelector } from "react-redux";
 import { bindActionCreators, compose } from "redux";
 import Autocomplete from "@material-ui/lab/Autocomplete";
-import {Divider,TextField,Box,Button,} from "@material-ui/core";
+import { Divider, TextField, Box, Button } from "@material-ui/core";
 import { useDropzone } from "react-dropzone";
 import { Editor } from "react-draft-wysiwyg";
-import { EditorState } from "draft-js";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { createMuiTheme } from "@material-ui/core/styles";
 import { BrowserRouter as Router, useLocation } from "react-router-dom";
-import { getIssue, getLabel, getProject, postLabel } from "../../actions";
-import { getAllUsers, getPriority ,getComponent,getLinkedIssues,getSprint} from "../../actions";
-import FormHelperText from '@material-ui/core/FormHelperText';
+import { EditorState, convertFromRaw, convertToRaw } from "draft-js"
+import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
+import { useHistory } from 'react-router-dom';
+import {
+  getIssue,
+  getLabel,
+  getProject,
+  getWorkItem,
+  postLabel,
+  postWorkItem,
+  getWorkItemEpic,
+} from "../../actions";
+import {
+  getAllUsers,
+  getPriority,
+  getComponent,
+  getLinkedIssues,
+  getSprint,
+} from "../../actions";
+import FormHelperText from "@material-ui/core/FormHelperText";
 
 const defaultTheme = createMuiTheme();
 const styles = (theme) => ({});
@@ -67,7 +83,7 @@ const useStyles = makeStyles((theme) => ({
   boxStyle: {
     "overflow-y": "scroll",
     "overflow-x": "hidden",
-    "height": "480px",
+    height: "480px",
   },
   dropDown: {
     flex: "1",
@@ -87,49 +103,62 @@ const useStyles = makeStyles((theme) => ({
   formControl: {
     minWidth: "300px",
   },
-  header: {
-
-  },
+  header: {},
   mainBox: {
-    "overflow": "hidden",
-    "color": "#000",
-    "background-color": "#fff"
+    overflow: "hidden",
+    color: "#000",
+    "background-color": "#fff",
   },
   headerWorkItem: {
-    "padding-left": "24px"
+    "padding-left": "24px",
   },
   footerWorkItem: {
     "padding-left": "24px",
-    "padding-top": "10px"
-  }
+    "padding-top": "10px",
+  },
 }));
 
 function StoryContent(props) {
+  const [projectId, setProjectId] = useState("");
+  const [issueTypeId, setIssueTypeId] = useState("");
+  const [summary, setSummary] = useState("");
+  const [componentsId, setComponentsId] = useState("");
+  const [description, setDescription] = useState("");
+  const [priorityId, setPriorityId] = useState("");
+  const [labelsId, setLabelsId] = useState("");
+  const [linkedIssueId, setLinkedIssueId] = useState("");
+  const [issueId, setissueId] = useState("");
+  const [assigneeId, setAssigneeId] = useState("");
+  const [epicLinkId, setEpicLinkId] = useState("");
+  const [sprintId, setSprintId] = useState("");
+  const [epicName, setEpicName] = useState("");
+  const [disabledValue, setDisabledValue] = useState(true);
   let location = useLocation();
+  let path=location.pathname + location.search
   let users = props.user;
   let priorities = props.priority;
   let components = props.component;
   let linkedissues = props.linkedissues;
   let sprints = props.sprint;
-
-  var projects = props.project
-  var issues=props.issue
-  var labels=props.label
-  var tbc=[]
+  var projects = props.project;
+  var issues = props.issue;
+  var labels = props.label;
+  var workItem = props.workItem;
+  var workItemEpic = props.workItemEpic;
   let one = true;
   useEffect(() => {
-    props.getProject()
-    props.getIssue()
-    props.getLabel()
-    props.getAllUsers()
-    props.getPriority()
-    props.getComponent()
-    props.getLinkedIssues()
-    props.getSprint()
-    console.log(props.project);
+    props.getProject();
+    props.getIssue();
+    props.getLabel();
+    props.getAllUsers();
+    props.getPriority();
+    props.getComponent();
+    props.getLinkedIssues();
+    props.getSprint();
+    props.getWorkItem();
+    props.getWorkItemEpic();
     one = false;
   }, [one]);
-  
 
   const [editorState, setEditorState] = useState(() =>
     EditorState.createEmpty()
@@ -146,10 +175,51 @@ function StoryContent(props) {
     </li>
   ));
 
-  const addLabel = e =>{
-    console.log(e.target.value)
+  const addLabel = (e) => {
+    console.log(e.target.value);
+  };
+  const handleCreate = () => {
+    const payload = {
+      project: projectId,
+      issue_type: issueTypeId,
+      epic_name: epicName,
+      summary: summary,
+      description: description,
+      priority: priorityId,
+      linked_issue: linkedIssueId,
+      issue: issueId,
+      assignee: assigneeId,
+      epic_link: epicLinkId,
+      sprint: sprintId,
+      labels: labelsId,
+      components: componentsId,
+    };
+    console.log(payload);
+    props.postWorkItem(payload);
+    history.push(path)
+  };
+  const handleTextFieldChange = (e) => {
+    console.log(e.target.value);
+    setSummary(e.target.value);
+  };
+  const handleEditorChange = () => {
+    let data = JSON.stringify(convertToRaw(editorState.getCurrentContent()))
+    setDescription(data);
 
-  }
+    console.log(EditorState.createWithContent(convertFromRaw(JSON.parse(data))))
+  };
+  const onEditorStateChange = (e) => {
+    setEditorState(e);
+  };
+  const handleTextFieldEpicChange = (e) => {
+    setEpicName(e.target.value);
+  };
+  const handleChangeIssueType = (e) => {
+    if (e.name === "Epic") {
+      setDisabledValue(!disabledValue);
+    }
+    setIssueTypeId(e._id)
+  };
   return (
     <Box width="70%" className={classes.mainBox} height="600px">
       <Grid container spacing={3} className={classes.headerWorkItem}>
@@ -175,11 +245,14 @@ function StoryContent(props) {
                 renderInput={(params) => (
                   <TextField {...params} variant="outlined" />
                 )}
+                onChange={(event, value) => {
+                  setProjectId(value._id);
+                }}
               />
             </Grid>
             <br></br>
             <Grid item sm={12} xs={6}>
-            <InputLabel fullWidth shrink required={true}>
+              <InputLabel fullWidth shrink required={true}>
                 Issue Type
               </InputLabel>
               <Autocomplete
@@ -191,7 +264,27 @@ function StoryContent(props) {
                 renderInput={(params) => (
                   <TextField {...params} variant="outlined" />
                 )}
+                onChange={(event, value) => {
+                  handleChangeIssueType(value);
+                }}
               />
+              <br></br>
+              <Grid item sm={12} xs={6}>
+                <TextField
+                  id="standard-full-width"
+                  label="Epic name"
+                  required
+                  style={{ margin: 0 }}
+                  fullWidth
+                  disabled={disabledValue}
+                  variant="outlined"
+                  margin="normal"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  onChange={handleTextFieldEpicChange}
+                />
+              </Grid>
               <br></br>
               <br></br>
               <Divider />
@@ -210,30 +303,39 @@ function StoryContent(props) {
                 InputLabelProps={{
                   shrink: true,
                 }}
+                onChange={handleTextFieldChange}
               />
             </Grid>
             <br></br>
             <Grid item sm={12} xs={6}>
-                <InputLabel fullWidth shrink required={true}>
-                  Components
-                </InputLabel>
-                <Autocomplete
-                  multiple
-                  id="combo-box-demo"
-                  limitTags={1}
-                  options={components}
-                  getOptionLabel={(option) => option.name}
-                  style={{ width: 300 }}
-                  required
-                  renderInput={(params) => <TextField {...params} variant="outlined" />}
-                />
-                <FormHelperText>Star typing to get a list of possible matches or press down to select.</FormHelperText>
-                <br></br>
+              <InputLabel fullWidth shrink required={true}>
+                Components
+              </InputLabel>
+              <Autocomplete
+                multiple
+                id="combo-box-demo"
+                limitTags={1}
+                options={components}
+                getOptionLabel={(option) => option.name}
+                style={{ width: 300 }}
+                required
+                renderInput={(params) => (
+                  <TextField {...params} variant="outlined" />
+                )}
+                onChange={(event, value) => {
+                  setComponentsId(value);
+                }}
+              />
+              <FormHelperText>
+                Star typing to get a list of possible matches or press down to
+                select.
+              </FormHelperText>
+              <br></br>
             </Grid>
             <br></br>
 
             <Grid item sm={12}>
-            <InputLabel fullWidth shrink>
+              <InputLabel fullWidth shrink>
                 Description
               </InputLabel>
               <div
@@ -243,10 +345,10 @@ function StoryContent(props) {
                   minHeight: "400px",
                 }}
               >
-                  
                 <Editor
                   editorState={editorState}
-                  onEditorStateChange={setEditorState}
+                  onChange={handleEditorChange}
+                  onEditorStateChange={onEditorStateChange}
                 />
               </div>
               <br></br>
@@ -255,25 +357,30 @@ function StoryContent(props) {
             <Grid item sm={12} xs={6}></Grid>
 
             <Grid item sm={12} xs={6}>
-                <InputLabel fullWidth shrink required={true}>
-                  Priority
-                </InputLabel>
-                <Autocomplete
-                  id="combo-box-demo"
-                  options={priorities}
-                  getOptionLabel={(option) => option.name}
-                  style={{ width: 300 }}
-                  required
-                  renderInput={(params) => <TextField {...params} variant="outlined" />}
-                />
+              <InputLabel fullWidth shrink>
+                Priority
+              </InputLabel>
+              <Autocomplete
+                id="combo-box-demo"
+                options={priorities}
+                getOptionLabel={(option) => option.name}
+                style={{ width: 300 }}
+                required
+                renderInput={(params) => (
+                  <TextField {...params} variant="outlined" />
+                )}
+                onChange={(event, value) => {
+                  setPriorityId(value._id);
+                }}
+              />
               <br></br>
             </Grid>
             <br></br>
             <Grid item sm={12} xs={6}>
-                <InputLabel fullWidth shrink required={true}>
-                  Labels
-                </InputLabel>
-                <Autocomplete
+              <InputLabel fullWidth shrink>
+                Labels
+              </InputLabel>
+              <Autocomplete
                 multiple
                 id="multiple-limit-tags"
                 limitTags={1}
@@ -284,6 +391,9 @@ function StoryContent(props) {
                   <TextField {...params} variant="outlined" />
                 )}
                 onClose={addLabel}
+                onChange={(event, value) => {
+                  setLabelsId(value);
+                }}
               />
               <br></br>
             </Grid>
@@ -292,24 +402,24 @@ function StoryContent(props) {
               <br></br>
               Attachment
               <section className={classes.dropDown}>
-                  <div {...getRootProps({ className: "dropzone" })}>
-                    <input {...getInputProps()} />
-                    <CloudUploadIcon />
-                    Drop files to attach, or browse.
-                  </div>
-                </section>
-                <aside>
-                  <h4>Files</h4>
-                  <ul>{files}</ul>
-                </aside>
+                <div {...getRootProps({ className: "dropzone" })}>
+                  <input {...getInputProps()} />
+                  <CloudUploadIcon />
+                  Drop files to attach, or browse.
+                </div>
+              </section>
+              <aside>
+                <h4>Files</h4>
+                <ul>{files}</ul>
+              </aside>
               <br></br>
             </Grid>
             <br></br>
             <Grid item sm={12} xs={6}>
-                <InputLabel fullWidth shrink required={true}>
-                  Linked Issues
-                </InputLabel>
-                <Autocomplete
+              <InputLabel fullWidth shrink>
+                Linked Issues
+              </InputLabel>
+              <Autocomplete
                 id="combo-box-demo"
                 options={linkedissues}
                 getOptionLabel={(option) => option.name}
@@ -317,63 +427,76 @@ function StoryContent(props) {
                 renderInput={(params) => (
                   <TextField {...params} variant="outlined" />
                 )}
+                onChange={(event, value) => {
+                  setLinkedIssueId(value._id);
+                }}
               />
               <br></br>
             </Grid>
             <br></br>
             <Grid item sm={12} xs={6}>
-                <InputLabel fullWidth shrink required={true}>
-                  Issue
-                </InputLabel>
-                <Autocomplete
+              <InputLabel fullWidth shrink>
+                Issue
+              </InputLabel>
+              <Autocomplete
                 id="combo-box-demo"
-                options={tbc}
-                getOptionLabel={(option) => option.name}
+                options={workItem}
+                getOptionLabel={(option) => option.summary}
                 style={{ width: 300 }}
                 renderInput={(params) => (
                   <TextField {...params} variant="outlined" />
                 )}
+                onChange={(event, value) => {
+                  setissueId(value._id);
+                }}
               />
               <br></br>
             </Grid>
             <br></br>
             <Grid item sm={12} xs={6}>
-                <InputLabel fullWidth shrink required={true}>
-                  Assignee
-                </InputLabel>
-                <Autocomplete
-                  id="combo-box-demo"
-                  options={users}
-                  getOptionLabel={(option) => option.username}
-                  style={{ width: 300 }}
-                  required
-                  renderInput={(params) => <TextField {...params} variant="outlined" />}
-                />
+              <InputLabel fullWidth shrink>
+                Assignee
+              </InputLabel>
+              <Autocomplete
+                id="combo-box-demo"
+                options={users}
+                getOptionLabel={(option) => option.username}
+                style={{ width: 300 }}
+                required
+                renderInput={(params) => (
+                  <TextField {...params} variant="outlined" />
+                )}
+                onChange={(event, value) => {
+                  setAssigneeId(value._id);
+                }}
+              />
               <br></br>
             </Grid>
             <br></br>
             <Grid item sm={12} xs={6}>
-              
-                <InputLabel fullWidth shrink required={true}>
-                  Epic Link
-                </InputLabel>
-                <Autocomplete
+              <InputLabel fullWidth shrink>
+                Epic Link
+              </InputLabel>
+              <Autocomplete
                 id="combo-box-demo"
-                options={tbc}
-                getOptionLabel={(option) => option.name}
+                options={workItemEpic}
+                getOptionLabel={(option) => option.summary}
                 style={{ width: 300 }}
                 renderInput={(params) => (
                   <TextField {...params} variant="outlined" />
                 )}
+                onChange={(event, value) => {
+                  setEpicLinkId(value._id);
+                }}
               />
               <br></br>
             </Grid>
             <br></br>
             <Grid item sm={12} xs={6}>
-                <InputLabel fullWidth shrink required={true}>
-                  Sprint
-                </InputLabel>
-                <Autocomplete
+              <InputLabel fullWidth shrink >
+                Sprint
+              </InputLabel>
+              <Autocomplete
                 id="combo-box-demo"
                 options={sprints}
                 getOptionLabel={(option) => option.name}
@@ -381,6 +504,9 @@ function StoryContent(props) {
                 renderInput={(params) => (
                   <TextField {...params} variant="outlined" />
                 )}
+                onChange={(event, value) => {
+                  setSprintId(value._id);
+                }}
               />
               <br></br>
             </Grid>
@@ -391,12 +517,14 @@ function StoryContent(props) {
       <Grid container spacing={1} className={classes.footerWorkItem}>
         <Grid item xs={10}></Grid>
         <Grid item xs={1}>
-          <Button variant="contained" color="primary">
+          <Button href={path} variant="contained" color="primary" onClick={handleCreate}>
             Create
           </Button>
         </Grid>
         <Grid item xs={1}>
-          <Button href={location.pathname} color="primary">Cancel</Button>
+          <Button href={location.pathname} color="primary">
+            Cancel
+          </Button>
         </Grid>
       </Grid>
     </Box>
@@ -414,10 +542,12 @@ const mapStateToProps = (state) => ({
   component: state.getComponent.component,
   project: state.getProject.project,
   loading: state.getProject.loading,
-  issue:state.getIssue.issue,
-  label:state.getLabel.label,
+  issue: state.getIssue.issue,
+  label: state.getLabel.label,
   linkedissues: state.getLinkedIssues.linkedissues,
-  sprint:state.getSprint.sprint,
+  sprint: state.getSprint.sprint,
+  workItem: state.getWorkItem.workItem,
+  workItemEpic: state.getWorkItem.workItemEpic,
 });
 
 const mapDispatchToProps = (dispatch) =>
@@ -425,13 +555,16 @@ const mapDispatchToProps = (dispatch) =>
     {
       getAllUsers: getAllUsers,
       getPriority: getPriority,
-      getComponent : getComponent,
+      getComponent: getComponent,
       getProject: getProject,
       getIssue: getIssue,
       getLabel: getLabel,
       postLabel: postLabel,
-      getLinkedIssues:getLinkedIssues,
-      getSprint:getSprint,
+      getLinkedIssues: getLinkedIssues,
+      getSprint: getSprint,
+      getWorkItem: getWorkItem,
+      postWorkItem: postWorkItem,
+      getWorkItemEpic: getWorkItemEpic,
     },
     dispatch
   );

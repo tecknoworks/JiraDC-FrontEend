@@ -150,7 +150,6 @@ export function getAllUsersError() {
 
 export function getAllUsers() {
     return dispatch => {
-        console.log("hey")
         dispatch(getAllUsersBegin());
         return AuthRequest.getAllUsers()
             .then(response => responseToJson(response))

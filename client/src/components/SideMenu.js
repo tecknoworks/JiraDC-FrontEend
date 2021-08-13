@@ -26,7 +26,7 @@ const categoriesProjectDetails = [
     id: 'Development',
     children: [
       { id: 'Backlog', icon: <DehazeIcon /> },
-      { id: 'Active sprints', icon: <DnsRoundedIcon />, active: true },
+      { id: 'Active sprints', icon: <DnsRoundedIcon />, active: false },
     ],
   },
   {
@@ -126,7 +126,7 @@ function SideMenu(props) {
   let categories=" "
     let location=useLocation()
     let content=" "
-    if(location.pathname==="/project" || location.pathname==="/components"){
+    if(location.pathname==="/project" || location.pathname==="/components" || location.pathname==="/backlog"){
       categories=categoriesProjectDetails
       content=<span>
         <ListItem className={clsx(classes.item, classes.itemCategory)}>
@@ -134,7 +134,7 @@ function SideMenu(props) {
         </ListItem>
       </span>
    }
-    if(location.pathname==="/projects" || location.pathname==="/backlog" ||  location.pathname==="/allprojects"){
+    if(location.pathname==="/projects" ||  location.pathname==="/allprojects"){
        categories=categoriesProject
        content=<span>
          
@@ -158,7 +158,9 @@ function SideMenu(props) {
       categoriesProjectDetails[0].children[1].active=false
       categoriesProjectDetails[1].children[0].active=false
       categoriesProjectDetails[1].children[1].active=false
-      history.push('/backlog')
+      history.push({pathname: '/backlog',
+      search: location.search,
+      state: { detail: location.state.detail }})
     }
     else  if(id==="Active sprints")
     {
