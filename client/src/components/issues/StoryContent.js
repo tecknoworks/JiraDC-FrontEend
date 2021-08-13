@@ -106,6 +106,7 @@ const useStyles = makeStyles((theme) => ({
 
 function StoryContent(props) {
   let location = useLocation();
+  let path=location.pathname+location.search
   let users = props.user;
   let priorities = props.priority;
   let components = props.component;
@@ -396,7 +397,7 @@ function StoryContent(props) {
           </Button>
         </Grid>
         <Grid item xs={1}>
-          <Button href={location.pathname} color="primary">Cancel</Button>
+          <Button href={path} color="primary">Cancel</Button>
         </Grid>
       </Grid>
     </Box>

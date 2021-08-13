@@ -43,7 +43,6 @@ export function postError() {
     };
 }
 
-// Request Posts
 export function postProject(data) {
     return dispatch => {
         dispatch(postBegin());
