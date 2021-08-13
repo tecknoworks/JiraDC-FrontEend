@@ -15,7 +15,12 @@ import { Divider, StepContent, Toolbar, Button } from "@material-ui/core";
 import { alpha, makeStyles } from "@material-ui/core/styles";
 import SearchIcon from "@material-ui/icons/Search";
 import InputBase from "@material-ui/core/InputBase";
-import { getComponent } from "../../actions";
+import { getComponent, postComponent } from "../../actions";
+import { Backdrop} from "@material-ui/core";
+import ComponentOverlay from "./ComponentOverlay";
+import ComponentEditOverlay from "./ComponentEditOverlay";
+import { useHistory } from 'react-router-dom';
+import EditIcon from '@material-ui/icons/Edit';
 const styles = (theme) => ({
   root: {
     width: "275px",
@@ -79,11 +84,18 @@ const styles = (theme) => ({
   tableprojectsheader: {
     "background-color": "#fff",
   },
+  backdrop:{
+    zIndex:theme.zIndex.drawer +1,
+    color:'#fff',
+  },
 });
 
 function ComponentContent(props) {
+  const [show, openOverlay] = useState(false);
+  const [show1, openEditOverlay] = useState(false);
   var components = props.components;
   const { classes } = props;
+  const history=useHistory();
 
   let one = true;
   useEffect(() => {
@@ -91,12 +103,17 @@ function ComponentContent(props) {
     one = false;
   }, [one]);
 
-  function createData(name, description, lead, assignee) {
-    return { name, description, lead, assignee };
+  function createData(name, description, user_id, project_id) {
+    return { name, description,  user_id, project_id };
   }
   const rows = components.map((component) =>
-    createData(component.name, "description", "lead", "assignee")
+    createData(component.name, component.description, component.username, component.projectName, "issues")
   );
+  const handleClick = (name) =>{
+    history.push({pathname: '/project',
+    search: '?name='+name,
+    state: { detail: name }})
+  }
   return (
     <Grid container spacing={7}>
       <Grid item sm={0.3}></Grid>
@@ -129,9 +146,15 @@ function ComponentContent(props) {
                 />
               </div></Grid>
               <Grid item sm={1}>
-              <Button variant="contained" color="primary">
+              <Button onClick={()=>openOverlay(!show)} variant="contained" color="primary">
               Create
             </Button>
+            <Backdrop className={classes.backdrop} open={show}>
+                <ComponentOverlay/>
+            </Backdrop>
+            <Backdrop className={classes.backdrop} open={show1}>
+                <ComponentEditOverlay/>
+            </Backdrop>
             </Grid>
             </Toolbar>
           </Grid>
@@ -150,18 +173,22 @@ function ComponentContent(props) {
                 <TableCell>Name</TableCell>
                 <TableCell align="right">Description</TableCell>
                 <TableCell align="right">Component Lead</TableCell>
-                <TableCell align="right">Default Assignee</TableCell>
+                <TableCell align="right">Project</TableCell>
+                <TableCell align="right">Issues</TableCell>
+                <TableCell align="right"></TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {rows.map((row) => (
-                <TableRow  key={row.name}>
+                <TableRow  key={row.name}> 
                   <TableCell component="th" scope="row">
                     {row.name}
                   </TableCell>
-                  <TableCell align="right">{row.key}</TableCell>
-                  <TableCell align="right">{row.type}</TableCell>
+                  <TableCell align="right">{row.description}</TableCell>
                   <TableCell align="right">{row.user_id}</TableCell>
+                  <TableCell onClick={() => handleClick(row.project_id)} style={{"cursor":'pointer'}} align="right">{row.project_id}</TableCell>
+                  <TableCell align="right">{row.type}</TableCell>
+                  <TableCell onClick={()=>openEditOverlay(!show1)} style={{"cursor":'pointer'}}align="right">{row.edit}<EditIcon/></TableCell>
                 </TableRow>
               ))}
             </TableBody>
