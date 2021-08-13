@@ -522,9 +522,7 @@ function StoryContent(props) {
           </Button>
         </Grid>
         <Grid item xs={1}>
-          <Button href={location.pathname} color="primary">
-            Cancel
-          </Button>
+          <Button href={path} color="primary">Cancel</Button>
         </Grid>
       </Grid>
     </Box>

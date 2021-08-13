@@ -5,12 +5,11 @@ import { AuthActionsTypes, register ,login, logout,getAllUsers } from './authAct
 import { ProjectActionsTypes, postProject, getProject , getKanbanProject,getScrumProject, getBugtrackingProject} from './projectActions';
 import { IssueActionsTypes, getIssue } from './issueActions';
 import { LabelActionsTypes, getLabel, postLabel } from './labelActions';
-import {  PriorityActionsTypes,getPriority } from './priorityActions';
-import {  ComponentActionsTypes,getComponent } from './componentActions';
+import { PriorityActionsTypes, getPriority } from './priorityActions';
+import { ComponentActionsTypes, getComponent, postComponent} from './componentActions';
 import { LinkedIssuesActionsTypes, getLinkedIssues } from './linkedissuesActions';
 import {  SprintActionsTypes,getSprint } from './sprintActions'
 import {  WorkItemActionsTypes, getWorkItem, postWorkItem, getWorkItemEpic } from './workItemActions'
-
 export {
     PageActionTypes,
     TierActions,
@@ -62,6 +61,7 @@ export {
      //Component
      ComponentActionsTypes,
      getComponent,
+     postComponent,
 
     //LinkedIssues
     LinkedIssuesActionsTypes,
