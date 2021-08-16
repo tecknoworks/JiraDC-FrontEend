@@ -13,7 +13,7 @@ export function getLoggedUser() {
         var utcNowDate=moment.utc( nowDate ).format()
         var dataObject=moment(utcNowDate)
         var duration = moment.duration(dataObject.diff(obj.time));
-        //console.log(duration.hours())
+        console.log(duration.hours())
         if(duration.hours()<25){
             loggedUser = {
                 isAuthUser: true,

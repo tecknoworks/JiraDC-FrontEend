@@ -160,7 +160,7 @@ function SideMenu(props) {
       categoriesProjectDetails[1].children[1].active=false
       history.push({pathname: '/backlog',
       search: location.search,
-      state: { detail: location.state.detail }})
+      state: { detail: location.state.detail ,  id: location.state.id}})
     }
     else  if(id==="Active sprints")
     {
@@ -177,7 +177,7 @@ function SideMenu(props) {
       categoriesProjectDetails[1].children[1].active=false
       history.push({pathname: '/components',
       search: location.search,
-      state: { detail: location.state.detail }})
+      state: { detail: location.state.detail, id: location.state.id }})
     }
     }
   return (

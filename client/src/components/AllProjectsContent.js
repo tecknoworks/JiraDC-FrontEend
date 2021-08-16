@@ -114,22 +114,22 @@ function AllProjectsContent(props) {
     }, [one]);
 
     console.log(projects)
-    function createData(name, key, type, user_id) {
-      return { name, key, type, user_id };
+    function createData(id, name, key, type, user_id) {
+      return { id, name, key, type, user_id };
     }
    
     const rows = projects.map(project => (
-      createData(project.name, "key", project.type, project.user_id)
+      createData(project._id, project.name, "key", project.type, project.user_id)
     ))
     let None = "None"
     let Kanban = "Kanban"
     let Scrum = "Scrum"
     let Bugtrackinng = "Bug tracking"
 
-    const handleClick = (name) =>{
+    const handleClick = (name,id) =>{
       history.push({pathname: '/project',
       search: '?name='+name,
-      state: { detail: name }})
+      state: { detail: name, id: id}})
     }
   return (
 
@@ -190,7 +190,7 @@ function AllProjectsContent(props) {
             </TableHead>
             <TableBody>
               {rows.map((row) => (
-                <TableRow  onClick={() => handleClick(row.name)} key={row.name}>
+                <TableRow  onClick={() => handleClick(row.name, row.id)} key={row.name}>
                   <TableCell component="th" scope="row">
                     {row.name}
                   </TableCell>

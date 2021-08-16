@@ -13,6 +13,12 @@ const getWorkItemInitialState = {
   workItemEpic:[
 
   ],
+  workItemProject:[
+
+  ],
+  workItemById:[
+
+  ],
 };
 
 export function postWorkItem(state = postWorkItemInitialState, action) {
@@ -38,6 +44,18 @@ export function getWorkItem(state = getWorkItemInitialState, action) {
       return { ...state, loading: false };
     case WorkItemActionsTypes.WORKITEM_GET_EPIC_REQUEST_SUCCESS:
         return { ...state,workItemEpic:action.data, loading: false };
+    case WorkItemActionsTypes.WORKITEM_GET_PROJECT_REQUEST:
+          return { ...state, loading: true };
+    case WorkItemActionsTypes.WORKITEM_GET_PROJECT_REQUEST_SUCCESS:
+          return { ...state,workItemProject:action.data, loading: false };
+    case WorkItemActionsTypes.WORKITEM_GET_PROJECT_REQUEST_ERROR:
+          return { ...state,loading: false };
+    case WorkItemActionsTypes.WORKITEM_GET_BY_ID_REQUEST:
+            return { ...state, loading: true };
+    case WorkItemActionsTypes.WORKITEM_GET_BY_ID_REQUEST_SUCCESS:
+            return { ...state,workItemById:action.data, loading: false };
+    case WorkItemActionsTypes.WORKITEM_GET_BY_ID_REQUEST_ERROR:
+            return { ...state,loading: false };
   }
 
   return state;
