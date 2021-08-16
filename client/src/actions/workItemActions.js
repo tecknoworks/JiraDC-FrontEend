@@ -6,6 +6,14 @@ export const WorkItemActionsTypes = {
     WORKITEM_GET_REQUEST_SUCCESS: 'WORKITEM_GET_REQUEST_SUCCESS',
     WORKITEM_GET_REQUEST_ERROR: 'WORKITEM_GET_REQUEST_ERROR',
 
+    WORKITEM_GET_PROJECT_REQUEST: 'WORKITEM_GET_PROJECT_REQUEST',
+    WORKITEM_GET_PROJECT_REQUEST_SUCCESS: 'WORKITEM_GET_PROJECT_REQUEST_SUCCESS',
+    WORKITEM_GET_PROJECT_REQUEST_ERROR: 'WORKITEM_GET_PROJECT_REQUEST_ERROR',
+
+    WORKITEM_GET_BY_ID_REQUEST: 'WORKITEM_GET_BY_ID_REQUEST',
+    WORKITEM_GET_BY_ID_REQUEST_SUCCESS: 'WORKITEM_GET_BY_ID_REQUEST_SUCCESS',
+    WORKITEM_GET_BY_ID_REQUEST_ERROR: 'WORKITEM_GET_BY_ID_REQUEST_ERROR',
+
     WORKITEM_POST_REQUEST: 'WORKITEM_POST_REQUEST',
     WORKITEM_POST_REQUEST_SUCCESS: 'WORKITEM_POST_REQUEST_SUCCESS',
     WORKITEM_POST_REQUEST_ERROR: 'WORKITEM_POST_REQUEST_ERROR',
@@ -81,6 +89,39 @@ export function getWorkItem() {
     };
 }
 
+//getWorkItemProjectId
+export function getWorkItemProjectBegin() {
+    return {
+        type: WorkItemActionsTypes.WORKITEM_GET_PROJECT_REQUEST
+    };
+}
+
+export function getWorkItemProjectSuccess(data) {
+    return {
+        type: WorkItemActionsTypes.WORKITEM_GET_PROJECT_REQUEST_SUCCESS,
+        data
+    };
+}
+
+export function getWorkItemProjectError() {
+    return {
+        type: WorkItemActionsTypes.WORKITEM_GET_PROJECT_REQUEST_ERROR,
+    };
+}
+
+export function getWorkItemProject(data) {
+    return dispatch => {
+        dispatch(getWorkItemProjectBegin());
+        return WorkItemRequest.getWorkItemProject(data)
+            .then(response => responseToJson(response))
+            .then(json =>  dispatch(getWorkItemProjectSuccess(json)))
+            .catch(error => {
+                dispatch(getWorkItemProjectError());
+                return globalErrorHandler(error);
+            });
+    };
+}
+
 //getEpicWorkItem
 export function getWorkItemEpicBegin() {
     return {
@@ -115,3 +156,36 @@ export function getWorkItemEpic() {
     };
 }
 
+
+//getworkItemById
+export function getWorkItemByIdBegin() {
+    return {
+        type: WorkItemActionsTypes.WORKITEM_GET_BY_ID_REQUEST
+    };
+}
+
+export function getWorkItemByIdSuccess(data) {
+    return {
+        type: WorkItemActionsTypes.WORKITEM_GET_BY_ID_REQUEST_SUCCESS,
+        data
+    };
+}
+
+export function getWorkItemByIdError() {
+    return {
+        type: WorkItemActionsTypes.WORKITEM_GET_BY_ID_REQUEST_ERROR,
+    };
+}
+
+export function getWorkItemById(data) {
+    return dispatch => {
+        dispatch(getWorkItemByIdBegin());
+        return WorkItemRequest.getWorkItemById(data)
+            .then(response => responseToJson(response))
+            .then(json =>  dispatch(getWorkItemByIdSuccess(json)))
+            .catch(error => {
+                dispatch(getWorkItemByIdError());
+                return globalErrorHandler(error);
+            });
+    };
+}
