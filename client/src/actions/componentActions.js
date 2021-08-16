@@ -9,6 +9,12 @@ export const ComponentActionsTypes = {
     COMPONENT_GET_REQUEST: 'COMPONENT_GET_REQUEST',
     COMPONENT_GET_REQUEST_SUCCESS: 'COMPONENT_GET_REQUEST_SUCCESS',
     COMPONENT_GET_REQUEST_ERROR: 'COMPONENT_GET_REQUEST_ERROR',
+
+    COMPONENT_UPDATE_REQUEST: 'COMPONENT_UPDATE_REQUEST',
+    COMPONENT_UPDATE_REQUEST_SUCCESS: 'COMPONENT_UPDATE_REQUEST_SUCCESS',
+    COMPONENT_UPDATE_REQUEST_ERROR: 'COMPONENT_UPDATE_REQUEST_ERROR',
+
+    COMPONENT_USER_UPDATE_REQUEST_SUCCESS: 'COMPONENT_USER_UPDATE_REQUEST_SUCCESS',
 };
 
 //postComponent
@@ -78,3 +84,44 @@ export function getComponent() {
             });
     };
 }
+
+//updateComponent
+
+export function updateComponentBegin() {
+    return {
+        type: ComponentActionsTypes.COMPONENT_UPDATE_REQUEST
+    };
+}
+
+export function updateComponentSuccess(data) {
+    return {
+        type: ComponentActionsTypes.COMPONENT_UPDATE_REQUEST_SUCCESS,
+        data
+    };
+}
+
+export function updateComponentError() {
+    return {
+        type: ComponentActionsTypes.COMPONENT_UPDATE_REQUEST_ERROR,
+    };
+}
+export function updateComponent(data) {
+    return dispatch => {
+        dispatch(updateComponentBegin());
+
+        return ComponentRequest.updateComponent(data)
+            .then(response => responseToJson(response))
+            .then(json => dispatch(updateComponentSuccess(json)))
+            .catch(error => {
+                dispatch(updateComponentError());
+                return globalErrorHandler(error);
+            });
+    }; 
+}
+export function userUpdateComponent(component) {
+    return {
+        type: ComponentActionsTypes.COMPONENT_USER_UPDATE_REQUEST_SUCCESS,
+        data: component
+    };
+}
+

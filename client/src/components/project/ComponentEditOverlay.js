@@ -5,7 +5,6 @@ import {withStyles,makeStyles,} from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import InputLabel from "@material-ui/core/InputLabel";
 import InputBase from "@material-ui/core/InputBase";
-import CloudUploadIcon from "@material-ui/icons/CloudUpload";
 import { connect, useDispatch, useSelector } from "react-redux";
 import { bindActionCreators, compose } from "redux";
 import Autocomplete from "@material-ui/lab/Autocomplete";
@@ -17,9 +16,7 @@ import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { createMuiTheme } from "@material-ui/core/styles";
 import { BrowserRouter as Router, useLocation } from "react-router-dom";
 import { getIssue, getLabel, getProject, postLabel } from "../../actions";
-import { getAllUsers, getPriority ,getComponent,getLinkedIssues,getSprint, postComponent} from "../../actions";
-import FormHelperText from '@material-ui/core/FormHelperText';
-import { Component } from "react";
+import { getAllUsers, getPriority ,getComponent,getLinkedIssues,getSprint, updateComponent, userUpdateComponent} from "../../actions";
 import { TextareaAutosize } from '@material-ui/core';
 
 const defaultTheme = createMuiTheme();
@@ -109,74 +106,69 @@ const useStyles = makeStyles((theme) => ({
 function ComponentEditOverlay(props) {
   let location = useLocation();
   let path=location.pathname+location.search
-  let currentProject=location.state.detail;
-  let users = props.user;
-  let priorities = props.priority;
-  let components = props.component;
-  let linkedissues = props.linkedissues;
-  let sprints = props.sprint;
-
+  let users = props.users.map(it => ({_id: it._id, username: it.username}));
   var projects = props.project
-  var issues=props.issue
-  var labels=props.label
-  var tbc=[]
 
-  let one = true;
+  useEffect(() => {
+    const temp = props.components.find(it => it._id == props.id);
+    if (!temp) {
+      return;
+    }
+
+    const component = {
+      _id: temp._id,
+      name: temp.name,
+      description: temp.description,
+      user_id:temp.user_id, 
+      project_id:temp.project_id,
+      projectName: temp.projectName
+    }
+    props.userUpdateComponent(component);
+
+  }, [props.components]);
+ 
+  
   const[name,setName]=useState("");
   const[username,setUsername]=useState("");
   const[description,setDescription]=useState("");
   const userData = localStorage.getItem("userData")
-    var fil= users.filter(function (el) {
-            return el._id == username._id
-        })
-    var filp= projects.filter(function (el) {
-            return el.name == location.state.detail
-        })
-  const postComponent = () =>{
-    const payload = {
-      name: name,
-      description: description,
-      user_id:fil[0]._id, 
-      project_id:filp[0]._id,
-    }
-    console.log(payload)
-     props.postComponent(payload);
-  }
 
+  const updateComponent = () =>{
+    const component = {
+      _id: props.component._id,
+      name: props.component.name,
+      description: props.component.description,
+      user_id:props.component.user_id, 
+      project_id:props.component.project_id,
+    }
+    console.log(component)
+    props.updateComponent(component);
+    
+  }
   const handleTextFieldChange = e => {
-    setName(e.target.value)
+    const component = {
+      _id: props.component._id,
+      name: props.component.name,
+      description: props.component.description,
+      user_id:props.component.user_id, 
+      project_id:props.component.project_id,
+    }
+     component.name = e.target.value;
+     props.userUpdateComponent(component);
 };
 const handleTextareaChange = e => {
-    setDescription(e.target.value)
-};
-function createData(name, description, user_id, project_id) {
-    return { name, description,  user_id, project_id };
+  const component = {
+    _id: props.component._id,
+    name: props.component.name,
+    description: props.component.description,
+    user_id:props.component.user_id, 
+    project_id:props.component.project_id,
   }
-  const rows = components.map((component) =>
-    createData(component.name, component.description, component.username, component.projectName, "issues")
-  );
-  useEffect(() => {
-    props.getProject()
-    props.getIssue()
-    props.getLabel()
-    props.getAllUsers()
-    props.getPriority()
-    props.getComponent()
-    props.getLinkedIssues()
-    props.getSprint()
-    console.log(props.project);
-    one = false;
-  }, [one]);
-  
+   component.description = e.target.value;
+   props.userUpdateComponent(component);
+};
 
-  const [editorState, setEditorState] = useState(() =>
-    EditorState.createEmpty()
-  );
-  useEffect(() => {
-    console.log(editorState);
-  }, [editorState]);
   const classes = useStyles();
-
   const { acceptedFiles, getRootProps, getInputProps } = useDropzone();
   const files = acceptedFiles.map((file) => (
     <li key={file.path}>
@@ -184,10 +176,12 @@ function createData(name, description, user_id, project_id) {
     </li>
   ));
 
-  const addLabel = e =>{
-    console.log(e.target.value)
+  const userIndex = users.findIndex(u => u._id === props.component.user_id);
+  const selectedUser = users[userIndex];
+  console.log("user index" + userIndex)
+  // const selectedUser = users.find(it => it._id == props.component.user_id)
 
-  }
+
   return (
     <Box width="70%" className={classes.mainBox} height="600px">
       <Grid container spacing={3} className={classes.headerWorkItem}>
@@ -204,13 +198,12 @@ function createData(name, description, user_id, project_id) {
                 <InputLabel fullWidth shrink required={true}>
                     Component Name
                 </InputLabel>
-           
                 <TextField  
-                    required
                     id="outlined-required"
                     variant="outlined"
                     style={{ width: 300 }}
-                    value={name}
+                    value={props.component.name}
+                    onChange={handleTextFieldChange}
                 />
             </Grid>
             <br></br>
@@ -220,6 +213,7 @@ function createData(name, description, user_id, project_id) {
                Description
               </InputLabel>
             <TextareaAutosize onChange={handleTextareaChange}
+            value={props.component.description}
             style={{ width: 600 , height: 100 ,"resize": "none"}}
             maxRows={4}
             />
@@ -231,26 +225,27 @@ function createData(name, description, user_id, project_id) {
                 <InputLabel fullWidth shrink required={true}>
                   Component Lead
                 </InputLabel>
-                <Autocomplete
+                {selectedUser && <Autocomplete
+                  disabled
                   id="combo-box-demo"
                   options={users}
                   getOptionLabel={(option) => option.username}
                   style={{ width: 300 }}
-                  required
                   renderInput={(params) => <TextField {...params} variant="outlined" />}
+                  value={selectedUser}
                   onChange={(event, value) => {setUsername(value)}}
-                />
+                />}
               <br></br>
             <Grid item xs={12}>
                 <InputLabel fullWidth shrink required={false}>
                     Project
                 </InputLabel>
                 <TextField 
-                    disabled
+                  disabled
                     id="outlined-required"
                     variant="outlined"
                     style={{ width: 300 }}
-                    defaultValue={currentProject}
+                    value={props.component.projectName}
                 />
             </Grid>
             </Grid>
@@ -260,7 +255,7 @@ function createData(name, description, user_id, project_id) {
       <Grid container spacing={1} className={classes.footerWorkItem}>
         <Grid item xs={10}></Grid>
         <Grid item xs={1}>
-          <Button href ={path} onClick={postComponent} variant="contained" color="primary">
+          <Button  href ={path} onClick={updateComponent} variant="contained" color="primary">
             Save
           </Button>
         </Grid>
@@ -277,32 +272,20 @@ ComponentEditOverlay.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  user: state.getAllUsers.user,
-  loading: state.getAllUsers.loading,
-  priority: state.getPriority.priority,
-  component: state.getComponent.component,
-  loading: state.postProject.loading,
+  users: state.getAllUsers.user,
+  components: state.getComponent.component,
+  component: state.updateComponent.component,
   project: state.getProject.project,
-  loading: state.getProject.loading,
-  issue:state.getIssue.issue,
-  label:state.getLabel.label,
-  linkedissues: state.getLinkedIssues.linkedissues,
-  sprint:state.getSprint.sprint,
 });
 
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       getAllUsers: getAllUsers,
-      getPriority: getPriority,
       getComponent : getComponent,
       getProject: getProject,
-      getIssue: getIssue,
-      getLabel: getLabel,
-      postLabel: postLabel,
-      getLinkedIssues:getLinkedIssues,
-      getSprint:getSprint,
-      postComponent: postComponent,
+      updateComponent: updateComponent,
+      userUpdateComponent: userUpdateComponent
     },
     dispatch
   );

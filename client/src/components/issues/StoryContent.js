@@ -18,22 +18,8 @@ import { BrowserRouter as Router, useLocation } from "react-router-dom";
 import { EditorState, convertFromRaw, convertToRaw } from "draft-js"
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { useHistory } from 'react-router-dom';
-import {
-  getIssue,
-  getLabel,
-  getProject,
-  getWorkItem,
-  postLabel,
-  postWorkItem,
-  getWorkItemEpic,
-} from "../../actions";
-import {
-  getAllUsers,
-  getPriority,
-  getComponent,
-  getLinkedIssues,
-  getSprint,
-} from "../../actions";
+import { getIssue, getLabel, getProject, getWorkItem, postLabel, postWorkItem, getWorkItemEpic,} from "../../actions";
+import { getAllUsers, getPriority, getComponent, getLinkedIssues, getSprint,} from "../../actions";
 import FormHelperText from "@material-ui/core/FormHelperText";
 
 const defaultTheme = createMuiTheme();

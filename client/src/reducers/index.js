@@ -8,9 +8,9 @@ import { getIssue } from './issue';
 import { getLabel, postLabel } from './label';
 import {  getPriority} from './priority';
 import { getWorkItem, postWorkItem } from './workItem'
-import { getComponent, postComponent} from './component';
+import { getComponent, postComponent, updateComponent} from './component';
 import { getLinkedIssues} from './linkedissues';
-import { getSprint} from './sprint';
+import { getSprint, postSprint} from './sprint';
 export default combineReducers({
     pages,
     page,
@@ -32,4 +32,6 @@ export default combineReducers({
     getWorkItem,
     postWorkItem,
     postComponent,
+    updateComponent,
+    postSprint,
 });

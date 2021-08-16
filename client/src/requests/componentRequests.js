@@ -18,7 +18,19 @@ const getComponent = () => {
     });
 }
 
+const updateComponent = (data) => {
+    return fetch(`${BASE_API_URL}/component`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    });
+}
+
+
 export default {
     getComponent,
     postComponent,
+    updateComponent,
 };

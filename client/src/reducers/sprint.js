@@ -10,6 +10,14 @@ const getSprintInitialState = {
     },
   ],
 };
+const postSprintInitialState = {
+  loading: false,
+  component: {
+    name: "",
+    description: "",
+    project_id:""
+  },
+};
 
 export function getSprint(state = getSprintInitialState, action) {
   switch (action.type) {
@@ -23,3 +31,17 @@ export function getSprint(state = getSprintInitialState, action) {
 
   return state;
 }
+
+export function postSprint(state = postSprintInitialState, action) {
+  switch (action.type) {
+    case SprintActionsTypes.SPRINT_POST_REQUEST:
+      return { ...state, loading: true };
+    case SprintActionsTypes.SPRINT_POST_REQUEST_SUCCESS:
+      return { ...state, loading: false };
+    case SprintActionsTypes.SPRINT_POST_REQUEST_ERROR:
+      return { ...state, loading: false };
+  }
+
+  return state;
+}
+
