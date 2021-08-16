@@ -11,12 +11,17 @@ const postComponentInitialState = {
 
 const getComponentInitialState = {
   loading: false,
-  component: [
-    {
-      id: "1",
-      name: "default",
-    },
-  ],
+  component: [],
+};
+
+const updateComponentInitialState = {
+  loading: false,
+  component: {
+    name: "",
+    description: "",
+    user_id: "",
+    project_id:""
+  },
 };
 
 export function postComponent(state = postComponentInitialState, action) {
@@ -44,3 +49,19 @@ export function getComponent(state = getComponentInitialState, action) {
 
   return state;
 }
+
+export function updateComponent(state = updateComponentInitialState, action) {
+  switch (action.type) {
+    case ComponentActionsTypes.COMPONENT_UPDATE_REQUEST:
+      return { ...state, loading: true };
+    case ComponentActionsTypes.COMPONENT_UPDATE_REQUEST_SUCCESS:
+      return { ...state, component: action.data, loading: false };
+    case ComponentActionsTypes.COMPONENT_UPDATE_REQUEST_ERROR:
+      return { ...state, loading: false };
+    case ComponentActionsTypes.COMPONENT_USER_UPDATE_REQUEST_SUCCESS:
+      return { ...state, component: action.data };
+  }
+
+  return state;
+}
+

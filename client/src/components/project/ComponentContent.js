@@ -21,6 +21,7 @@ import ComponentOverlay from "./ComponentOverlay";
 import ComponentEditOverlay from "./ComponentEditOverlay";
 import { useHistory } from 'react-router-dom';
 import EditIcon from '@material-ui/icons/Edit';
+import SprintCreateOverlay from "./SprintCreateOverlay";
 const styles = (theme) => ({
   root: {
     width: "275px",
@@ -93,6 +94,12 @@ const styles = (theme) => ({
 function ComponentContent(props) {
   const [show, openOverlay] = useState(false);
   const [show1, openEditOverlay] = useState(false);
+  const [show2, openCreateOverlay] = useState(false);
+  const [idComponent, setidComponent] = useState("");
+  const [nameComponent, setnameComponent] = useState("");
+  const [descriptionComponent, setdescriptionComponent] = useState("");
+  const [userId, setuserId] = useState("");
+  const [projId, setprojId] = useState("");
   var components = props.components;
   const { classes } = props;
   const history=useHistory();
@@ -102,12 +109,11 @@ function ComponentContent(props) {
     props.getComponent();
     one = false;
   }, [one]);
-
-  function createData(name, description, user_id, project_id) {
-    return { name, description,  user_id, project_id };
+  function createData(id,name, description, user_id, project_id) {
+    return { id,name, description,  user_id, project_id };
   }
   const rows = components.map((component) =>
-    createData(component.name, component.description, component.username, component.projectName, "issues")
+    createData(component._id, component.name, component.description, component.username, component.projectName, "issues")
   );
   const handleClick = (name) =>{
     history.push({pathname: '/project',
@@ -149,11 +155,20 @@ function ComponentContent(props) {
               <Button onClick={()=>openOverlay(!show)} variant="contained" color="primary">
               Create
             </Button>
+            <Button onClick={()=>openCreateOverlay(!show2)} variant="contained" color="primary">
+              Create Sprint
+            </Button>
             <Backdrop className={classes.backdrop} open={show}>
                 <ComponentOverlay/>
             </Backdrop>
             <Backdrop className={classes.backdrop} open={show1}>
-                <ComponentEditOverlay/>
+                {idComponent && <ComponentEditOverlay 
+                id={idComponent}
+                />}
+
+            </Backdrop>
+            <Backdrop className={classes.backdrop} open={show2}>
+                <SprintCreateOverlay/>
             </Backdrop>
             </Grid>
             </Toolbar>
@@ -188,7 +203,14 @@ function ComponentContent(props) {
                   <TableCell align="right">{row.user_id}</TableCell>
                   <TableCell onClick={() => handleClick(row.project_id)} style={{"cursor":'pointer'}} align="right">{row.project_id}</TableCell>
                   <TableCell align="right">{row.type}</TableCell>
-                  <TableCell onClick={()=>openEditOverlay(!show1)} style={{"cursor":'pointer'}}align="right">{row.edit}<EditIcon/></TableCell>
+                  <TableCell onClick={()=>{
+                    openEditOverlay(!show1)
+                    setidComponent(row.id)
+                    setnameComponent(row.name)
+                    setdescriptionComponent(row.description)
+                    setuserId(row.user_id)
+                    setprojId(row.project_id)
+                    }} style={{"cursor":'pointer'}}align="right">{row.edit}<EditIcon/></TableCell>
                 </TableRow>
               ))}
             </TableBody>

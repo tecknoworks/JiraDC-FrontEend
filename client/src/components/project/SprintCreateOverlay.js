@@ -5,7 +5,6 @@ import {withStyles,makeStyles,} from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import InputLabel from "@material-ui/core/InputLabel";
 import InputBase from "@material-ui/core/InputBase";
-import CloudUploadIcon from "@material-ui/icons/CloudUpload";
 import { connect, useDispatch, useSelector } from "react-redux";
 import { bindActionCreators, compose } from "redux";
 import Autocomplete from "@material-ui/lab/Autocomplete";
@@ -17,7 +16,7 @@ import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { createMuiTheme } from "@material-ui/core/styles";
 import { BrowserRouter as Router, useLocation } from "react-router-dom";
 import { getIssue, getLabel, getProject, postLabel } from "../../actions";
-import { getAllUsers, getPriority ,getComponent,getLinkedIssues,getSprint, postComponent} from "../../actions";
+import { getAllUsers, getPriority ,getComponent,getLinkedIssues,getSprint, postComponent, postSprint} from "../../actions";
 import FormHelperText from '@material-ui/core/FormHelperText';
 import { Component } from "react";
 import { TextareaAutosize } from '@material-ui/core';
@@ -38,7 +37,6 @@ const BootstrapInput = withStyles((theme) => ({
     fontSize: 16,
     padding: "10px 26px 10px 12px",
     transition: theme.transitions.create(["border-color", "box-shadow"]),
-    // Use the system font instead of the default Roboto font.
     fontFamily: [
       "-apple-system",
       "BlinkMacSystemFont",
@@ -106,44 +104,30 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-function ComponentOverlay(props) {
+function SprintCreateOverlay(props) {
   let location = useLocation();
   let path=location.pathname+location.search
   let currentProject=location.state.detail;
-  let users = props.user;
-  let priorities = props.priority;
-  let components = props.component;
-  let linkedissues = props.linkedissues;
-  let sprints = props.sprint;
-
   var projects = props.project
-  var issues=props.issue
-  var labels=props.label
-  var tbc=[]
-
   let one = true;
+
+
   const[name,setName]=useState("");
-  const[username,setUsername]=useState("");
   const[description,setDescription]=useState("");
-  const userData = localStorage.getItem("userData")
-    var fil= users.filter(function (el) {
-            return el._id == username._id
-        })
     var filp= projects.filter(function (el) {
             return el.name == location.state.detail
         })
-  const postComponent = () =>{
+  const postSprint = () =>{
     const payload = {
       name: name,
       description: description,
-      user_id:fil[0]._id, 
       project_id:filp[0]._id,
     }
     console.log(payload)
-     props.postComponent(payload);
+     props.postSprint(payload);
   }
 
-  const handleTextFieldChange = e => {
+const handleTextFieldChange = e => {
     setName(e.target.value)
 };
 const handleTextareaChange = e => {
@@ -151,17 +135,11 @@ const handleTextareaChange = e => {
 };
   useEffect(() => {
     props.getProject()
-    props.getIssue()
-    props.getLabel()
-    props.getAllUsers()
-    props.getPriority()
-    props.getComponent()
-    props.getLinkedIssues()
     props.getSprint()
+    props.postSprint()
     one = false;
   }, [one]);
   
-
   const [editorState, setEditorState] = useState(() =>
     EditorState.createEmpty()
   );
@@ -185,7 +163,7 @@ const handleTextareaChange = e => {
     <Box width="70%" className={classes.mainBox} height="600px">
       <Grid container spacing={3} className={classes.headerWorkItem}>
         <Grid item sm={12}>
-          <h2 className={classes.header}>Create New Component</h2>
+          <h2 className={classes.header}>Create New Sprint</h2>
         </Grid>
       </Grid>
       <Paper className={classes.boxStyle}>
@@ -195,7 +173,7 @@ const handleTextareaChange = e => {
             <br></br>
             <Grid item sm={12} xs={6}>
                 <InputLabel fullWidth shrink required={true}>
-                    Component Name
+                    Sprint Name
                 </InputLabel>
                 <TextField  onChange={handleTextFieldChange}
                     required
@@ -205,7 +183,9 @@ const handleTextareaChange = e => {
                 />
             </Grid>
             <br></br>
+            <br></br>
             <Divider/>
+            <br></br>
             <br></br>
             <InputLabel fullWidth shrink required={true}>
                Description
@@ -217,21 +197,7 @@ const handleTextareaChange = e => {
             <br></br>
             <Grid item sm={12} xs={6}></Grid>
             <br></br>
-
-            <Grid item sm={12} xs={6}>
-                <InputLabel fullWidth shrink required={true}>
-                  Component Lead
-                </InputLabel>
-                <Autocomplete
-                  id="combo-box-demo"
-                  options={users}
-                  getOptionLabel={(option) => option.username}
-                  style={{ width: 300 }}
-                  required
-                  renderInput={(params) => <TextField {...params} variant="outlined" />}
-                  onChange={(event, value) => {setUsername(value)}}
-                />
-              <br></br>
+            <br></br>
             <Grid item xs={12}>
                 <InputLabel fullWidth shrink required={false}>
                     Project
@@ -244,14 +210,14 @@ const handleTextareaChange = e => {
                     defaultValue={currentProject}
                 />
             </Grid>
-            </Grid>
+          
           </Grid>
         </Grid>
       </Paper>
       <Grid container spacing={1} className={classes.footerWorkItem}>
         <Grid item xs={10}></Grid>
         <Grid item xs={1}>
-          <Button href ={path} onClick={postComponent} variant="contained" color="primary">
+          <Button href ={path} onClick={postSprint} variant="contained" color="primary">
             Create
           </Button>
         </Grid>
@@ -263,7 +229,7 @@ const handleTextareaChange = e => {
   );
 }
 
-ComponentOverlay.propTypes = {
+SprintCreateOverlay.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
@@ -285,16 +251,9 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
-      getAllUsers: getAllUsers,
-      getPriority: getPriority,
-      getComponent : getComponent,
       getProject: getProject,
-      getIssue: getIssue,
-      getLabel: getLabel,
-      postLabel: postLabel,
-      getLinkedIssues:getLinkedIssues,
       getSprint:getSprint,
-      postComponent: postComponent,
+      postSprint: postSprint,
     },
     dispatch
   );
@@ -302,4 +261,4 @@ const mapDispatchToProps = (dispatch) =>
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),
   withStyles(styles)
-)(ComponentOverlay);
+)(SprintCreateOverlay);

@@ -6,9 +6,9 @@ import { ProjectActionsTypes, postProject, getProject , getKanbanProject,getScru
 import { IssueActionsTypes, getIssue } from './issueActions';
 import { LabelActionsTypes, getLabel, postLabel } from './labelActions';
 import { PriorityActionsTypes, getPriority } from './priorityActions';
-import { ComponentActionsTypes, getComponent, postComponent} from './componentActions';
+import { ComponentActionsTypes, getComponent, postComponent, updateComponent, userUpdateComponent} from './componentActions';
 import { LinkedIssuesActionsTypes, getLinkedIssues } from './linkedissuesActions';
-import {  SprintActionsTypes,getSprint } from './sprintActions'
+import {  SprintActionsTypes,getSprint, postSprint } from './sprintActions'
 import {  WorkItemActionsTypes, getWorkItem, postWorkItem, getWorkItemEpic } from './workItemActions'
 export {
     PageActionTypes,
@@ -62,6 +62,8 @@ export {
      ComponentActionsTypes,
      getComponent,
      postComponent,
+     updateComponent,
+     userUpdateComponent,
 
     //LinkedIssues
     LinkedIssuesActionsTypes,
@@ -70,6 +72,7 @@ export {
      //Sprint
      SprintActionsTypes,
      getSprint,
+     postSprint,
 
      //WorkItem
      WorkItemActionsTypes,
