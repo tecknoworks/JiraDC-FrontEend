@@ -17,7 +17,6 @@ import { createMuiTheme } from "@material-ui/core/styles";
 import { BrowserRouter as Router, useLocation } from "react-router-dom";
 import { EditorState, convertFromRaw, convertToRaw } from "draft-js"
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
-import { useHistory } from 'react-router-dom';
 import {
   getIssue,
   getLabel,
@@ -26,6 +25,7 @@ import {
   postLabel,
   postWorkItem,
   getWorkItemEpic,
+  getWorkItemById,
 } from "../../actions";
 import {
   getAllUsers,
@@ -116,9 +116,13 @@ const useStyles = makeStyles((theme) => ({
     "padding-left": "24px",
     "padding-top": "10px",
   },
+  backdrop:{
+    zIndex:theme.zIndex.drawer +1,
+    color:'#fff',
+  },
 }));
 
-function StoryContent(props) {
+function StoryContentEdit(props) {
   const [projectId, setProjectId] = useState("");
   const [issueTypeId, setIssueTypeId] = useState("");
   const [summary, setSummary] = useState("");
@@ -145,6 +149,8 @@ function StoryContent(props) {
   var labels = props.label;
   var workItem = props.workItem;
   var workItemEpic = props.workItemEpic;
+  var workItemById = props.workItemById
+  console.log(props._id)
   let one = true;
   useEffect(() => {
     props.getProject();
@@ -157,8 +163,11 @@ function StoryContent(props) {
     props.getSprint();
     props.getWorkItem();
     props.getWorkItemEpic();
+    props.getWorkItemById(props._id);
     one = false;
   }, [one]);
+
+  console.log(workItemById)
 
   const [editorState, setEditorState] = useState(() =>
     EditorState.createEmpty()
@@ -226,7 +235,7 @@ function StoryContent(props) {
     <Box width="70%" className={classes.mainBox} height="600px">
       <Grid container spacing={3} className={classes.headerWorkItem}>
         <Grid item sm={12}>
-          <h2 className={classes.header}>Create Issue</h2>
+          <h2 className={classes.header}>Edit Issue</h2>
         </Grid>
       </Grid>
       <Paper className={classes.boxStyle}>
@@ -305,6 +314,7 @@ function StoryContent(props) {
                 InputLabelProps={{
                   shrink: true,
                 }}
+                
                 onChange={handleTextFieldChange}
               />
             </Grid>
@@ -520,7 +530,7 @@ function StoryContent(props) {
         <Grid item xs={10}></Grid>
         <Grid item xs={1}>
           <Button href={path} variant="contained" color="primary" onClick={handleCreate}>
-            Create
+            Save
           </Button>
         </Grid>
         <Grid item xs={1}>
@@ -531,7 +541,7 @@ function StoryContent(props) {
   );
 }
 
-StoryContent.propTypes = {
+StoryContentEdit.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
@@ -548,6 +558,7 @@ const mapStateToProps = (state) => ({
   sprint: state.getSprint.sprint,
   workItem: state.getWorkItem.workItem,
   workItemEpic: state.getWorkItem.workItemEpic,
+  workItemById: state.getWorkItem.workItemById,
 });
 
 const mapDispatchToProps = (dispatch) =>
@@ -565,6 +576,7 @@ const mapDispatchToProps = (dispatch) =>
       getWorkItem: getWorkItem,
       postWorkItem: postWorkItem,
       getWorkItemEpic: getWorkItemEpic,
+      getWorkItemById:getWorkItemById,
     },
     dispatch
   );
@@ -572,4 +584,4 @@ const mapDispatchToProps = (dispatch) =>
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),
   withStyles(styles)
-)(StoryContent);
+)(StoryContentEdit);

@@ -9,7 +9,7 @@ import { PriorityActionsTypes, getPriority } from './priorityActions';
 import { ComponentActionsTypes, getComponent, postComponent} from './componentActions';
 import { LinkedIssuesActionsTypes, getLinkedIssues } from './linkedissuesActions';
 import {  SprintActionsTypes,getSprint } from './sprintActions'
-import {  WorkItemActionsTypes, getWorkItem, postWorkItem, getWorkItemEpic } from './workItemActions'
+import {  WorkItemActionsTypes, getWorkItem, postWorkItem, getWorkItemEpic, getWorkItemProject, getWorkItemById } from './workItemActions'
 export {
     PageActionTypes,
     TierActions,
@@ -76,5 +76,7 @@ export {
      getWorkItem,
      postWorkItem,
      getWorkItemEpic,
+     getWorkItemProject,
+     getWorkItemById,
  
 };

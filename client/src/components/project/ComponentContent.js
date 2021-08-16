@@ -99,6 +99,7 @@ function ComponentContent(props) {
 
   let one = true;
   useEffect(() => {
+    debugger
     props.getComponent();
     one = false;
   }, [one]);
