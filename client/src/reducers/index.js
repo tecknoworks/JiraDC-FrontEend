@@ -7,7 +7,7 @@ import { postProject, getProject} from './project';
 import { getIssue } from './issue';
 import { getLabel, postLabel } from './label';
 import {  getPriority} from './priority';
-import { getWorkItem, postWorkItem } from './workItem'
+import { getWorkItem, postWorkItem, updateWorkItem } from './workItem'
 import { getComponent, postComponent, updateComponent} from './component';
 import { getLinkedIssues} from './linkedissues';
 import { getSprint, postSprint} from './sprint';
@@ -31,6 +31,7 @@ export default combineReducers({
     getSprint,
     getWorkItem,
     postWorkItem,
+    updateWorkItem,
     postComponent,
     updateComponent,
     postSprint,

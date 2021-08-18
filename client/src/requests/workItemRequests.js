@@ -43,10 +43,22 @@ const getWorkItemEpic = () => {
         },
     });
 }
+
+const updateWorkItem = (data) => {
+    return fetch(`${BASE_API_URL}/workItem`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    });
+}
+
 export default {
     getWorkItem,
     postWorkItem,
     getWorkItemEpic,
     getWorkItemProject,
     getWorkItemById,
+    updateWorkItem,
 };

@@ -26,6 +26,8 @@ import {
   postWorkItem,
   getWorkItemEpic,
   getWorkItemById,
+  userUpdateWorkItem,
+  updateWorkItem,
 } from "../../actions";
 import {
   getAllUsers,
@@ -123,19 +125,9 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function StoryContentEdit(props) {
-  const [projectId, setProjectId] = useState("");
-  const [issueTypeId, setIssueTypeId] = useState("");
-  const [summary, setSummary] = useState("");
+
   const [componentsId, setComponentsId] = useState("");
-  const [description, setDescription] = useState("");
-  const [priorityId, setPriorityId] = useState("");
   const [labelsId, setLabelsId] = useState("");
-  const [linkedIssueId, setLinkedIssueId] = useState("");
-  const [issueId, setissueId] = useState("");
-  const [assigneeId, setAssigneeId] = useState("");
-  const [epicLinkId, setEpicLinkId] = useState("");
-  const [sprintId, setSprintId] = useState("");
-  const [epicName, setEpicName] = useState("");
   const [disabledValue, setDisabledValue] = useState(true);
   let location = useLocation();
   let path=location.pathname + location.search
@@ -150,7 +142,7 @@ function StoryContentEdit(props) {
   var workItem = props.workItem;
   var workItemEpic = props.workItemEpic;
   var workItemById = props.workItemById
-  console.log(props._id)
+  var updatedWorkItem=props.updatedWorkItem
   let one = true;
   useEffect(() => {
     props.getProject();
@@ -163,18 +155,74 @@ function StoryContentEdit(props) {
     props.getSprint();
     props.getWorkItem();
     props.getWorkItemEpic();
-    props.getWorkItemById(props._id);
+    props.getWorkItemById({'_id':props._id});
+
     one = false;
   }, [one]);
 
-  console.log(workItemById)
+  let selectedComponent=[]
+  var selectedComponentFinal=[{"name":" "}]
 
+  let selectedLabel=[]
+  var selectedLabelFinal=[{"name":" "}]
+  useEffect(() => {
+    const currentIssue = props.workItem.find(it => it._id == props._id);
+    if (!currentIssue) {
+      return;
+    }
+
+
+    for(let i=0;i<currentIssue.component.length;i++){
+        let componentIndex=components.findIndex(c => c._id === currentIssue.component[i].component);
+        selectedComponent.push(components[componentIndex])
+    }
+    
+    if(selectedComponent){
+      selectedComponentFinal=selectedComponent
+    }
+
+    for(let i=0;i<currentIssue.label.length;i++){
+        let labelIndex=labels.findIndex(c => c._id === currentIssue.label[i].label);
+        selectedLabel.push(labels[labelIndex])
+    }
+    
+    if(selectedLabel){
+      selectedLabelFinal=selectedLabel
+    }
+
+    const issue = {
+      _id: currentIssue._id,
+      project: currentIssue.project,
+      issue_type: currentIssue.issue_type,
+      epic_name: currentIssue.epic_name,
+      summary: currentIssue.summary,
+      description: currentIssue.description,
+      priority: currentIssue.priority,
+      linked_issue: currentIssue.linked_issue,
+      issue: currentIssue.issue,
+      assignee: currentIssue.assignee,
+      epic_link: currentIssue.epic_link,
+      sprint: currentIssue.sprint,
+      labels: selectedLabelFinal,
+      components: selectedComponentFinal,
+    };
+    
+  
+    if(currentIssue.description!==""){
+        setEditorState(EditorState.createWithContent(convertFromRaw(JSON.parse(currentIssue.description))))
+    }
+    props.userUpdateWorkItem(issue);
+  }, [props.workItem]);
+
+  
   const [editorState, setEditorState] = useState(() =>
     EditorState.createEmpty()
   );
+ 
   useEffect(() => {
     console.log(editorState);
   }, [editorState]);
+
   const classes = useStyles();
 
   const { acceptedFiles, getRootProps, getInputProps } = useDropzone();
@@ -184,44 +232,25 @@ function StoryContentEdit(props) {
     </li>
   ));
 
-  const addLabel = (e) => {
-    console.log(e.target.value);
-  };
-  const handleCreate = () => {
-    const payload = {
-      project: projectId,
-      issue_type: issueTypeId,
-      epic_name: epicName,
-      summary: summary,
-      description: description,
-      priority: priorityId,
-      linked_issue: linkedIssueId,
-      issue: issueId,
-      assignee: assigneeId,
-      epic_link: epicLinkId,
-      sprint: sprintId,
-      labels: labelsId,
-      components: componentsId,
-    };
-    console.log(payload);
-    props.postWorkItem(payload);
-    history.push(path)
-  };
   const handleTextFieldChange = (e) => {
-    console.log(e.target.value);
-    setSummary(e.target.value);
+    const payload=takeValues()
+    payload.summary=e.target.value
+    props.userUpdateWorkItem(payload)
   };
   const handleEditorChange = () => {
     let data = JSON.stringify(convertToRaw(editorState.getCurrentContent()))
     setDescription(data);
-
-    console.log(EditorState.createWithContent(convertFromRaw(JSON.parse(data))))
+    const payload=takeValues()
+    payload.description=data
+    props.userUpdateWorkItem(payload)
   };
   const onEditorStateChange = (e) => {
     setEditorState(e);
   };
   const handleTextFieldEpicChange = (e) => {
-    setEpicName(e.target.value);
+    const payload=takeValues()
+    payload.epicName=e.target.value
+    props.userUpdateWorkItem(payload)
   };
   const handleChangeIssueType = (e) => {
     if (e.name === "Epic") {
@@ -229,8 +258,131 @@ function StoryContentEdit(props) {
     }else{
       setDisabledValue(true);
     }
-    setIssueTypeId(e._id)
+    const payload=takeValues()
+    payload.issue_type=e._id
+    props.userUpdateWorkItem(payload)
   };
+  const handleChangeProject = (e) => {
+    const payload=takeValues()
+    payload.project=e._id
+    props.userUpdateWorkItem(payload)
+  }
+  const handleChangePriority = (e) => {
+    const payload=takeValues()
+    payload.priority=e._id
+    props.userUpdateWorkItem(payload)
+  }
+  const handleChangeLinkedIssue = (e) => {
+    const payload=takeValues()
+    payload.linked_issue=e._id
+    props.userUpdateWorkItem(payload)
+  }
+
+  const handleChangeIssue = (e) => {
+    const payload=takeValues()
+    payload.issue=e._id
+    props.userUpdateWorkItem(payload)
+  }
+
+  const handleChangeAssignee = (e) => {
+    const payload=takeValues()
+    payload.assignee=e._id
+    props.userUpdateWorkItem(payload)
+  }
+
+  const handleChangeEpicLink = (e) => {
+    const payload=takeValues()
+    payload.epic_link=e._id
+    props.userUpdateWorkItem(payload)
+  }
+
+  const handleChangeSprint = (e) => {
+    const payload=takeValues()
+    payload.sprint=e._id
+    props.userUpdateWorkItem(payload)
+  }
+
+  const handleChangeComponents = (e) =>{
+    const payload=takeValues()
+    payload.components=e
+    props.userUpdateWorkItem(payload)
+  }
+
+  const handleChangeLabels = (e) =>{
+    const payload=takeValues()
+    payload.colabelsmponents=e
+    props.userUpdateWorkItem(payload)
+  }
+
+  const takeValues= () =>{
+      return {
+        _id: props._id,
+        project:props.updatedWorkItem.project,
+        issue_type: props.updatedWorkItem.issue_type,
+        epic_name: props.updatedWorkItem.epic_name,
+        summary: props.updatedWorkItem.summary,
+        description: props.updatedWorkItem.description,
+        priority: props.updatedWorkItem.priority,
+        linked_issue: props.updatedWorkItem.linked_issue,
+        issue:props.updatedWorkItem.issue,
+        assignee: props.updatedWorkItem.assignee,
+        epic_link: props.updatedWorkItem.epic_link,
+        sprint: props.updatedWorkItem.sprint,
+        labels: props.updatedWorkItem.labels,
+        components: props.updatedWorkItem.components,
+    }
+  }
+  const updateWorkItem = () =>{
+    const payload=takeValues()
+    console.log(payload)
+    props.updateWorkItem(payload)
+    history.push(path)
+  }
+
+  const projectIndex = projects.findIndex(p => p._id === props.updatedWorkItem.project);
+  const selectedProject = projects[projectIndex];
+  
+  const issueTypeIndex = issues.findIndex(i => i._id === props.updatedWorkItem.issue_type);
+  const selectedIssueType = issues[issueTypeIndex];
+
+  const priorityIndex = priorities.findIndex(p => p._id === props.updatedWorkItem.priority);
+  const selectedPriorities = priorities[priorityIndex];
+
+  const linkedIssueIndex = linkedissues.findIndex(l => l._id === props.updatedWorkItem.linked_issue);
+  const selectedLinkedIssue = linkedissues[linkedIssueIndex];
+  var selectedLinkedIssueFinal={"name":" "}
+  if(selectedLinkedIssue){
+    selectedLinkedIssueFinal=selectedLinkedIssue
+  }
+
+  const issueIndex = issues.findIndex(i => i._id === props.updatedWorkItem.issue);
+  const selectedIssue = issues[issueIndex];
+  var selectedIssueFinal={"summary":" "}
+  if(selectedIssue){
+    selectedIssueFinal=selectedIssue
+  }
+
+  const assigneeIndex = workItemEpic.findIndex(u => u._id === props.updatedWorkItem.assignee);
+  const selectedAssignee = users[assigneeIndex];
+  var selectedAssigneeFinal={"username":" "}
+  if(selectedAssignee){
+    selectedAssigneeFinal=selectedAssignee
+  }
+
+  const EpicLinkIndex = workItemEpic.findIndex(e => e._id === props.updatedWorkItem.epic_link);
+  const selectedEpicLink = workItemEpic[EpicLinkIndex];
+  var selectedEpicLinkFinal={"summary":" "}
+  if(selectedEpicLink){
+    selectedEpicLinkFinal=selectedEpicLink
+  }
+
+  const SprintIndex = sprints.findIndex(e => e._id === props.updatedWorkItem.sprint);
+  const selectedSprint = sprints[SprintIndex];
+  var selectedSprintFinal={"name":" "}
+  if(selectedSprint){
+    selectedSprintFinal=selectedSprint
+  }
+
   return (
     <Box width="70%" className={classes.mainBox} height="600px">
       <Grid container spacing={3} className={classes.headerWorkItem}>
@@ -247,26 +399,27 @@ function StoryContentEdit(props) {
               <InputLabel fullWidth shrink required={true}>
                 Projects
               </InputLabel>
-              <Autocomplete
+              {selectedProject && <Autocomplete
                 id="combo-box-demo"
                 options={projects}
                 getOptionLabel={(option) => option.name}
                 style={{ width: 300 }}
                 required
+                value={selectedProject}
                 renderInput={(params) => (
                   <TextField {...params} variant="outlined" />
                 )}
                 onChange={(event, value) => {
-                  setProjectId(value._id);
+                    handleChangeProject(value);
                 }}
-              />
+              />}
             </Grid>
             <br></br>
             <Grid item sm={12} xs={6}>
               <InputLabel fullWidth shrink required={true}>
                 Issue Type
               </InputLabel>
-              <Autocomplete
+              {selectedIssueType && <Autocomplete
                 id="combo-box-demo"
                 options={issues}
                 getOptionLabel={(option) => option.name}
@@ -275,10 +428,11 @@ function StoryContentEdit(props) {
                 renderInput={(params) => (
                   <TextField {...params} variant="outlined" />
                 )}
+                value={selectedIssueType}
                 onChange={(event, value) => {
                   handleChangeIssueType(value);
                 }}
-              />
+              />}
               <br></br>
               <Grid item sm={12} xs={6}>
                 <TextField
@@ -293,6 +447,7 @@ function StoryContentEdit(props) {
                   InputLabelProps={{
                     shrink: true,
                   }}
+                  value={props.updatedWorkItem.epic_name}
                   onChange={handleTextFieldEpicChange}
                 />
               </Grid>
@@ -314,7 +469,7 @@ function StoryContentEdit(props) {
                 InputLabelProps={{
                   shrink: true,
                 }}
-                
+                value={props.updatedWorkItem.summary}
                 onChange={handleTextFieldChange}
               />
             </Grid>
@@ -323,7 +478,7 @@ function StoryContentEdit(props) {
               <InputLabel fullWidth shrink required={true}>
                 Components
               </InputLabel>
-              <Autocomplete
+              {props.updatedWorkItem.components && ((props.updatedWorkItem.components.length) || (!props.updatedWorkItem.components.length)) && <Autocomplete
                 multiple
                 id="combo-box-demo"
                 limitTags={1}
@@ -331,13 +486,14 @@ function StoryContentEdit(props) {
                 getOptionLabel={(option) => option.name}
                 style={{ width: 300 }}
                 required
+                defaultValue={props.updatedWorkItem.components}
                 renderInput={(params) => (
                   <TextField {...params} variant="outlined" />
                 )}
                 onChange={(event, value) => {
-                  setComponentsId(value);
+                    handleChangeComponents(value);
                 }}
-              />
+              />}
               <FormHelperText>
                 Star typing to get a list of possible matches or press down to
                 select.
@@ -358,6 +514,7 @@ function StoryContentEdit(props) {
                 }}
               >
                 <Editor
+                  defaultEditorState={props.updatedWorkItem.description}
                   editorState={editorState}
                   onChange={handleEditorChange}
                   onEditorStateChange={onEditorStateChange}
@@ -372,19 +529,20 @@ function StoryContentEdit(props) {
               <InputLabel fullWidth shrink>
                 Priority
               </InputLabel>
-              <Autocomplete
+              {selectedPriorities && <Autocomplete
                 id="combo-box-demo"
                 options={priorities}
                 getOptionLabel={(option) => option.name}
                 style={{ width: 300 }}
                 required
+                value={selectedPriorities}
                 renderInput={(params) => (
                   <TextField {...params} variant="outlined" />
                 )}
                 onChange={(event, value) => {
-                  setPriorityId(value._id);
+                    handleChangePriority(value);
                 }}
-              />
+              />}
               <br></br>
             </Grid>
             <br></br>
@@ -392,21 +550,21 @@ function StoryContentEdit(props) {
               <InputLabel fullWidth shrink>
                 Labels
               </InputLabel>
-              <Autocomplete
+              {props.updatedWorkItem.labels && ((props.updatedWorkItem.labels.length) || (!props.updatedWorkItem.labels.length)) &&<Autocomplete
                 multiple
                 id="multiple-limit-tags"
                 limitTags={1}
                 options={labels}
                 getOptionLabel={(option) => option.name}
                 style={{ width: 300 }}
+                defaultValue={props.updatedWorkItem.labels}
                 renderInput={(params) => (
-                  <TextField {...params} variant="outlined" />
+                  <TextField {...params} variant="outlined" defaultValue={props.updatedWorkItem.labels}/>
                 )}
-                onClose={addLabel}
                 onChange={(event, value) => {
-                  setLabelsId(value);
+                    handleChangeLabels(value);
                 }}
-              />
+              />}
               <br></br>
             </Grid>
             <br></br>
@@ -431,18 +589,18 @@ function StoryContentEdit(props) {
               <InputLabel fullWidth shrink>
                 Linked Issues
               </InputLabel>
-              <Autocomplete
+             {selectedLinkedIssueFinal && <Autocomplete
                 id="combo-box-demo"
                 options={linkedissues}
                 getOptionLabel={(option) => option.name}
                 style={{ width: 300 }}
                 renderInput={(params) => (
-                  <TextField {...params} variant="outlined" />
+                  <TextField {...params} variant="outlined" defaultValue={selectedLinkedIssueFinal.name}/>
                 )}
                 onChange={(event, value) => {
-                  setLinkedIssueId(value._id);
+                    handleChangeLinkedIssue(value);
                 }}
-              />
+              />}
               <br></br>
             </Grid>
             <br></br>
@@ -456,10 +614,10 @@ function StoryContentEdit(props) {
                 getOptionLabel={(option) => option.summary}
                 style={{ width: 300 }}
                 renderInput={(params) => (
-                  <TextField {...params} variant="outlined" />
+                  <TextField {...params} variant="outlined" defaultValue={selectedIssueFinal.summary}/>
                 )}
                 onChange={(event, value) => {
-                  setissueId(value._id);
+                    handleChangeIssue(value);
                 }}
               />
               <br></br>
@@ -476,10 +634,10 @@ function StoryContentEdit(props) {
                 style={{ width: 300 }}
                 required
                 renderInput={(params) => (
-                  <TextField {...params} variant="outlined" />
+                  <TextField {...params} variant="outlined" defaultValue={selectedAssigneeFinal.username}/>
                 )}
                 onChange={(event, value) => {
-                  setAssigneeId(value._id);
+                    handleChangeAssignee(value);
                 }}
               />
               <br></br>
@@ -495,10 +653,10 @@ function StoryContentEdit(props) {
                 getOptionLabel={(option) => option.summary}
                 style={{ width: 300 }}
                 renderInput={(params) => (
-                  <TextField {...params} variant="outlined" />
+                  <TextField {...params} variant="outlined"  defaultValue={selectedEpicLinkFinal.summary}/>
                 )}
                 onChange={(event, value) => {
-                  setEpicLinkId(value._id);
+                    handleChangeEpicLink(value);
                 }}
               />
               <br></br>
@@ -514,10 +672,10 @@ function StoryContentEdit(props) {
                 getOptionLabel={(option) => option.name}
                 style={{ width: 300 }}
                 renderInput={(params) => (
-                  <TextField {...params} variant="outlined" />
+                  <TextField {...params} variant="outlined" defaultValue={selectedSprintFinal.name}/>
                 )}
                 onChange={(event, value) => {
-                  setSprintId(value._id);
+                    handleChangeSprint(value);
                 }}
               />
               <br></br>
@@ -529,7 +687,7 @@ function StoryContentEdit(props) {
       <Grid container spacing={1} className={classes.footerWorkItem}>
         <Grid item xs={10}></Grid>
         <Grid item xs={1}>
-          <Button href={path} variant="contained" color="primary" onClick={handleCreate}>
+          <Button href={path} onClick={updateWorkItem} variant="contained" color="primary">
             Save
           </Button>
         </Grid>
@@ -559,6 +717,7 @@ const mapStateToProps = (state) => ({
   workItem: state.getWorkItem.workItem,
   workItemEpic: state.getWorkItem.workItemEpic,
   workItemById: state.getWorkItem.workItemById,
+  updatedWorkItem: state.updateWorkItem.updatedWorkItem,
 });
 
 const mapDispatchToProps = (dispatch) =>
@@ -577,6 +736,8 @@ const mapDispatchToProps = (dispatch) =>
       postWorkItem: postWorkItem,
       getWorkItemEpic: getWorkItemEpic,
       getWorkItemById:getWorkItemById,
+      updateWorkItem: updateWorkItem,
+      userUpdateWorkItem: userUpdateWorkItem,
     },
     dispatch
   );
