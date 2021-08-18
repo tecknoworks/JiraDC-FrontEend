@@ -177,7 +177,7 @@ const handleTextareaChange = e => {
   ));
 
   const userIndex = users.findIndex(u => u._id === props.component.user_id);
-  const selectedUser = users[userIndex];
+  let selectedUser = users[userIndex];
   console.log("user index" + userIndex)
   // const selectedUser = users.find(it => it._id == props.component.user_id)
 
@@ -195,59 +195,65 @@ const handleTextareaChange = e => {
           <Grid item xs={11}>
             <br></br>
             <Grid item sm={12} xs={6}>
-                <InputLabel fullWidth shrink required={true}>
-                    Component Name
-                </InputLabel>
-                <TextField  
-                    id="outlined-required"
-                    variant="outlined"
-                    style={{ width: 300 }}
-                    value={props.component.name}
-                    onChange={handleTextFieldChange}
-                />
+              <InputLabel fullWidth shrink required={true}>
+                Component Name
+              </InputLabel>
+              <TextField
+                id="outlined-required"
+                variant="outlined"
+                style={{ width: 300 }}
+                value={props.component.name}
+                onChange={handleTextFieldChange}
+              />
             </Grid>
             <br></br>
-            <Divider/>
+            <Divider />
             <br></br>
             <InputLabel fullWidth shrink required={true}>
-               Description
-              </InputLabel>
-            <TextareaAutosize onChange={handleTextareaChange}
-            value={props.component.description}
-            style={{ width: 600 , height: 100 ,"resize": "none"}}
-            maxRows={4}
+              Description
+            </InputLabel>
+            <TextareaAutosize
+              onChange={handleTextareaChange}
+              value={props.component.description}
+              style={{ width: 600, height: 100, resize: "none" }}
+              maxRows={4}
             />
             <br></br>
             <Grid item sm={12} xs={6}></Grid>
             <br></br>
 
             <Grid item sm={12} xs={6}>
-                <InputLabel fullWidth shrink required={true}>
-                  Component Lead
-                </InputLabel>
-                {selectedUser && <Autocomplete
-                  disabled
+              <InputLabel fullWidth shrink required={true}>
+                Component Lead
+              </InputLabel>
+              {props.component.name && ((props.component.user_id && selectedUser) || (!props.component.user_id)) && (
+                <Autocomplete
                   id="combo-box-demo"
                   options={users}
                   getOptionLabel={(option) => option.username}
                   style={{ width: 300 }}
-                  renderInput={(params) => <TextField {...params} variant="outlined" />}
+                  renderInput={(params) => (
+                    <TextField {...params} variant="outlined" />
+                  )}
                   value={selectedUser}
-                  onChange={(event, value) => {setUsername(value)}}
-                />}
-              <br></br>
-            <Grid item xs={12}>
-                <InputLabel fullWidth shrink required={false}>
-                    Project
-                </InputLabel>
-                <TextField 
-                  disabled
-                    id="outlined-required"
-                    variant="outlined"
-                    style={{ width: 300 }}
-                    value={props.component.projectName}
+                  onChange={(event, value) => {
+                    setUsername(value);
+                  }}
                 />
-            </Grid>
+              )}
+              <br></br>
+              <Grid item xs={12}>
+                <InputLabel fullWidth shrink required={false}>
+                  Project
+                </InputLabel>
+                <TextField
+                  disabled
+                  id="outlined-required"
+                  variant="outlined"
+                  style={{ width: 300 }}
+                  value={props.component.projectName}
+                />
+              </Grid>
             </Grid>
           </Grid>
         </Grid>
@@ -255,12 +261,19 @@ const handleTextareaChange = e => {
       <Grid container spacing={1} className={classes.footerWorkItem}>
         <Grid item xs={10}></Grid>
         <Grid item xs={1}>
-          <Button  href ={path} onClick={updateComponent} variant="contained" color="primary">
+          <Button
+            href={path}
+            onClick={updateComponent}
+            variant="contained"
+            color="primary"
+          >
             Save
           </Button>
         </Grid>
         <Grid item xs={1}>
-          <Button href={path} color="primary">Cancel</Button>
+          <Button href={path} color="primary">
+            Cancel
+          </Button>
         </Grid>
       </Grid>
     </Box>
