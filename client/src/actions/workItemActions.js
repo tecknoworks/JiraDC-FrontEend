@@ -18,6 +18,12 @@ export const WorkItemActionsTypes = {
     WORKITEM_POST_REQUEST_SUCCESS: 'WORKITEM_POST_REQUEST_SUCCESS',
     WORKITEM_POST_REQUEST_ERROR: 'WORKITEM_POST_REQUEST_ERROR',
 
+    WORKITEM_UPDATE_REQUEST: 'WORKITEM_UPDATE_REQUEST',
+    WORKITEM_UPDATE_REQUEST_SUCCESS: 'WORKITEM_UPDATE_REQUEST_SUCCESS',
+    WORKITEM_UPDATE_REQUEST_ERROR: 'WORKITEM_UPDATE_REQUEST_ERROR',
+
+    WORKITEM_USER_UPDATE_REQUEST_SUCCESS: 'WORKITEM_USER_UPDATE_REQUEST_SUCCESS',
+
     WORKITEM_GET_EPIC_REQUEST: 'WORKITEM_GET_EPIC_REQUEST',
     WORKITEM_GET_EPIC_REQUEST_SUCCESS: 'WORKITEM_GET_EPIC_REQUEST_SUCCESS',
     WORKITEM_GET_EPIC_REQUEST_ERROR: 'WORKITEM_GET_EPIC_REQUEST_ERROR',
@@ -189,3 +195,44 @@ export function getWorkItemById(data) {
             });
     };
 }
+
+
+//update work item
+export function updateWorkItemBegin() {
+    return {
+        type: WorkItemActionsTypes.WORKITEM_UPDATE_REQUEST
+    };
+}
+
+export function updateWorkItemSuccess(data) {
+    return {
+        type: WorkItemActionsTypes.WORKITEM_UPDATE_REQUEST_SUCCESS,
+        data
+    };
+}
+
+export function updateWorkItemError() {
+    return {
+        type: WorkItemActionsTypes.WORKITEM_UPDATE_REQUEST_ERROR,
+    };
+}
+export function updateWorkItem(data) {
+    return dispatch => {
+        dispatch(updateWorkItemBegin());
+
+        return WorkItemRequest.updateWorkItem(data)
+            .then(response => responseToJson(response))
+            .then(json => dispatch(updateWorkItemSuccess(json)))
+            .catch(error => {
+                dispatch(updateWorkItemError());
+                return globalErrorHandler(error);
+            });
+    }; 
+}
+export function userUpdateWorkItem(WorkItem) {
+    return {
+        type: WorkItemActionsTypes.WORKITEM_USER_UPDATE_REQUEST_SUCCESS,
+        data: WorkItem
+    };
+}
+

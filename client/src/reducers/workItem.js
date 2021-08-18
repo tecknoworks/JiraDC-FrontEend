@@ -21,6 +21,9 @@ const getWorkItemInitialState = {
   ],
 };
 
+const updateWorkItemInitialState = {
+  updatedWorkItem:{},
+};
 export function postWorkItem(state = postWorkItemInitialState, action) {
     switch (action.type) {
       case WorkItemActionsTypes.WORKITEM_POST_REQUEST:
@@ -58,5 +61,19 @@ export function getWorkItem(state = getWorkItemInitialState, action) {
             return { ...state,loading: false };
   }
 
+  return state;
+}
+
+export function updateWorkItem(state = updateWorkItemInitialState, action) {
+  switch (action.type) {
+    case WorkItemActionsTypes.WORKITEM_UPDATE_REQUEST:
+      return { ...state, loading: true };
+    case WorkItemActionsTypes.WORKITEM_UPDATE_REQUEST_SUCCESS:
+      return { ...state, updatedWorkItem: action.data, loading: false };
+    case WorkItemActionsTypes.WORKITEM_UPDATE_REQUEST_ERROR:
+      return { ...state, loading: false };
+    case WorkItemActionsTypes.WORKITEM_USER_UPDATE_REQUEST_SUCCESS:
+      return { ...state, updatedWorkItem: action.data };
+  }
   return state;
 }

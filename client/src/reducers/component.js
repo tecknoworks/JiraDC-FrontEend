@@ -61,7 +61,6 @@ export function updateComponent(state = updateComponentInitialState, action) {
     case ComponentActionsTypes.COMPONENT_USER_UPDATE_REQUEST_SUCCESS:
       return { ...state, component: action.data };
   }
-
   return state;
 }
 
