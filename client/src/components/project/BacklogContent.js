@@ -25,7 +25,7 @@ import SprintCreateOverlay from "./SprintCreateOverlay";
 import BorderColorIcon from '@material-ui/icons/BorderColor';
 import SprintEditOverlay from "./SprintEditOverlay";
 import { DragDropContext,Droppable, Draggable} from "react-beautiful-dnd";
-import RootRef from "@material-ui/core/RootRef";
+
 const styles = (theme) => ({
   root: {
     width: "275px",
@@ -76,18 +76,194 @@ const styles = (theme) => ({
     top:"21px",
     cursor: "pointer",
   },
+});
 
+const getIssueIcon = (issue) => {
+  if (issue === "Epic") {
+    return (
+      <span>
+        <Epic />
+      </span>
+    );
+  } else if (issue === "Story") {
+    return (
+      <span>
+        <Story />
+      </span>
+    );
+  } else if (issue === "Bug") {
+    return (
+      <span>
+        <Bug />
+      </span>
+    );
+  } else if (issue === "Task") {
+    return (
+      <span>
+        <Task />
+      </span>
+    );
+  } else if (issue === "SubTask") {
+    return (
+      <span>
+        <Subtask />
+      </span>
+    );
+  }
+
+  return (
+    <span>
+      <Subtask />
+    </span>
+  );
+}
+
+const getPriorityIcon = (priority) => {
+  if (priority === "Blocker") {
+    return (
+      <span>
+        <Blocker width="35%" height="35%" />
+      </span>
+    );
+  } else if (priority === "Critical") {
+    return (
+      <span>
+        <Critical width="35%" height="35%" />
+      </span>
+    );
+  } else if (priority === "Major") {
+    return (
+      <span>
+        <Major width="35%" height="35%" />
+      </span>
+    );
+  } else if (priority === "Minor") {
+    return (
+      <span>
+        <Minor width="35%" height="35%" />
+      </span>
+    );
+  } else if (priority === "Trivial") {
+    return (
+      <span>
+        <Trivial width="35%" height="35%" />
+      </span>
+    );
+  }
+
+  return (
+    <span>
+      <Subtask />
+    </span>
+  );
+}
+
+const initial = Array.from({ length: 10 }, (v, k) => k).map(k => {
+  const custom = {
+    id: `id-${k}`,
+    content: `Quote ${k}`
+  };
+
+  return custom;
+});
+
+const grid = 8;
+const reorder = (list, startIndex, endIndex) => {
+  const result = Array.from(list);
+  const [removed] = result.splice(startIndex, 1);
+  result.splice(endIndex, 0, removed);
+
+  return result;
+};
+
+function WorkItem({ workItem, index, classes }) {
+  return (
+    <Draggable draggableId={workItem._id} index={index} classes={classes}>
+      {provided => (
+        <div
+          ref={provided.innerRef}
+          {...provided.draggableProps}
+          {...provided.dragHandleProps}
+        >
+          <div>
+            <ListItem button onClick={() => showClick(workItem._id)} style={{ "cursor": 'pointer' }} align="right" className={classes.nested}> 
+              <Grid container spacing={3}>
+                <Grid item xs={10} className={classes.gridItem}>
+                  {getIssueIcon(workItem.issue_type)} {workItem.summary}
+                </Grid>
+                <Grid item xs={1}>
+                  {getPriorityIcon(workItem.priority)}
+                </Grid>
+              </Grid>
+            </ListItem>
+            <Divider />
+          </div>
+        </div>
+      )}
+    </Draggable>
+  );
+}
+
+function Quote({ quote, index }) {
+  return (
+    <Draggable draggableId={quote.id} index={index}>
+      {provided => (
+        <div
+          ref={provided.innerRef}
+          {...provided.draggableProps}
+          {...provided.dragHandleProps}
+        >
+          {quote.content}
+        </div>
+      )}
+    </Draggable>
+  );
+}
+
+const WorkItemList = React.memo(function WorkItemList({ workItems, classes }) {
+  return workItems.map((workItem, index) => (
+    <WorkItem workItem={workItem} index={index} key={workItem.id} classes={classes} />
+  ));
+});
+
+const QuoteList = React.memo(function QuoteList({ quotes }) {
+  return quotes.map((quote, index) => (
+    <Quote quote={quote} index={index} key={quote.id} />
+  ));
 });
 
 function BacklogContent(props) {
+
+  const [state, setState] = useState({ quotes: initial });
+
+  function onDragEnd(result) {
+    if (!result.destination) {
+      return;
+    }
+
+    if (result.destination.index === result.source.index) {
+      return;
+    }
+
+    const quotes = reorder(
+      state.quotes,
+      result.source.index,
+      result.destination.index
+    );
+
+    setState({ quotes });
+  }
+
  const [closed, setClosed]=useState([])
  const [idWi, setIdWi] = useState("");
  const [show, openEditOverlay] = useState(false);
  const [show1, openEditSprintOverlay] = useState(false);
  const [show2, openCreateOverlay] = useState(false);
  const [id_Sprint,setIdSprint]=useState("")
-  const { classes } = props;
+ const { classes } = props;
+
   var workItem = props.workItemProject;
+  debugger
   const { sprint } = props;
   let one = true;
   let location = useLocation();
@@ -212,90 +388,60 @@ function BacklogContent(props) {
     openEditSprintOverlay(!show1);
     setIdSprint(id_Sprint);
   }
-  const [columns, setColumns] = useState(workItem);
-  const onDragEnd = ({ source, destination }) => {
-    // Make sure we have a valid destination
-    if (destination === undefined || destination === null) return null;
-
-    // Make sure we're actually moving the item
-    if (
-      source.droppableId === destination.droppableId &&destination.index === source.index
-    )
-    return null;
-
-    // Set start and end variables
-    const start = workItem[source.droppableId];
-    const end = workItem[destination.droppableId];
-
-    // If start is the same as end, we're in the same column
-    if (start === end) {
-      // Move the item within the list
-      // Start by making a new list without the dragged item
-      console.log(start);
-      const newList = start.list.filter((_, idx) => idx !== source.index);
-
-      // Then insert the item at the right location
-      newList.splice(destination.index, 0, start.list[source.index]);
-
-      // Then create a new copy of the column object
-      const newCol = {
-        id: start.wi._id,
-        list: newList
-      };
-
-      // Update the state
-      setColumns((state) => ({ ...state, [newCol.id]: newCol }));
-      return null;
-    } else {
-      // If start is different from end, we need to update multiple columns
-      // Filter the start list like before
-      const newStartList = start.list.filter((_, idx) => idx !== source.index);
-
-      // Create a new start column
-      const newStartCol = {
-        id: start.wi._id,
-        list: newStartList
-      };
-
-      // Make a new end list array
-      const newEndList = end.list;
-
-      // Insert the item into the end list
-      newEndList.splice(destination.index, 0, start.list[source.index]);
-
-      // Create a new end column
-      const newEndCol = {
-        id: end.workItem._id,
-        list: newEndList
-      };
-
-      // Update the state
-      setColumns((state) => ({
-        ...state,
-        [newStartCol.id]: newStartCol,
-        [newEndCol.id]: newEndCol
-      }));
-      return null;
-    }
-  };
 
   var itemsToShow = [];
   let itemList = [];
+  let sprints = [];
+  let sprintNames = [];
+  const sortWorkItemsByPosition = ( a, b ) => {
+    if (a.positionInSprint < b.positionInSprint) {
+      return -1;
+    }
+    if (a.positionInSprint > b.positionInSprint) {
+      return 1;
+    }
+  
+    // names must be equal
+    return 0;
+  } 
+  for (var property in workItem) {
+    workItem[property].items.sort(sortWorkItemsByPosition)
+    sprints.push(workItem[property]);
+    sprintNames.push(property);
+  }
+
+  function onDragEndItems(result) {
+    debugger
+    const sprint = sprints.filter(s => s.id == result.destination.droppableId)[0];
+    const [removed] = sprint.items.splice(result.source.index, 1);
+    sprint.items.splice(result.destination.index, 0, removed);
+    debugger
+    
+    // let sourceItem = sprint.items[result.source.index];
+    // let destinationItem = sprint.items[result.destination.index];
+    // sourceItem.positionInSprint = destinationItem.positionInSprint;
+    // for (let index = result.destination.index; index < result.source.index; index++ ) {
+    //   sprint.item[index].positionInSprint = sprint.item[index].positionInSprint + 1;
+    // }
+    
+  }
+
+  //workItem.sort((a, b) => (a.color > b.color) ? 1 : (a.color === b.color) ? ((a.size > b.size) ? 1 : -1) : -1 )
+  
+ const isCollapsed = (id) => {
+    return sprintNames.indexOf(id) > -1
+  };
 
   for (var property in workItem) {
       const id = property.toString();
       const id_Sprint = workItem[property].id;
       const isClosed = closed.indexOf(id) > -1;
-      const isBacklog = id == "Backlog";
       const sprintOpened = !workItem[property].closed;
     itemsToShow = [];
     workItem[property].items.map((wi) => {
       itemsToShow.push(
-        <div > 
+        <div> 
           {handleIcon(wi.issue_type, wi.priority)}
-          <Collapse in={!isClosed} timeout="auto" unmountOnExit>
-            <List component="div" disablePadding className={classes.listItem}>
-            {/* <Droppable droppableId={wi._id}> */}
               <ListItem button onClick={()=>showClick(wi._id)} style={{"cursor":'pointer'}} align="right" className={classes.nested}>
                 <Grid container spacing={3}>
                   <Grid item xs={10} className={classes.gridItem}>
@@ -306,44 +452,49 @@ function BacklogContent(props) {
                   </Grid>
                 </Grid>
               </ListItem>
-              {/* </Droppable> */}
-            </List>
-          </Collapse>
           <Divider />
         </div>
       );
     });
-
-    function test (props) {
-      return(<div>bbb</div>);
+    itemList.push(
+      <List
+        component="nav"
+        aria-labelledby="nested-list-subheader"
+        className={classes.root, classes.listItem}
+      >
+        <div className={classes.icon} onClick={() => showClickSprintOverlay(id_Sprint)}><BorderColorIcon style={{ fontSize: 17 }} /></div>
+        <ListItem button onClick={() => handleClick(id)} style={!sprintOpened ? { backgroundColor: '#eeeeee', 'border-radius': '15px', cursor: 'not-allowed' } : {}}>
+          <ListItemText primary={id} />
+          {sprintOpened && (isClosed ? <ExpandMore /> : <ExpandLess />)}
+        </ListItem>
+        <Collapse in={!isClosed} timeout="auto" unmountOnExit>
+        <List component="div" disablePadding className={classes.listItem}>
+          {itemsToShow}
+          </List>
+        </Collapse>
+      </List>
+    );
+  }
+  let workItemListDrop = null;
+    if (workItem && workItem["Sprint 1"]) {
+      workItemListDrop = workItem["Sprint 1"];
     }
 
-    itemList.push(
-      <Droppable droppableId={workItem[property].id || "backlog"}>
-        {(provided) => (
-            <List ref={provided.innerRef} {...provided.droppableProps}
-              component="nav"
-              aria-labelledby="nested-list-subheader"
-              className={classes.root}
-              className={classes.listItem}
-            >
-              {!isBacklog && <div className={classes.icon} onClick={() => showClickSprintOverlay(id_Sprint)}><BorderColorIcon style={{ fontSize: 17 }} /></div>}
-              <ListItem button onClick={() => handleClick(id)} style={!sprintOpened ? { backgroundColor: '#eeeeee', 'border-radius': '15px', cursor: 'not-allowed' } : {}}>
-                <ListItemText primary={id} />
-                {sprintOpened && (isClosed ? <ExpandMore /> : <ExpandLess />)}
-              </ListItem>
-              <dv>aaa</dv>
-              <test></test>
-              {provided.placeholder}
-            </List>
-      )}
-      </Droppable>
-    );
-    
-  }
+    debugger
   return (
-    <DragDropContext onDragEnd={onDragEnd}>
     <Grid container spacing={7}>
+    <DragDropContext onDragEnd={onDragEnd}>
+      <Droppable droppableId="list">
+        {provided => (
+          <div ref={provided.innerRef} {...provided.droppableProps}>
+            <span>Test</span>
+            <QuoteList quotes={state.quotes} />
+            {provided.placeholder}
+          </div>
+        )}
+      </Droppable>
+    </DragDropContext>
+
       <Grid item sm={0.3}></Grid>
 
       <Grid item sm={11}>
@@ -380,8 +531,37 @@ function BacklogContent(props) {
             </Toolbar>
           </Grid>
         </Grid>
-
-        {itemList}
+        {sprints.map((sprint, index) => (
+          <DragDropContext onDragEnd={onDragEndItems}>
+          <Droppable droppableId={sprint.id.toString()}>
+            {provided => (
+              <div ref={provided.innerRef} {...provided.droppableProps}>
+                <div>
+                    <List
+                      component="nav"
+                      aria-labelledby="nested-list-subheader"
+                      className={classes.root, classes.listItem}
+                    >
+                      <div className={classes.icon} onClick={() => showClickSprintOverlay(sprint.id)}><BorderColorIcon style={{ fontSize: 17 }} /></div>
+                      <ListItem button onClick={() => handleClick(sprintNames[index])} style={sprint.closed ? { backgroundColor: '#eeeeee', 'border-radius': '15px', cursor: 'not-allowed' } : {}}>
+                        <ListItemText primary={sprintNames[index]} />
+                        {!sprint.closed && (isCollapsed(sprints[index]) ? <ExpandMore /> : <ExpandLess />)}
+                      </ListItem>
+                      <Collapse in={!isCollapsed(sprints[index])} timeout="auto" unmountOnExit>
+                        <List component="div" disablePadding className={classes.listItem}>
+                          <WorkItemList workItems={sprint.items} classes={classes} />
+                        </List>
+                      </Collapse>
+                    </List>
+                  {provided.placeholder}
+                </div>
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
+        ))}
+        
+        {/* {itemList} */}
       </Grid>
       {idWi && show &&  (
         <Backdrop className={classes.backdrop} open={show}>
@@ -395,8 +575,6 @@ function BacklogContent(props) {
             <SprintEditOverlay id={id_Sprint}/>
         </Backdrop>}
     </Grid>
-    </DragDropContext>
-    
   );
 }
 

@@ -2,12 +2,6 @@ import { SprintActionsTypes } from "../actions";
 const getSprintInitialState = {
   loading: false,
   sprint: [
-    {
-      id: "1",
-      name: "default",
-      project_id: "2",
-
-    },
   ],
 };
 const postSprintInitialState = {
