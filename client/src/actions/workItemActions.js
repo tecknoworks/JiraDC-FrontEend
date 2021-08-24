@@ -27,6 +27,14 @@ export const WorkItemActionsTypes = {
     WORKITEM_GET_EPIC_REQUEST: 'WORKITEM_GET_EPIC_REQUEST',
     WORKITEM_GET_EPIC_REQUEST_SUCCESS: 'WORKITEM_GET_EPIC_REQUEST_SUCCESS',
     WORKITEM_GET_EPIC_REQUEST_ERROR: 'WORKITEM_GET_EPIC_REQUEST_ERROR',
+
+    WORKITEM_LOCAL_UPDATE_SPRINT_ITEMS: "WORKITEM_LOCAL_UPDATE_SPRINT_ITEMS",
+
+    WORKITEM_CHANGE_POSITION_REQUEST_SUCCESS: 'WORKITEM_CHANGE_POSITION_REQUEST_SUCCESS',
+
+    WORKITEM_CHANGE_POSITION_BT_SPRINTS_REQUEST_SUCCESS: 'WORKITEM_CHANGE_POSITION_BT_SPRINTS_REQUEST_SUCCESS',
+
+
 };
 //post workitem
 export function postWorkItemBegin() {
@@ -127,6 +135,51 @@ export function getWorkItemProject(data) {
             });
     };
 }
+
+export function localUpdateWorkItemSprintItems(data) {
+    return {
+        type: WorkItemActionsTypes.WORKITEM_LOCAL_UPDATE_SPRINT_ITEMS,
+        data: data
+    };
+}
+export function changeItemPositionSucces(data) {
+    return {
+        type: WorkItemActionsTypes.WORKITEM_CHANGE_POSITION_REQUEST_SUCCESS,
+        data: data
+    };
+}
+export function changeItemPositionBTSprintsSucces(data) {
+    return {
+        type: WorkItemActionsTypes.WORKITEM_CHANGE_POSITION_BT_SPRINTS_REQUEST_SUCCESS,
+        data: data
+    };
+}
+
+export function changeItemPosition(data) {
+    return dispatch => {
+        // dispatch(getWorkItemProjectBegin());
+        return WorkItemRequest.changeItemPosition(data)
+            .then(response => responseToJson(response))
+            .then(json =>  dispatch(changeItemPositionSucces(json)))
+            .catch(error => {
+                // dispatch(getWorkItemProjectError());
+                return globalErrorHandler(error);
+            });
+    };
+}
+export function changeItemPositionBTSprints(data) {
+    return dispatch => {
+        // dispatch(getWorkItemProjectBegin());
+        return WorkItemRequest.changeItemPositionBTSprints(data)
+            .then(response => responseToJson(response))
+            .then(json =>  dispatch(changeItemPositionBTSprintsSucces(json)))
+            .catch(error => {
+                // dispatch(getWorkItemProjectError());
+                return globalErrorHandler(error);
+            });
+    };
+}
+
 
 //getEpicWorkItem
 export function getWorkItemEpicBegin() {

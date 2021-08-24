@@ -18,7 +18,7 @@ import ExpandLess from "@material-ui/icons/ExpandLess";
 import ExpandMore from "@material-ui/icons/ExpandMore";
 import { alpha, makeStyles } from "@material-ui/core/styles";
 import SearchIcon from "@material-ui/icons/Search";
-import { getWorkItemProject, getSprint } from "../../actions";
+import { getWorkItemProject, getSprint, localUpdateWorkItemSprintItems, changeItemPosition, changeItemPositionBTSprints} from "../../actions";
 import { BrowserRouter as Router, Switch, useLocation } from "react-router-dom";
 import StoryContentEdit from "../issues/StoryContentEdit";
 import SprintCreateOverlay from "./SprintCreateOverlay";
@@ -264,7 +264,7 @@ function BacklogContent(props) {
 
   var workItem = props.workItemProject;
   debugger
-  const { sprint } = props;
+  // const { sprint } = props;
   let one = true;
   let location = useLocation();
   const projectName = location.state.id;
@@ -411,23 +411,68 @@ function BacklogContent(props) {
   }
 
   function onDragEndItems(result) {
-    debugger
-    const sprint = sprints.filter(s => s.id == result.destination.droppableId)[0];
-    const [removed] = sprint.items.splice(result.source.index, 1);
-    sprint.items.splice(result.destination.index, 0, removed);
-    debugger
-    
-    // let sourceItem = sprint.items[result.source.index];
-    // let destinationItem = sprint.items[result.destination.index];
-    // sourceItem.positionInSprint = destinationItem.positionInSprint;
-    // for (let index = result.destination.index; index < result.source.index; index++ ) {
-    //   sprint.item[index].positionInSprint = sprint.item[index].positionInSprint + 1;
-    // }
-    
-  }
+    const sprint = sprints.filter(s => s.id == result.destination.droppableId)[0]; 
 
-  //workItem.sort((a, b) => (a.color > b.color) ? 1 : (a.color === b.color) ? ((a.size > b.size) ? 1 : -1) : -1 )
+    //MOVE ITEMS FROM ONE SPRINT TO ANOTHER
+    const Anothersprint = sprints.filter(s => s.id == result.source.droppableId)[0]; 
+    if(sprint.id != Anothersprint.id)
+    {
+      debugger
+      const [deleted] =  Anothersprint.items.splice(result.source.index, 1);
+      let newArrangedItems = []
+      for (let index = 0; index < Anothersprint.items.length; index ++) {
+        newArrangedItems[index]= Anothersprint.items[index]
+        newArrangedItems[index].positionInSprint = index;
+      }
+      
+      debugger
+      props.localUpdateWorkItemSprintItems({ id: Anothersprint.id, items: newArrangedItems })
+      //props.changeItemPosition({ id: Anothersprint.id, items: newArrangedItems })    
+
+      debugger
+      let newArrangedItemsDestination = []
+      for (let index = 0; index < sprint.items.length; index ++) {
+        newArrangedItemsDestination[index]= sprint.items[index]
+        newArrangedItemsDestination[index].positionInSprint = index;
+      }
+      newArrangedItemsDestination[result.destination.index] =  deleted;
+      newArrangedItemsDestination[result.destination.index].positionInSprint =  result.destination.index;
+      for (let index = result.destination.index+1; index < sprint.items.length+1; index ++) {
+        newArrangedItemsDestination[index]= sprint.items[index-1]
+        newArrangedItemsDestination[index].positionInSprint = index ;
+      }
+
+      debugger
+      props.localUpdateWorkItemSprintItems({ id: sprint.id, items: newArrangedItemsDestination })
+     // props.changeItemPosition({ id: Anothersprint.id, items: newArrangedItems })    
+
+
+
+      console.log("i voi lu")
+      //props.changeItemPositionBTSprints({ id: sprint.id, items: newArrangedItems })
+    }else{
+     
+    const indexSprint= sprints.indexOf(sprint)
+    let newArrangedItems = []
+    const [removed] =  sprint.items.splice(result.source.index, 1);
+    for (let index = 0; index < result.destination.index; index ++) {
+      newArrangedItems[index]= sprint.items[index]
+      newArrangedItems[index].positionInSprint = index;
+    }
+    for (let index = result.destination.index; index < sprint.items.length; index ++) {
+      newArrangedItems[index + 1]= sprint.items[index]
+      newArrangedItems[index + 1].positionInSprint = index + 1;
+    }
+
+    removed.positionInSprint = result.destination.index;
+    newArrangedItems[result.destination.index] =  removed;
+    props.localUpdateWorkItemSprintItems({ id: sprint.id, items: newArrangedItems })
+    props.changeItemPosition({ id: sprint.id, items: newArrangedItems })    
+    }
+    
+  }   
   
+ 
  const isCollapsed = (id) => {
     return sprintNames.indexOf(id) > -1
   };
@@ -483,20 +528,7 @@ function BacklogContent(props) {
     debugger
   return (
     <Grid container spacing={7}>
-    <DragDropContext onDragEnd={onDragEnd}>
-      <Droppable droppableId="list">
-        {provided => (
-          <div ref={provided.innerRef} {...provided.droppableProps}>
-            <span>Test</span>
-            <QuoteList quotes={state.quotes} />
-            {provided.placeholder}
-          </div>
-        )}
-      </Droppable>
-    </DragDropContext>
-
       <Grid item sm={0.3}></Grid>
-
       <Grid item sm={11}>
         <Grid container spacing={7}>
           <Grid item sm={10}>
@@ -531,12 +563,12 @@ function BacklogContent(props) {
             </Toolbar>
           </Grid>
         </Grid>
-        {sprints.map((sprint, index) => (
-          <DragDropContext onDragEnd={onDragEndItems}>
-          <Droppable droppableId={sprint.id.toString()}>
-            {provided => (
-              <div ref={provided.innerRef} {...provided.droppableProps}>
-                <div>
+        <DragDropContext onDragEnd={onDragEndItems}>
+          {sprints.map((sprint, index) => (
+            <Droppable droppableId={sprint.id.toString()}>
+              {provided => (
+                <div ref={provided.innerRef} {...provided.droppableProps}>
+                  <div>
                     <List
                       component="nav"
                       aria-labelledby="nested-list-subheader"
@@ -553,13 +585,13 @@ function BacklogContent(props) {
                         </List>
                       </Collapse>
                     </List>
-                  {provided.placeholder}
+                    {provided.placeholder}
+                  </div>
                 </div>
-              </div>
-            )}
-          </Droppable>
+              )}
+            </Droppable>
+          ))}
         </DragDropContext>
-        ))}
         
         {/* {itemList} */}
       </Grid>
@@ -592,6 +624,9 @@ const mapDispatchToProps = (dispatch) =>
     {
       getWorkItemProject: getWorkItemProject,
       getSprint: getSprint,
+      localUpdateWorkItemSprintItems: localUpdateWorkItemSprintItems,
+      changeItemPosition: changeItemPosition,
+      changeItemPositionBTSprints: changeItemPositionBTSprints,
     },
     dispatch
   );
