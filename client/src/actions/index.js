@@ -10,7 +10,7 @@ import { ComponentActionsTypes, getComponent, postComponent, updateComponent, us
 import { LinkedIssuesActionsTypes, getLinkedIssues } from './linkedissuesActions';
 import {  WorkItemActionsTypes, getWorkItem, postWorkItem, getWorkItemEpic,getWorkItemProject, getWorkItemById, userUpdateWorkItem, updateWorkItem} from './workItemActions'
 import {  SprintActionsTypes,getSprint, postSprint } from './sprintActions'
-
+import {  CommentActionsTypes,postComment, putComment } from './commentActions'
 export {
     PageActionTypes,
     TierActions,
@@ -85,4 +85,8 @@ export {
      updateWorkItem,
      userUpdateWorkItem,
  
+     //Comments
+     CommentActionsTypes,
+     postComment,
+     putComment,
 };

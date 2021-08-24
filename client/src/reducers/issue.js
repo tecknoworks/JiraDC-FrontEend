@@ -3,10 +3,6 @@ import { IssueActionsTypes } from "../actions";
 const getIssueInitialState = {
   loading: false,
   issue: [
-    {
-        id:"1",
-        name:"epic"
-    },
   ],
 };
 

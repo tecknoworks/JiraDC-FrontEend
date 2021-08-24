@@ -2,10 +2,6 @@ import { LinkedIssuesActionsTypes } from "../actions";
 const getLinkedissuesInitialState = {
   loading: false,
   linkedissues: [
-    {
-      id: "1",
-      name: "default",
-    },
   ],
 };
 

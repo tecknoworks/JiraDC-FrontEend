@@ -194,7 +194,7 @@ function BacklogContent(props) {
       const id = property.toString();
       const isClosed = closed.indexOf(id) > -1;
     itemsToShow = [];
-    workItem[property].map((wi) => {
+    workItem[property].items.map((wi) => {
       itemsToShow.push(
         <div>
           {handleIcon(wi.issue_type, wi.priority)}

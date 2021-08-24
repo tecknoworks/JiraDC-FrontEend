@@ -20,11 +20,7 @@ const loginInitialState = {
 }
 const getUsersInitialState = {
     loading: false,
-    user: [{
-        id:'1',
-        username: 'catalina',
-        
-    }]
+    user: []
 }
 export function register(state = registerInitialState, action) {
     switch (action.type) {

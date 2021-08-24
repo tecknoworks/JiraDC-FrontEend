@@ -126,7 +126,7 @@ function SideMenu(props) {
   let categories=" "
     let location=useLocation()
     let content=" "
-    if(location.pathname==="/project" || location.pathname==="/components" || location.pathname==="/backlog"){
+    if(location.pathname==="/project" || location.pathname==="/components" || location.pathname==="/backlog" || location.pathname==="/sprint"){
       categories=categoriesProjectDetails
       content=<span>
         <ListItem className={clsx(classes.item, classes.itemCategory)}>
@@ -168,7 +168,9 @@ function SideMenu(props) {
       categoriesProjectDetails[0].children[1].active=true
       categoriesProjectDetails[1].children[0].active=false
       categoriesProjectDetails[1].children[1].active=false
-      history.push('/')
+      history.push({pathname: '/sprint',
+      search: location.search,
+      state: { detail: location.state.detail ,  id: location.state.id}})
     }else  if(id==="Components")
     {
       categoriesProjectDetails[0].children[0].active=false

@@ -228,6 +228,7 @@ const handleTextareaChange = e => {
               </InputLabel>
               {props.component.name && ((props.component.user_id && selectedUser) || (!props.component.user_id)) && (
                 <Autocomplete
+                  disabled
                   id="combo-box-demo"
                   options={users}
                   getOptionLabel={(option) => option.username}

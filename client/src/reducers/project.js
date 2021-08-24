@@ -11,11 +11,6 @@ const postProjectInitialState = {
 const getProjectInitialState = {
   loading: false,
   project: [
-    {
-      name: "default",
-      type: "kanban",
-      user_id: "1",
-    },
   ],
 };
 
