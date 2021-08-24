@@ -8,9 +8,10 @@ import { LabelActionsTypes, getLabel, postLabel } from './labelActions';
 import { PriorityActionsTypes, getPriority } from './priorityActions';
 import { ComponentActionsTypes, getComponent, postComponent, updateComponent, userUpdateComponent} from './componentActions';
 import { LinkedIssuesActionsTypes, getLinkedIssues } from './linkedissuesActions';
-import {  WorkItemActionsTypes, getWorkItem, postWorkItem, getWorkItemEpic,getWorkItemProject, getWorkItemById, userUpdateWorkItem, updateWorkItem} from './workItemActions'
-import {  SprintActionsTypes,getSprint, postSprint } from './sprintActions'
 import {  CommentActionsTypes,postComment, putComment } from './commentActions'
+import { SprintActionsTypes,getSprint, postSprint, updateSprint, userUpdateSprint} from './sprintActions'
+import { WorkItemActionsTypes, getWorkItem, postWorkItem, getWorkItemEpic,getWorkItemProject, getWorkItemById, userUpdateWorkItem, updateWorkItem, localUpdateWorkItemSprintItems, changeItemPosition, changeItemPositionBTSprints} from './workItemActions'
+
 export {
     PageActionTypes,
     TierActions,
@@ -74,6 +75,8 @@ export {
      SprintActionsTypes,
      getSprint,
      postSprint,
+     updateSprint,
+     userUpdateSprint,
 
      //WorkItem
      WorkItemActionsTypes,
@@ -84,6 +87,9 @@ export {
      getWorkItemById,
      updateWorkItem,
      userUpdateWorkItem,
+     localUpdateWorkItemSprintItems,
+     changeItemPosition,
+     changeItemPositionBTSprints,
  
      //Comments
      CommentActionsTypes,

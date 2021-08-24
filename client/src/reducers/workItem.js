@@ -53,6 +53,16 @@ export function getWorkItem(state = getWorkItemInitialState, action) {
           return { ...state,workItemProject:action.data, loading: false };
     case WorkItemActionsTypes.WORKITEM_GET_PROJECT_REQUEST_ERROR:
           return { ...state,loading: false };
+    case WorkItemActionsTypes.WORKITEM_LOCAL_UPDATE_SPRINT_ITEMS:
+      const newWorkItem = Object.assign({}, state.workItemProject);
+      for (let key in newWorkItem) {
+        if (newWorkItem[key].id == action.data.id) {
+          newWorkItem[key].items = action.data.items;
+        }
+      }
+      debugger
+
+      return { ...state, workItemProject: newWorkItem, loading: false };
     case WorkItemActionsTypes.WORKITEM_GET_BY_ID_REQUEST:
             return { ...state, loading: true };
     case WorkItemActionsTypes.WORKITEM_GET_BY_ID_REQUEST_SUCCESS:

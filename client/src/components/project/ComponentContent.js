@@ -21,7 +21,6 @@ import ComponentOverlay from "./ComponentOverlay";
 import ComponentEditOverlay from "./ComponentEditOverlay";
 import { useHistory } from 'react-router-dom';
 import EditIcon from '@material-ui/icons/Edit';
-import SprintCreateOverlay from "./SprintCreateOverlay";
 const styles = (theme) => ({
   root: {
     width: "275px",
@@ -94,7 +93,6 @@ const styles = (theme) => ({
 function ComponentContent(props) {
   const [show, openOverlay] = useState(false);
   const [show1, openEditOverlay] = useState(false);
-  const [show2, openCreateOverlay] = useState(false);
   const [idComponent, setidComponent] = useState("");
   const [nameComponent, setnameComponent] = useState("");
   const [descriptionComponent, setdescriptionComponent] = useState("");
@@ -156,9 +154,6 @@ function ComponentContent(props) {
               <Button onClick={()=>openOverlay(!show)} variant="contained" color="primary">
               Create
             </Button>
-            <Button onClick={()=>openCreateOverlay(!show2)} variant="contained" color="primary">
-              Create Sprint
-            </Button>
             <Backdrop className={classes.backdrop} open={show}>
                 <ComponentOverlay/>
             </Backdrop>
@@ -167,9 +162,6 @@ function ComponentContent(props) {
                 id={idComponent}
                 />}
 
-            </Backdrop>
-            <Backdrop className={classes.backdrop} open={show2}>
-                <SprintCreateOverlay/>
             </Backdrop>
             </Grid>
             </Toolbar>

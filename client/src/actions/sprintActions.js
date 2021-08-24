@@ -9,6 +9,12 @@ export const SprintActionsTypes = {
     SPRINT_POST_REQUEST: 'SPRINT_POST_REQUEST',
     SPRINT_POST_REQUEST_SUCCESS: 'SPRINT_POST_REQUEST_SUCCESS',
     SPRINT_POST_REQUEST_ERROR: 'SPRINT_POST_REQUEST_ERROR',
+
+    SPRINT_UPDATE_REQUEST: 'SPRINT_UPDATE_REQUEST',
+    SPRINT_UPDATE_REQUEST_SUCCESS: 'SPRINT_UPDATE_REQUEST_SUCCESS',
+    SPRINT_UPDATE_REQUEST_ERROR: 'SPRINT_UPDATE_REQUEST_ERROR',
+
+    SPRINT_USER_UPDATE_REQUEST_SUCCESS: 'SPRINT_USER_UPDATE_REQUEST_SUCCESS',
 };
 //getsprint
 export function getBegin() {
@@ -29,11 +35,11 @@ export function getError() {
         type: SprintActionsTypes.SPRINT_GET_REQUEST_ERROR,
     };
 }
-export function getSprint() {
+export function getSprint(payload) {
     return dispatch => {
         dispatch(getBegin());
 
-        return SprintRequest.getSprint()
+        return SprintRequest.getSprint(payload)
             .then(response => responseToJson(response))
             .then(json => dispatch(getSuccess(json)))
             .catch(error => {
@@ -74,5 +80,45 @@ export function postSprint(data) {
                 dispatch(postError());
                 return globalErrorHandler(error);
             });
+    };
+}
+//updateSprint 
+
+export function updateSprintBegin() {
+    return {
+        type: SprintActionsTypes.SPRINT_UPDATE_REQUEST
+    };
+}
+
+export function updateSprintSuccess(data) {
+    return {
+        type: SprintActionsTypes.SPRINT_UPDATE_REQUEST_SUCCESS,
+        data
+    };
+}
+
+export function updateSprintError() {
+    return {
+        type: SprintActionsTypes.SPRINT_UPDATE_REQUEST_ERROR,
+    };
+}
+export function updateSprint(data) {
+    return dispatch => {
+        dispatch(updateSprintBegin());
+
+        return SprintRequest.updateSprint(data)
+            .then(response => responseToJson(response))
+            .then(json => dispatch(updateSprintSuccess(json)))
+            .catch(error => {
+                dispatch(updateSprintError());
+                return globalErrorHandler(error);
+            });
+    }; 
+}
+export function userUpdateSprint(sprint) {
+    debugger
+    return {
+        type: SprintActionsTypes.SPRINT_USER_UPDATE_REQUEST_SUCCESS,
+        data: sprint
     };
 }
