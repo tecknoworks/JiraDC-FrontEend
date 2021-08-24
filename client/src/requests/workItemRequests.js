@@ -54,6 +54,26 @@ const updateWorkItem = (data) => {
     });
 }
 
+const changeItemPosition = (data) => {
+    return fetch(`${BASE_API_URL}/workItemChangePosition`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    });
+}
+const changeItemPositionBTSprints = (data) => {
+    return fetch(`${BASE_API_URL}/workItemChangeSprint`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    });
+}
+
+
 export default {
     getWorkItem,
     postWorkItem,
@@ -61,4 +81,6 @@ export default {
     getWorkItemProject,
     getWorkItemById,
     updateWorkItem,
+    changeItemPosition,
+    changeItemPositionBTSprints,
 };
