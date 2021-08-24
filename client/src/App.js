@@ -24,6 +24,7 @@ import AllProjectsContent from './components/AllProjectsContent';
 import ProjectDetails from './components/project/ProjectDetails';
 import ComponentContent from './components/project/ComponentContent';
 import backlogContent from './components/project/backlogContent';
+import ActiveSprintsContent from './components/project/ActiveSprintsContent';
 function App(props) {
 
   let routes=" "
@@ -64,6 +65,7 @@ function App(props) {
         <Route path="/project/" component={ProjectDetails} />
         <Route path="/components/" component={ComponentContent} />
         <Route path="/backlog/" component={backlogContent} />
+        <Route path="/sprint/" component={ActiveSprintsContent} />
       </Switch>
       <Footer />
     </Router>

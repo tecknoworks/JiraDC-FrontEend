@@ -2,11 +2,6 @@ import { PriorityActionsTypes } from "../actions";
 const getPriorityInitialState = {
   loading: false,
   priority: [
-    {
-      id: "1",
-      name: "default",
-
-    },
   ],
 };
 

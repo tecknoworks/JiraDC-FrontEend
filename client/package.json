@@ -35,7 +35,8 @@
     "react-sticky-header": "^0.2.0",
     "react-toastify": "^6.2.0",
     "redux": "^4.1.0",
-    "redux-thunk": "^2.3.0"
+    "redux-thunk": "^2.3.0",
+    "semantic-ui-react": "^2.0.3"
   },
   "scripts": {
     "start": "webpack serve --open --mode development",

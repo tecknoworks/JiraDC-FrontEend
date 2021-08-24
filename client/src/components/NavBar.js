@@ -87,12 +87,7 @@ function NavBar(props) {
     else if (location.pathname ==="/people") {
         value = 2
     }
-    else if (location.pathname === "/projects/create" || 
-             location.pathname === "/projects/create/kanban" || 
-             location.pathname === "/projects/create/scrum" || 
-             location.pathname === "/projects/create/bugtracking") {
-        value = 3
-    }
+    
     let navMenu = " "
     if (location.pathname === "/"||location.pathname === "/login"||location.pathname === "/signup") {
         navMenu = <span>
@@ -103,9 +98,6 @@ function NavBar(props) {
             <Tab href="/projects" textColor="inherit" label="Your work" />
             <Tab href="/allprojects" textColor="inherit" label="Projects" />
             <Tab href="/projects" textColor="inherit" label="People" />
-            <Button href="/projects/create" variant="text" size="medium" color="inherit" className={classes.addProject} startIcon={<AddCircleOutlineIcon />} >
-                Create New Project
-            </Button>
             <Button  onClick={()=>openOverlay(!show)} variant="text" size="medium" color="inherit" className={classes.addProject} startIcon={<AddCircleOutlineIcon />} >
                 Create Issue 
             </Button>
