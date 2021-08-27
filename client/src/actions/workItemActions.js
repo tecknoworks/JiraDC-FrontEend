@@ -34,6 +34,12 @@ export const WorkItemActionsTypes = {
 
     WORKITEM_CHANGE_POSITION_BT_SPRINTS_REQUEST_SUCCESS: 'WORKITEM_CHANGE_POSITION_BT_SPRINTS_REQUEST_SUCCESS',
 
+    //active sprints
+    WORKITEM_LOCAL_UPDATE_STATUS_ITEMS:"WORKITEM_LOCAL_UPDATE_STATUS_ITEMS",
+
+    WORKITEM_CHANGE_POSITION_STATUS_REQUEST_SUCCESS: 'WORKITEM_CHANGE_POSITION_STATUS_REQUEST_SUCCESS',
+
+    WORKITEM_CHANGE_STATUS_REQUEST_SUCCESS:"WORKITEM_CHANGE_STATUS_REQUEST_SUCCESS",
 
 };
 //post workitem
@@ -258,6 +264,9 @@ export function updateWorkItemBegin() {
 }
 
 export function updateWorkItemSuccess(data) {
+   // if (refreshProject && refreshProject.isRefresh) {
+        //getWorkItemProject({});
+   // }
     return {
         type: WorkItemActionsTypes.WORKITEM_UPDATE_REQUEST_SUCCESS,
         data
@@ -270,6 +279,7 @@ export function updateWorkItemError() {
     };
 }
 export function updateWorkItem(data) {
+    //refreshProject = {isRefresh = true, projectId}
     return dispatch => {
         dispatch(updateWorkItemBegin());
 
@@ -289,3 +299,48 @@ export function userUpdateWorkItem(WorkItem) {
     };
 }
 
+//active sprints
+export function localUpdateWorkItemStatusItems(data) {
+    return {
+        type: WorkItemActionsTypes.WORKITEM_LOCAL_UPDATE_STATUS_ITEMS,
+        data: data
+    };
+}
+
+export function changeItemPositionStatusSuccess(data) {
+    return {
+        type: WorkItemActionsTypes.WORKITEM_CHANGE_POSITION_STATUS_REQUEST_SUCCESS,
+        data: data
+    };
+}
+export function changeItemPositionStatus(data) {
+    return dispatch => {
+        // dispatch(getWorkItemProjectBegin());
+        return WorkItemRequest.changeItemPositionStatus(data)
+            .then(response => responseToJson(response))
+            .then(json =>  dispatch(changeItemPositionStatusSucces(json)))
+            .catch(error => {
+                // dispatch(getWorkItemProjectError());
+                return globalErrorHandler(error);
+            });
+    };
+}
+
+export function changeItemStatusSuccess(data) {
+    return {
+        type: WorkItemActionsTypes.WORKITEM_CHANGE_STATUS_REQUEST_SUCCESS,
+        data: data
+    };
+}
+export function changeItemStatus(data) {
+    return dispatch => {
+        // dispatch(getWorkItemProjectBegin());
+        return WorkItemRequest.changeItemStatus(data)
+            .then(response => responseToJson(response))
+            .then(json =>  dispatch(changeItemStatusSuccess(json)))
+            .catch(error => {
+                // dispatch(getWorkItemProjectError());
+                return globalErrorHandler(error);
+            });
+    };
+}

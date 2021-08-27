@@ -45,7 +45,7 @@ const getWorkItemEpic = () => {
 }
 
 const updateWorkItem = (data) => {
-    return fetch(`${BASE_API_URL}/workItem`, {
+    return fetch(`${BASE_API_URL}/updateWorkItem`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json'
@@ -73,6 +73,28 @@ const changeItemPositionBTSprints = (data) => {
     });
 }
 
+//active sprints
+const changeItemPositionStatus = (data) => {
+    return fetch(`${BASE_API_URL}/workItemChangePositionStatus`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    });
+}
+
+const changeItemStatus = (data) => {
+    return fetch(`${BASE_API_URL}/workItemChangeStatus`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    });
+}
+
+
 
 export default {
     getWorkItem,
@@ -83,4 +105,6 @@ export default {
     updateWorkItem,
     changeItemPosition,
     changeItemPositionBTSprints,
+    changeItemPositionStatus,
+    changeItemStatus,
 };

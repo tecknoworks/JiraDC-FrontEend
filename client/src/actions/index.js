@@ -10,7 +10,7 @@ import { ComponentActionsTypes, getComponent, postComponent, updateComponent, us
 import { LinkedIssuesActionsTypes, getLinkedIssues } from './linkedissuesActions';
 import {  CommentActionsTypes,postComment, putComment } from './commentActions'
 import { SprintActionsTypes,getSprint, postSprint, updateSprint, userUpdateSprint} from './sprintActions'
-import { WorkItemActionsTypes, getWorkItem, postWorkItem, getWorkItemEpic,getWorkItemProject, getWorkItemById, userUpdateWorkItem, updateWorkItem, localUpdateWorkItemSprintItems, changeItemPosition, changeItemPositionBTSprints} from './workItemActions'
+import { WorkItemActionsTypes, getWorkItem, postWorkItem, getWorkItemEpic,getWorkItemProject, getWorkItemById, userUpdateWorkItem, updateWorkItem, localUpdateWorkItemSprintItems, changeItemPosition, changeItemPositionBTSprints,localUpdateWorkItemStatusItems, changeItemPositionStatus,changeItemStatus} from './workItemActions'
 
 export {
     PageActionTypes,
@@ -90,6 +90,9 @@ export {
      localUpdateWorkItemSprintItems,
      changeItemPosition,
      changeItemPositionBTSprints,
+     localUpdateWorkItemStatusItems,
+     changeItemPositionStatus,
+     changeItemStatus,
  
      //Comments
      CommentActionsTypes,

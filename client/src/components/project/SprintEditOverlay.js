@@ -9,11 +9,12 @@ import { bindActionCreators, compose } from "redux";
 import { Divider, TextField, Box, Button, } from "@material-ui/core";
 import { EditorState } from "draft-js";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
-import { BrowserRouter as Router, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, useLocation, Link,Route, Switch } from "react-router-dom";
 import { getSprint, updateSprint, userUpdateSprint } from "../../actions";
 import { TextareaAutosize } from '@material-ui/core';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
+import BacklogContent from "../project/backlogContent";
 
 const styles = (theme) => ({});
 
@@ -88,8 +89,9 @@ function SprintEditOverlay(props) {
   const updateSprint = () => {
     const sprint = getSprintPayload(props.sprint);
     console.log(sprint)
-    debugger
     props.updateSprint(sprint);
+    props.refreshData()
+    props.closeOverlay()
   }
 
   const handleTextFieldChange = e => {
@@ -125,7 +127,14 @@ function SprintEditOverlay(props) {
   }, [editorState]);
   const classes = useStyles();
 
+  const choosePath = () =>{
+    if(location.pathname==="/backlog")
+      return <Route path={path}>
+      <BacklogContent/>
+      </Route>
+  }
   return (
+    <Router>
     <Box width="70%" className={classes.mainBox} height="600px">
       <Grid container spacing={3} className={classes.headerWorkItem}>
         <Grid item sm={12}>
@@ -188,15 +197,22 @@ function SprintEditOverlay(props) {
       <Grid container spacing={1} className={classes.footerWorkItem}>
         <Grid item xs={10}></Grid>
         <Grid item xs={1}>
-          <Button href={path} onClick={updateSprint} variant="contained" color="primary">
+        <Link to={path}>
+          <Button onClick={updateSprint} variant="contained" color="primary">
             Save
           </Button>
+          </Link>
         </Grid>
         <Grid item xs={1}>
-          <Button href={path} color="primary">Cancel</Button>
+        <Link to={path}>
+          <Button onClick={props.closeOverlay} color="primary">Cancel</Button>
+          </Link>
         </Grid>
       </Grid>
     </Box>
+    <Switch>{choosePath}
+    </Switch>
+    </Router>
   );
 }
 

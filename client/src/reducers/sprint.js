@@ -57,7 +57,6 @@ export function updateSprint(state = updateSprintInitialState, action) {
     case SprintActionsTypes.SPRINT_UPDATE_REQUEST_ERROR:
       return { ...state, loading: false };
     case SprintActionsTypes.SPRINT_USER_UPDATE_REQUEST_SUCCESS:
-      debugger
       return { ...state, sprint: action.data };
   }
 

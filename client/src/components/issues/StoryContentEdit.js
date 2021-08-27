@@ -14,7 +14,7 @@ import { useDropzone } from "react-dropzone";
 import { Editor } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { createMuiTheme } from "@material-ui/core/styles";
-import { BrowserRouter as Router, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, useLocation, Link,Route, Switch } from "react-router-dom";
 import { EditorState, convertFromRaw, convertToRaw } from "draft-js";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import {
@@ -39,6 +39,8 @@ import {
 import FormHelperText from "@material-ui/core/FormHelperText";
 import { Comment, Form, Header } from "semantic-ui-react";
 import EditIcon from '@material-ui/icons/Edit';
+import BacklogContent from "../project/backlogContent";
+import ActiveSprintsContent from "../project/ActiveSprintsContent";
 const defaultTheme = createMuiTheme();
 const styles = (theme) => ({});
 const BootstrapInput = withStyles((theme) => ({
@@ -324,6 +326,7 @@ function StoryContentEdit(props) {
       assignee: currentIssue.assignee,
       epic_link: currentIssue.epic_link,
       sprint: currentIssue.sprint,
+      status: currentIssue.status,
       labels: selectedLabelFinal,
       components: selectedComponentFinal,
       comments: currentIssue.comments,
@@ -338,6 +341,7 @@ function StoryContentEdit(props) {
       );
     }
     props.userUpdateWorkItem(issue);
+    console.log(path)
   }, [props.workItem]);
 
   const [editorState, setEditorState] = useState(() =>
@@ -438,6 +442,11 @@ function StoryContentEdit(props) {
     payload.labels = e;
     props.userUpdateWorkItem(payload);
   };
+  const handleChangeStatus = (e) =>{
+    const payload = takeValues();
+    payload.status = e;
+    props.userUpdateWorkItem(payload);
+  }
 
   const takeValues = () => {
     return {
@@ -453,6 +462,7 @@ function StoryContentEdit(props) {
       assignee: props.updatedWorkItem.assignee,
       epic_link: props.updatedWorkItem.epic_link,
       sprint: props.updatedWorkItem.sprint,
+      status:props.updatedWorkItem.status,
       labels: props.updatedWorkItem.labels,
       components: props.updatedWorkItem.components,
       comments: props.updatedWorkItem.comments,
@@ -462,7 +472,9 @@ function StoryContentEdit(props) {
     const payload = takeValues();
     console.log(payload);
     props.updateWorkItem(payload);
-    history.push(path);
+    props.refreshData()
+    props.closeOverlay()
+    //history.push(path);
   };
 
   const addReply = () => {
@@ -565,18 +577,55 @@ function StoryContentEdit(props) {
     selectedSprintFinal = selectedSprint;
   }
 
+  const selectedStatus=props.updatedWorkItem.status
+  var status=["To do","In progress", "Done"]
+
+  const choosePath = () =>{
+    if(location.pathname==="/backlog")
+      return <Route path={path}>
+      <BacklogContent />
+      </Route>
+    else if (location.pathname==="/sprint"){
+      console.log("hey")
+      return <Route path={path}> <ActiveSprintsContent/></Route>
+    }
+      
+  }
   return (
+    <Router>
     <Box width="70%" className={classes.mainBox} height="600px">
       <Grid container spacing={3} className={classes.headerWorkItem}>
         <Grid item sm={12}>
           <h2 className={classes.header}>Edit Issue</h2>
         </Grid>
+       
       </Grid>
       <Paper className={classes.boxStyle}>
         <Grid container spacing={3}>
           <Grid item xs={0.1}></Grid>
           <Grid item xs={11}>
             <br></br>
+            <Grid item sm={12}>
+        <InputLabel fullWidth shrink>
+                Status
+              </InputLabel>
+                {props.updatedWorkItem.status && <Autocomplete
+                  id="combo-box-demo"
+                  options={status}
+                  getOptionLabel={(option) => option}
+                  style={{ width: 300 }}
+                  defaultValue={selectedStatus}
+                  renderInput={(params) => (
+                    <TextField {...params} variant="outlined" />
+                  )}
+                  onChange={(event, value) => {
+                    handleChangeStatus(value);
+                  }}
+                />
+              }
+              
+              </Grid>
+              <br></br>
             <Grid item xs={12}>
               <InputLabel fullWidth shrink required={true}>
                 Projects
@@ -661,7 +710,7 @@ function StoryContentEdit(props) {
             </Grid>
             <br></br>
             <Grid item sm={12} xs={6}>
-              <InputLabel fullWidth shrink required={true}>
+              <InputLabel fullWidth shrink>
                 Components
               </InputLabel>
               {props.updatedWorkItem.components &&
@@ -674,7 +723,6 @@ function StoryContentEdit(props) {
                     options={components}
                     getOptionLabel={(option) => option.name}
                     style={{ width: 300 }}
-                    required
                     defaultValue={props.updatedWorkItem.components}
                     renderInput={(params) => (
                       <TextField {...params} variant="outlined" />
@@ -685,7 +733,7 @@ function StoryContentEdit(props) {
                   />
                 )}
               <FormHelperText>
-                Star typing to get a list of possible matches or press down to
+                Start typing to get a list of possible matches or press down to
                 select.
               </FormHelperText>
               <br></br>
@@ -929,22 +977,28 @@ function StoryContentEdit(props) {
       <Grid container spacing={1} className={classes.footerWorkItem}>
         <Grid item xs={10}></Grid>
         <Grid item xs={1}>
+        <Link to={path}>
           <Button
-            href={path}
             onClick={updateWorkItem}
             variant="contained"
             color="primary"
           >
             Save
           </Button>
+          </Link>
         </Grid>
         <Grid item xs={1}>
-          <Button href={path} color="primary">
+        <Link to={path}>
+          <Button onClick={props.closeOverlay} color="primary">
             Cancel
           </Button>
+          </Link>
         </Grid>
       </Grid>
     </Box>
+  <Switch>{choosePath}
+    </Switch>
+    </Router>
   );
 }
 
