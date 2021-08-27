@@ -14,13 +14,19 @@ import { useDropzone } from "react-dropzone";
 import { Editor } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { createMuiTheme } from "@material-ui/core/styles";
-import { BrowserRouter as Router, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, useLocation, Link,Route, Switch } from "react-router-dom";
 import { EditorState, convertFromRaw, convertToRaw } from "draft-js"
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { useHistory } from 'react-router-dom';
 import { getIssue, getLabel, getProject, getWorkItem, postLabel, postWorkItem, getWorkItemEpic,} from "../../actions";
 import { getAllUsers, getPriority, getComponent, getLinkedIssues, getSprint,} from "../../actions";
 import FormHelperText from "@material-ui/core/FormHelperText";
+import BacklogContent from "../project/backlogContent";
+import AllProjectsContent from "../AllProjectsContent";
+import ActiveSprintsContent from "../project/ActiveSprintsContent";
+import ComponentContent from "../project/ComponentContent";
+import ProjectPage from "../ProjectPage";
+import CreateProjectPage from "../CreateProjectPage";
 
 const defaultTheme = createMuiTheme();
 const styles = (theme) => ({});
@@ -208,7 +214,34 @@ function StoryContent(props) {
     }
     setIssueTypeId(e._id)
   };
+  const choosePath = () =>{
+    if(location.pathname==="/backlog")
+      return <Route path={path}>
+      <BacklogContent/>
+      </Route>
+    else  if(location.pathname==="/allprojects")
+    return <Route path={path}>
+    <AllProjectsContent/>
+    </Route>
+    else  if(location.pathname==="/sprint")
+    return <Route path={path}>
+    <ActiveSprintsContent/>
+    </Route>
+    else  if(location.pathname==="/component")
+    return <Route path={path}>
+    <ComponentContent/>
+    </Route>
+    else  if(location.pathname==="/projects")
+    return <Route path={path}>
+    <ProjectPage/>
+    </Route>
+    else  if(location.pathname==="/projects/create")
+    return <Route path={path}>
+    <CreateProjectPage/>
+    </Route>
+  }
   return (
+    <Router>
     <Box width="70%" className={classes.mainBox} height="600px">
       <Grid container spacing={3} className={classes.headerWorkItem}>
         <Grid item sm={12}>
@@ -306,7 +339,6 @@ function StoryContent(props) {
                 options={components}
                 getOptionLabel={(option) => option.name}
                 style={{ width: 300 }}
-                required
                 renderInput={(params) => (
                   <TextField {...params} variant="outlined" />
                 )}
@@ -315,7 +347,7 @@ function StoryContent(props) {
                 }}
               />
               <FormHelperText>
-                Star typing to get a list of possible matches or press down to
+                Start typing to get a list of possible matches or press down to
                 select.
               </FormHelperText>
               <br></br>
@@ -505,15 +537,18 @@ function StoryContent(props) {
       <Grid container spacing={1} className={classes.footerWorkItem}>
         <Grid item xs={10}></Grid>
         <Grid item xs={1}>
-          <Button href={path} variant="contained" color="primary" onClick={handleCreate}>
+          <Button variant="contained" color="primary" onClick={handleCreate}>
             Create
           </Button>
         </Grid>
         <Grid item xs={1}>
-          <Button href={path} color="primary">Cancel</Button>
+          <Button onClick={props.closeOverlay} color="primary">Cancel</Button>
         </Grid>
       </Grid>
     </Box>
+     <Switch>{choosePath}
+     </Switch>
+     </Router>
   );
 }
 

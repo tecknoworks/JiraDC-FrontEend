@@ -116,7 +116,7 @@ export function updateSprint(data) {
     }; 
 }
 export function userUpdateSprint(sprint) {
-    debugger
+
     return {
         type: SprintActionsTypes.SPRINT_USER_UPDATE_REQUEST_SUCCESS,
         data: sprint

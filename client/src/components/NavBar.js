@@ -64,6 +64,11 @@ function NavBar(props) {
         }
         props.logout(payload)
     }
+
+    const closeOverlayWorkItem =() =>{
+        openOverlay(!show)
+      }
+    
     let logButton = " "
     if (isAuthUser) {
         logButton = <span><Button href="/" color="inherit" style={{float:'right'}} onClick={logOut}><PersonIcon/>Log Out</Button></span>
@@ -101,10 +106,9 @@ function NavBar(props) {
             <Button  onClick={()=>openOverlay(!show)} variant="text" size="medium" color="inherit" className={classes.addProject} startIcon={<AddCircleOutlineIcon />} >
                 Create Issue 
             </Button>
-            <Backdrop className={classes.backdrop} open={show}>
-                <StoryContent/>
+            <Backdrop className={classes.backdrop} open={show} >
+                <StoryContent closeOverlay={closeOverlayWorkItem}/>
             </Backdrop>
-           
         </Tabs> 
         </Grid></span>
     }

@@ -76,86 +76,93 @@ const styles = (theme) => ({
     top:"21px",
     cursor: "pointer",
   },
+  workItem:{
+    "padding-top":"5px",
+    "padding-bottom":"5px",
+  },
+  iconImage:{
+    width:"10%",
+    "padding-top":"0px",
+    "padding-bottom":"0px",
+  },
+  summary :{
+    top:"0px",
+  }
+
 });
 
 const getIssueIcon = (issue) => {
   if (issue === "Epic") {
     return (
-      <span>
+      
         <Epic />
-      </span>
+      
     );
   } else if (issue === "Story") {
     return (
-      <span>
+      
         <Story />
-      </span>
+      
     );
   } else if (issue === "Bug") {
     return (
-      <span>
+      
         <Bug />
-      </span>
+      
     );
   } else if (issue === "Task") {
     return (
-      <span>
+      
         <Task />
-      </span>
+      
     );
   } else if (issue === "SubTask") {
     return (
-      <span>
+      
         <Subtask />
-      </span>
+      
     );
   }
 
   return (
-    <span>
+    
       <Subtask />
-    </span>
+    
   );
 }
 
 const getPriorityIcon = (priority) => {
   if (priority === "Blocker") {
     return (
-      <span>
-        <Blocker width="35%" height="35%" />
-      </span>
+      
+        <Blocker width="15" height="15" />
+      
     );
   } else if (priority === "Critical") {
     return (
-      <span>
-        <Critical width="35%" height="35%" />
-      </span>
+      
+        <Critical width="15" height="15" />
+      
     );
   } else if (priority === "Major") {
     return (
-      <span>
-        <Major width="35%" height="35%" />
-      </span>
+      
+        <Major width="15" height="15" />
+      
     );
   } else if (priority === "Minor") {
     return (
-      <span>
-        <Minor width="35%" height="35%" />
-      </span>
+      
+        <Minor width="15" height="15" />
+      
     );
   } else if (priority === "Trivial") {
     return (
-      <span>
-        <Trivial width="35%" height="35%" />
-      </span>
+      
+        <Trivial width="15" height="15" />
+      
     );
   }
-
-  return (
-    <span>
-      <Subtask />
-    </span>
-  );
 }
 
 const initial = Array.from({ length: 10 }, (v, k) => k).map(k => {
@@ -176,7 +183,7 @@ const reorder = (list, startIndex, endIndex) => {
   return result;
 };
 
-function WorkItem({ workItem, index, classes }) {
+function WorkItem({ workItem, index, classes, showClick }) {
   return (
     <Draggable draggableId={workItem._id} index={index} classes={classes}>
       {provided => (
@@ -186,12 +193,12 @@ function WorkItem({ workItem, index, classes }) {
           {...provided.dragHandleProps}
         >
           <div>
-            <ListItem button onClick={() => showClick(workItem._id)} style={{ "cursor": 'pointer' }} align="right" className={classes.nested}> 
-              <Grid container spacing={3}>
+            <ListItem button onClick={() => showClick(workItem._id)} style={{ "cursor": 'pointer',  }} align="right" className={classes.nested, classes.workItem}> 
+              <Grid container spacing={0}>
                 <Grid item xs={10} className={classes.gridItem}>
-                  {getIssueIcon(workItem.issue_type)} {workItem.summary}
+                {getIssueIcon(workItem.issue_type)} {workItem.summary}
                 </Grid>
-                <Grid item xs={1}>
+                <Grid item xs={1} className={classes.iconImage}>
                   {getPriorityIcon(workItem.priority)}
                 </Grid>
               </Grid>
@@ -204,55 +211,14 @@ function WorkItem({ workItem, index, classes }) {
   );
 }
 
-function Quote({ quote, index }) {
-  return (
-    <Draggable draggableId={quote.id} index={index}>
-      {provided => (
-        <div
-          ref={provided.innerRef}
-          {...provided.draggableProps}
-          {...provided.dragHandleProps}
-        >
-          {quote.content}
-        </div>
-      )}
-    </Draggable>
-  );
-}
-
-const WorkItemList = React.memo(function WorkItemList({ workItems, classes }) {
+const WorkItemList = React.memo(function WorkItemList({ workItems, classes, showClick }) {
   return workItems.map((workItem, index) => (
-    <WorkItem workItem={workItem} index={index} key={workItem.id} classes={classes} />
+    <WorkItem workItem={workItem} index={index} key={workItem.id} classes={classes} showClick={showClick}/>
   ));
 });
 
-const QuoteList = React.memo(function QuoteList({ quotes }) {
-  return quotes.map((quote, index) => (
-    <Quote quote={quote} index={index} key={quote.id} />
-  ));
-});
 
 function BacklogContent(props) {
-
-  const [state, setState] = useState({ quotes: initial });
-
-  function onDragEnd(result) {
-    if (!result.destination) {
-      return;
-    }
-
-    if (result.destination.index === result.source.index) {
-      return;
-    }
-
-    const quotes = reorder(
-      state.quotes,
-      result.source.index,
-      result.destination.index
-    );
-
-    setState({ quotes });
-  }
 
  const [closed, setClosed]=useState([])
  const [idWi, setIdWi] = useState("");
@@ -263,7 +229,6 @@ function BacklogContent(props) {
  const { classes } = props;
 
   var workItem = props.workItemProject;
-  debugger
   // const { sprint } = props;
   let one = true;
   let location = useLocation();
@@ -273,7 +238,6 @@ function BacklogContent(props) {
       id: location.state.id,
     };
     if (payload !== {}) {
-      console.log(payload);
       props.getWorkItemProject(payload);
       props.getSprint(payload);
     }
@@ -281,91 +245,12 @@ function BacklogContent(props) {
     one = false;
   }, [one]);
 
-    
   const existingSprintIds = []
   for (var property in workItem) {
     if (workItem[property].id) {
       existingSprintIds.push(workItem[property].id);
     }
   }
-
-  for (let index = 0; index < props.sprint.length; index++) {
-    if (existingSprintIds.indexOf(props.sprint[index]._id) < 0) {
-      workItem[props.sprint[index].name] = {
-        items: [],
-        id: props.sprint[index]._id,
-      }
-    }
-
-    workItem[props.sprint[index].name].closed = props.sprint[index].closed;
-  }
-  let iconIssue = <span></span>;
-  let iconPriority = <span></span>;
-  const handleIcon = (issue, priority) => {
-    if (issue === "Epic") {
-      iconIssue = (
-        <span>
-          <Epic />
-        </span>
-      );
-    } else if (issue === "Story") {
-      iconIssue = (
-        <span>
-          <Story />
-        </span>
-      );
-    } else if (issue === "Bug") {
-      iconIssue = (
-        <span>
-          <Bug />
-        </span>
-      );
-    } else if (issue === "Task") {
-      iconIssue = (
-        <span>
-          <Task />
-        </span>
-      );
-    } else if (issue === "SubTask") {
-      iconIssue = (
-        <span>
-          <Subtask />
-        </span>
-      );
-    }
-
-    if (priority === "Blocker") {
-      iconPriority = (
-        <span>
-          <Blocker width="35%" height="35%" />
-        </span>
-      );
-    } else if (priority === "Critical") {
-      iconPriority = (
-        <span>
-          <Critical width="35%" height="35%" />
-        </span>
-      );
-    } else if (priority === "Major") {
-      iconPriority = (
-        <span>
-          <Major width="35%" height="35%" />
-        </span>
-      );
-    } else if (priority === "Minor") {
-      iconPriority = (
-        <span>
-          <Minor width="35%" height="35%" />
-        </span>
-      );
-    } else if (priority === "Trivial") {
-      iconPriority = (
-        <span>
-          <Trivial width="35%" height="35%" />
-        </span>
-      );
-    }
-  };
 
   const handleClick = (property) => {
     const newClosed = JSON.parse(JSON.stringify(closed));
@@ -376,7 +261,6 @@ function BacklogContent(props) {
     else {
         newClosed.push(property);
     }
-    
     setClosed(newClosed)
   };
 
@@ -389,8 +273,6 @@ function BacklogContent(props) {
     setIdSprint(id_Sprint);
   }
 
-  var itemsToShow = [];
-  let itemList = [];
   let sprints = [];
   let sprintNames = [];
   const sortWorkItemsByPosition = ( a, b ) => {
@@ -417,7 +299,6 @@ function BacklogContent(props) {
     const Anothersprint = sprints.filter(s => s.id == result.source.droppableId)[0]; 
     if(sprint.id != Anothersprint.id)
     {
-      debugger
       const [deleted] =  Anothersprint.items.splice(result.source.index, 1);
       let newArrangedItems = []
       for (let index = 0; index < Anothersprint.items.length; index ++) {
@@ -425,33 +306,28 @@ function BacklogContent(props) {
         newArrangedItems[index].positionInSprint = index;
       }
       
-      debugger
       props.localUpdateWorkItemSprintItems({ id: Anothersprint.id, items: newArrangedItems })
-      //props.changeItemPosition({ id: Anothersprint.id, items: newArrangedItems })    
+      props.changeItemPosition({ id: Anothersprint.id, items: newArrangedItems })    
 
-      debugger
       let newArrangedItemsDestination = []
       for (let index = 0; index < sprint.items.length; index ++) {
         newArrangedItemsDestination[index]= sprint.items[index]
         newArrangedItemsDestination[index].positionInSprint = index;
+        newArrangedItemsDestination[index].sprint_id=sprint.id
       }
       newArrangedItemsDestination[result.destination.index] =  deleted;
       newArrangedItemsDestination[result.destination.index].positionInSprint =  result.destination.index;
+      newArrangedItemsDestination[result.destination.index].sprint_id=sprint.id
       for (let index = result.destination.index+1; index < sprint.items.length+1; index ++) {
         newArrangedItemsDestination[index]= sprint.items[index-1]
         newArrangedItemsDestination[index].positionInSprint = index ;
+        newArrangedItemsDestination[index].sprint_id=sprint.id
       }
 
       debugger
       props.localUpdateWorkItemSprintItems({ id: sprint.id, items: newArrangedItemsDestination })
-     // props.changeItemPosition({ id: Anothersprint.id, items: newArrangedItems })    
-
-
-
-      console.log("i voi lu")
-      //props.changeItemPositionBTSprints({ id: sprint.id, items: newArrangedItems })
+      props.changeItemPositionBTSprints({ id: Anothersprint.id, items: newArrangedItemsDestination })    
     }else{
-     
     const indexSprint= sprints.indexOf(sprint)
     let newArrangedItems = []
     const [removed] =  sprint.items.splice(result.source.index, 1);
@@ -470,62 +346,55 @@ function BacklogContent(props) {
     props.changeItemPosition({ id: sprint.id, items: newArrangedItems })    
     }
     
-  }   
-  
- 
- const isCollapsed = (id) => {
-    return sprintNames.indexOf(id) > -1
-  };
-
-  for (var property in workItem) {
-      const id = property.toString();
-      const id_Sprint = workItem[property].id;
-      const isClosed = closed.indexOf(id) > -1;
-      const sprintOpened = !workItem[property].closed;
-    itemsToShow = [];
-    workItem[property].items.map((wi) => {
-      itemsToShow.push(
-        <div> 
-          {handleIcon(wi.issue_type, wi.priority)}
-              <ListItem button onClick={()=>showClick(wi._id)} style={{"cursor":'pointer'}} align="right" className={classes.nested}>
-                <Grid container spacing={3}>
-                  <Grid item xs={10} className={classes.gridItem}>
-                    {iconIssue} {wi.summary}
-                  </Grid>
-                  <Grid item xs={1}>
-                    {iconPriority}
-                  </Grid>
-                </Grid>
-              </ListItem>
-          <Divider />
-        </div>
-      );
-    });
-    itemList.push(
-      <List
-        component="nav"
-        aria-labelledby="nested-list-subheader"
-        className={classes.root, classes.listItem}
-      >
-        <div className={classes.icon} onClick={() => showClickSprintOverlay(id_Sprint)}><BorderColorIcon style={{ fontSize: 17 }} /></div>
-        <ListItem button onClick={() => handleClick(id)} style={!sprintOpened ? { backgroundColor: '#eeeeee', 'border-radius': '15px', cursor: 'not-allowed' } : {}}>
-          <ListItemText primary={id} />
-          {sprintOpened && (isClosed ? <ExpandMore /> : <ExpandLess />)}
-        </ListItem>
-        <Collapse in={!isClosed} timeout="auto" unmountOnExit>
-        <List component="div" disablePadding className={classes.listItem}>
-          {itemsToShow}
-          </List>
-        </Collapse>
-      </List>
-    );
   }
-  let workItemListDrop = null;
-    if (workItem && workItem["Sprint 1"]) {
-      workItemListDrop = workItem["Sprint 1"];
+  
+  const refreshDataWorkItem = () => {
+    const payload = {
+      id: location.state.id,
+    };
+    if (payload !== {}) {
+      props.getWorkItemProject(payload);
+      props.getSprint(payload);
     }
+    console.log(props.workItemProject)
+  }
+  const closeOverlayWorkItem =() =>{
+    openEditOverlay(!show)
+  }
 
-    debugger
+  const refreshDataSprint = () => {
+    const payload = {
+      id: location.state.id,
+    };
+    if (payload !== {}) {
+      props.getWorkItemProject(payload);
+      props.getSprint(payload);
+    }
+    console.log(props.workItemProject)
+  }
+  const closeOverlaySprint =() =>{
+    openEditSprintOverlay(!show1)
+  }
+
+  const refreshDataCreateSprint = () => {
+    const payload = {
+      id: location.state.id,
+    };
+    if (payload !== {}) {
+      props.getWorkItemProject(payload);
+      props.getSprint(payload);
+    }
+    console.log(props.workItemProject)
+  }
+  const closeOverlayCreateSprint =() =>{
+    openCreateOverlay(!show2)
+  }
+
+
+
+ const isCollapsed = (id) => {
+    return closed.indexOf(id) > -1
+  };
   return (
     <Grid container spacing={7}>
       <Grid item sm={0.3}></Grid>
@@ -577,11 +446,11 @@ function BacklogContent(props) {
                       <div className={classes.icon} onClick={() => showClickSprintOverlay(sprint.id)}><BorderColorIcon style={{ fontSize: 17 }} /></div>
                       <ListItem button onClick={() => handleClick(sprintNames[index])} style={sprint.closed ? { backgroundColor: '#eeeeee', 'border-radius': '15px', cursor: 'not-allowed' } : {}}>
                         <ListItemText primary={sprintNames[index]} />
-                        {!sprint.closed && (isCollapsed(sprints[index]) ? <ExpandMore /> : <ExpandLess />)}
+                        {(isCollapsed(sprints[index]) ? <ExpandMore /> : <ExpandLess />)}
                       </ListItem>
-                      <Collapse in={!isCollapsed(sprints[index])} timeout="auto" unmountOnExit>
+                      <Collapse in={!isCollapsed(sprintNames[index])} timeout="auto" unmountOnExit>
                         <List component="div" disablePadding className={classes.listItem}>
-                          <WorkItemList workItems={sprint.items} classes={classes} />
+                          <WorkItemList workItems={sprint.items} classes={classes} showClick={showClick}/>
                         </List>
                       </Collapse>
                     </List>
@@ -592,19 +461,17 @@ function BacklogContent(props) {
             </Droppable>
           ))}
         </DragDropContext>
-        
-        {/* {itemList} */}
       </Grid>
       {idWi && show &&  (
         <Backdrop className={classes.backdrop} open={show}>
-          <StoryContentEdit _id={idWi} />
+          <StoryContentEdit _id={idWi} refreshData={refreshDataWorkItem} closeOverlay={closeOverlayWorkItem} show={show}/>
         </Backdrop>
       )}
         <Backdrop className={classes.backdrop} open={show2}>
-          <SprintCreateOverlay/>
+          <SprintCreateOverlay refreshData={refreshDataCreateSprint} closeOverlay={closeOverlayCreateSprint}/>
         </Backdrop>
         {id_Sprint && <Backdrop className={classes.backdrop} open={show1}>
-            <SprintEditOverlay id={id_Sprint}/>
+            <SprintEditOverlay id={id_Sprint} refreshData={refreshDataSprint} closeOverlay={closeOverlaySprint}/>
         </Backdrop>}
     </Grid>
   );
