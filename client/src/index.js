@@ -46,7 +46,7 @@ ReactDOM.render(
         <ThemeProvider theme={theme}>
           <ConfirmProvider>
             <CssBaseline />
-            <App />
+            <App/>
           </ConfirmProvider>
         </ThemeProvider>
       </React.StrictMode>

@@ -1,8 +1,8 @@
 import { toast } from 'react-toastify';
 
 export function globalErrorHandler(error) {
-    if (error && error.message)
-        toast.error(error.message);
+    if (error && error.error)
+        toast.error(error.error, {className: "hey"});
     else
         toast.error('An error occured!');
 

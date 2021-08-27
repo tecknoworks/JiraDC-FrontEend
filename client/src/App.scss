@@ -1,5 +1,7 @@
 body {
   background-color: #212121;
+  overflow-x: hidden;
+  overflow-y: scroll;
 }
 .App-logo {
   height: 40vmin;
@@ -18,5 +20,36 @@ body {
   }
   to {
     transform: rotate(360deg);
+  }
+}
+
+.hey {
+  background-color: #212121;
+  height: auto;
+  width: auto;
+}
+
+
+.succes {
+  background-color: #70d666;
+  height: auto;
+  width: auto;
+}
+
+.left-menu-project {
+  display: flex;
+  header {
+    width: 0;
+    height: 0;
+    left: 0;
+
+    button.MuiIconButton-root {
+      color: #fff;
+      background-color: #597ef7;
+      border-radius: 0;
+      left: -12px;
+      width: 73px;
+      height: 64px;
+    }
   }
 }

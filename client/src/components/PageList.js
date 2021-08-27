@@ -57,6 +57,7 @@ const styles = (theme) => ({
     },
     HomeContainer: {
         "padding-top": "80px",
+         "overflow-x": 'hidden',
     }
 });
 
@@ -68,8 +69,6 @@ class PageList extends React.Component {
     }
 
     componentWillMount() {
-        const { fetchPages } = this.props;
-        fetchPages({});
     }
 
     onRemovePage(id) {
@@ -86,7 +85,7 @@ class PageList extends React.Component {
     }
 
     render() {
-        let { loadingPages, pages, classes } = this.props;
+        let { classes } = this.props;
 
         return (
             <div className={classes.HomeContainer}>
@@ -113,13 +112,9 @@ class PageList extends React.Component {
 }
 
 const mapStateToProps = state => ({
-    pages: state.pages.data,
-    loadingPages: state.pages.loadingPages
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-    fetchPages: fetchPages,
-    removePage: removePage
 }, dispatch);
 
 export default compose(connect(mapStateToProps, mapDispatchToProps), withStyles(styles))(PageList);

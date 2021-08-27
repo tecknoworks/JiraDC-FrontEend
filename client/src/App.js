@@ -3,6 +3,7 @@ import { bindActionCreators, compose } from 'redux';
 import { connect, useDispatch, useSelector } from 'react-redux';
 import { login } from './actions';
 // Style
+import 'react-toastify/dist/ReactToastify.css';
 import './App.scss';
 
 // Router
@@ -25,6 +26,8 @@ import ProjectDetails from './components/project/ProjectDetails';
 import ComponentContent from './components/project/ComponentContent';
 import backlogContent from './components/project/backlogContent';
 import ActiveSprintsContent from './components/project/ActiveSprintsContent';
+import Notifications from './components/Notifications';
+import SideMenu from './components/SideMenu';
 function App(props) {
 
   let routes=" "
@@ -54,6 +57,8 @@ function App(props) {
   return (
     <Router>
       <NavBar />
+      <GlobalErrors />
+    <Notifications/>
       <Switch>
         <Route path="/" exact component={PageList} />
         <Persistance path="/login" type="guest">
@@ -62,10 +67,10 @@ function App(props) {
         <Route path="/signup" component={SignUp} />
         <Route path="/projects" component={ProjectPage} />
         <Route path="/allprojects" component={AllProjectsContent} />
-        <Route path="/project/" component={ProjectDetails} />
-        <Route path="/components/" component={ComponentContent} />
-        <Route path="/backlog/" component={backlogContent} />
-        <Route path="/sprint/" component={ActiveSprintsContent} />
+        <Route path="/project/" component={ProjectDetails} component={SideMenu} />
+        <Route path="/components/" component={ComponentContent} component={SideMenu}/>
+        <Route path="/backlog/" component={backlogContent} component={SideMenu}/>
+        <Route path="/sprint/" component={ActiveSprintsContent} component={SideMenu} />
       </Switch>
       <Footer />
     </Router>

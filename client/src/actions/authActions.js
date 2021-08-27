@@ -86,6 +86,7 @@ export function login(data) {
             .then(response => responseToJson(response))
             .then(json => dispatch(loginSuccess(json)))
             .catch(error => {
+                debugger
                 console.log(error)
                 dispatch(loginError());
                 return globalErrorHandler(error);

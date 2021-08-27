@@ -19,6 +19,8 @@ import CardActions from '@material-ui/core/CardActions';
 import { bindActionCreators, compose } from 'redux';
 import { connect, useDispatch, useSelector } from 'react-redux';
 import { getProject } from '../actions';
+import SideMenu from './SideMenu';
+import { useHistory } from "react-router-dom";
 
 const styles = (theme) => ({
   cardColor:{
@@ -55,7 +57,14 @@ const styles = (theme) => ({
 function ProjectsContent(props) {
   const { classes } = props;
   const projects= props.project
-
+  const history = useHistory();
+  const handleClick = (name, id) => {
+    history.push({
+      pathname: "/project",
+      search: "?name=" + name,
+      state: { detail: name, id: id },
+    });
+  };  
   let one=true
     useEffect(() => {
       props.getProject()
@@ -81,7 +90,7 @@ function ProjectsContent(props) {
           </Typography>
         </CardContent>
         <CardActions>
-          <Button size="small">See project</Button>
+          <Button  onClick={() => handleClick(project.name, project.id)}  size="small">See project</Button>
         </CardActions>
         </Grid>
         </Grid>
@@ -89,8 +98,9 @@ function ProjectsContent(props) {
    
     </Grid>
   ))
-  return (
+  return (    
     <div>
+ 
       <Grid container spacing={3}>
           {cardsArray}
      </Grid>
