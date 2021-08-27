@@ -5,6 +5,7 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import { BrowserRouter as Router, 
     useLocation } from "react-router-dom";
 import backlogContent from './backlogContent';
+import SideMenu from '../SideMenu';
 
 let theme = createTheme({
   palette: {
@@ -76,7 +77,8 @@ function ProjectDetails(props) {
           </main>
         </div>
       </div>
-    </ThemeProvider>
+    </ThemeProvider>  
+
   );
 }
 

@@ -1,236 +1,282 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import clsx from 'clsx';
-import { withStyles } from '@material-ui/core/styles';
-import Divider from '@material-ui/core/Divider';
+import { makeStyles, useTheme } from '@material-ui/core/styles';
+import Drawer from '@material-ui/core/Drawer';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
 import List from '@material-ui/core/List';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import Typography from '@material-ui/core/Typography';
+import Divider from '@material-ui/core/Divider';
+import IconButton from '@material-ui/core/IconButton';
+import MenuIcon from '@material-ui/icons/Menu';
+import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import HomeIcon from '@material-ui/icons/Home';
-import DnsRoundedIcon from '@material-ui/icons/DnsRounded';
-import SettingsIcon from '@material-ui/icons/Settings';
-import DehazeIcon from '@material-ui/icons/Dehaze';
-import WorkIcon from '@material-ui/icons/Work';
-import { createTheme, ThemeProvider} from '@material-ui/core/styles';
-import { useHistory } from 'react-router-dom';
+import InboxIcon from '@material-ui/icons/MoveToInbox';
+import MailIcon from '@material-ui/icons/Mail';
+import AllProjectsContent from './AllProjectsContent';
+import { withStyles } from '@material-ui/core/styles';
+import PropTypes from 'prop-types';
+import ProjectsContent from './ProjectsContent';
+import ProjectDetails from './project/ProjectDetails';
+import ActiveSprintsContent from './project/ActiveSprintsContent';
 import CallToActionIcon from '@material-ui/icons/CallToAction';
+import WorkIcon from '@material-ui/icons/Work';
+import DnsOutlinedIcon from '@material-ui/icons/DnsOutlined';
+import { useHistory } from 'react-router-dom';
 import {
   BrowserRouter as Router,
   Switch,
   useLocation
 } from "react-router-dom";
+import ComponentContent from './project/ComponentContent';
+import BacklogContent from './project/backlogContent';
+import DynamicFeedIcon from '@material-ui/icons/DynamicFeed';
+import TrendingUpIcon from '@material-ui/icons/TrendingUp';
+import AddToQueueIcon from '@material-ui/icons/AddToQueue';
+import CodeIcon from '@material-ui/icons/Code';
+import CloudQueueIcon from '@material-ui/icons/CloudQueue';
+import DirectionsBoatIcon from '@material-ui/icons/DirectionsBoat';
+import PhoneCallbackIcon from '@material-ui/icons/PhoneCallback';
+import MenuBookIcon from '@material-ui/icons/MenuBook';
+import SettingsIcon from '@material-ui/icons/Settings';
+import WorkOutlineOutlinedIcon from '@material-ui/icons/WorkOutlineOutlined';
+import AssignmentOutlinedIcon from '@material-ui/icons/AssignmentOutlined';
+const drawerWidth = 240;
 
-const categoriesProjectDetails = [
-  {
-    id: 'Development',
-    children: [
-      { id: 'Backlog', icon: <DehazeIcon /> },
-      { id: 'Active sprints', icon: <DnsRoundedIcon />, active: false },
-    ],
+const useStyles = makeStyles((theme) => ({
+  root: {
+    display: 'flex',
   },
-  {
-    id: 'Tools',
-    children: [
-      { id: 'Components', icon: <CallToActionIcon /> },
-      { id: 'Test sessions', icon: <SettingsIcon /> },
-    ],
+  appBar: {
+    zIndex: theme.zIndex.drawer + 1,
+    transition: theme.transitions.create(['width', 'margin'], {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen,
+    }),
   },
-];
-const categoriesProject = [
-  {
-    id: 'Development',
-    children: [
-      { id: 'Projects', icon: <WorkIcon />, active: true },
-    ],
+  appBarShift: {
+    marginLeft: drawerWidth,
+    width: `calc(100% - ${drawerWidth}px)`,
+    transition: theme.transitions.create(['width', 'margin'], {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
   },
-  {
-    id: 'Settings',
-    children: [
-      { id: 'Test sessions', icon: <SettingsIcon /> },
-    ],
+  menuButton: {
+    marginRight: 36,
   },
-];
-const categoriesCreate = [
-  {
-    id: 'Project Templates',
-    children: [
-      { id: 'Software Development', icon: <WorkIcon />, active: true },
-     
-    ],
-  }
-];
-let theme = createTheme({
-  MuiDrawer: {
-    paper: {
-      backgroundColor: "#ffffff",
-    },
-  },
-  MuiPaper:{
-    root:{
-    backgroundColor: "#232f3e",}
-  },
-});
-const styles = (theme) => ({
-  categoryHeader: {
-    paddingTop: theme.spacing(2),
-    paddingBottom: theme.spacing(2),
-  },
-  categoryHeaderPrimary: {
-    color: theme.palette.common.white,
-  },
-  item: {
-    paddingTop: 1,
-    paddingBottom: 1,
-    color: 'rgba(255, 255, 255, 0.7)',
-    '&:hover,&:focus': {
-      backgroundColor: 'rgba(255, 255, 255, 0.08)',
-    },
-  },
-  itemCategory: {
-    backgroundColor: "#232f3e",
-    boxShadow: '0 -1px 0 #404854 inset',
-    paddingTop: theme.spacing(2),
-    paddingBottom: theme.spacing(2),
-  },
-  firebase: {
-    fontSize: 24,
-    color: theme.palette.common.white,
-  },
-  itemActiveItem: {
-    color: '#4fc3f7',
-  },
-  itemPrimary: {
-    fontSize: 'inherit',
-  },
-  itemIcon: {
-    minWidth: 'auto',
-    marginRight: theme.spacing(2),
-  },
-  divider: {
-    marginTop: theme.spacing(2),
+  hide: {
+    display: 'none',
   },
   drawer: {
+    width: drawerWidth,
+    flexShrink: 0,
+    whiteSpace: 'nowrap',
+  },
+  drawerOpen: {
+    width: drawerWidth,
+    transition: theme.transitions.create('width', {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+  },
+  drawerClose: {
+    transition: theme.transitions.create('width', {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen,
+    }),
+    width: theme.spacing(7) + 1,
     [theme.breakpoints.up('sm')]: {
-      width: 256,
-      flexShrink: 0,
-      backgroundColor:"#232f3e"
+      width: theme.spacing(9) + 1,
     },
   },
-  
-});
+  toolbar: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    padding: theme.spacing(0, 1),
+    // necessary for content to be below app bar
+    ...theme.mixins.toolbar,
+  },
+  content: {
+    flexGrow: 1,
+    padding: theme.spacing(2),
+  },
+}));
+function SideMenu() {
+  const classes = useStyles();
+  const theme = useTheme();
+  const history = useHistory();
+  let location = useLocation()
+  let content = ""
+  if (location.pathname === "/project")
+    content = <span><ActiveSprintsContent /></span>
+  else
+    if (location.pathname === "/components")
+      content = <span><ComponentContent /></span>
+    else
+      if (location.pathname === "/backlog")
+        content = <span><BacklogContent /></span>
+      else
+        if (location.pathname === "/sprint")
+          content = <span><ActiveSprintsContent /></span>
 
-function SideMenu(props) {
-  const { classes, ...other } = props;
-  const history=useHistory();
-  let categories=" "
-    let location=useLocation()
-    let content=" "
-    if(location.pathname==="/project" || location.pathname==="/components" || location.pathname==="/backlog" || location.pathname==="/sprint"){
-      categories=categoriesProjectDetails
-      content=<span>
-        <ListItem className={clsx(classes.item, classes.itemCategory)}>
-        <HomeIcon />{location.state.detail}
-        </ListItem>
-      </span>
-   }
-    if(location.pathname==="/projects" ||  location.pathname==="/allprojects"){
-       categories=categoriesProject
-       content=<span>
-         
-         <ListItem className={clsx(classes.item, classes.itemCategory)}>
-         <HomeIcon />Home Page
-         </ListItem>
-       </span>
-    }else if(location.pathname==="/projects/create" || location.pathname==="/projects/create/kanban" || location.pathname==="/projects/create/scrum" || location.pathname==="/projects/create/bugtracking"){
-        categories=categoriesCreate
-        content=<span></span>
+  const [open, setOpen] = React.useState(true);
+
+
+  const handleDrawerOpen = () => {
+    setOpen(true);
+  };
+
+  const handleDrawerClose = () => {
+    setOpen(false);
+  };
+  const FunctionalIcons = (index) => {
+    if (index === 0)
+      return <AssignmentOutlinedIcon />
+    else
+      if (index === 1)
+        return <DnsOutlinedIcon />
+      else
+        if (index === 2)
+          return <WorkOutlineOutlinedIcon />
+  }
+
+  const UnusedIcons = (index_unused) => {
+    if (index_unused === 0)
+      return <DynamicFeedIcon />
+    else
+      if (index_unused === 1)
+        return <TrendingUpIcon />
+    else
+      if (index_unused === 2)
+        return <AddToQueueIcon />
+    else
+      if (index_unused === 3)
+        return <CodeIcon />
+    else
+      if (index_unused === 4)
+        return <CloudQueueIcon />
+    else
+      if (index_unused === 5)
+        return <DirectionsBoatIcon />
+      if (index_unused === 6)
+        return <PhoneCallbackIcon />
+    else
+      if (index_unused === 7)
+        return  <MenuBookIcon />
+    else
+      if (index_unused === 8)
+        return <SettingsIcon/>
+  }
+
+
+  const slectedItem = (index) => {
+    if (index === 0) {
+      history.push({
+        pathname: '/backlog',
+        search: location.search,
+        state: { detail: location.state.detail, id: location.state.id }
+      })
     }
- const selectedChildren=(id) =>{
-    if(id==="Projects")
-    {
-      categoriesProject[0].children[0].active=true
-      history.push('/allprojects')
-    }
-    else  if(id==="Backlog")
-    {
-      categoriesProjectDetails[0].children[0].active=true
-      categoriesProjectDetails[0].children[1].active=false
-      categoriesProjectDetails[1].children[0].active=false
-      categoriesProjectDetails[1].children[1].active=false
-      history.push({pathname: '/backlog',
-      search: location.search,
-      state: { detail: location.state.detail ,  id: location.state.id}})
-    }
-    else  if(id==="Active sprints")
-    {
-      categoriesProjectDetails[0].children[0].active=false
-      categoriesProjectDetails[0].children[1].active=true
-      categoriesProjectDetails[1].children[0].active=false
-      categoriesProjectDetails[1].children[1].active=false
-      history.push({pathname: '/sprint',
-      search: location.search,
-      state: { detail: location.state.detail ,  id: location.state.id}})
-    }else  if(id==="Components")
-    {
-      categoriesProjectDetails[0].children[0].active=false
-      categoriesProjectDetails[0].children[1].active=false
-      categoriesProjectDetails[1].children[0].active=true
-      categoriesProjectDetails[1].children[1].active=false
-      history.push({pathname: '/components',
-      search: location.search,
-      state: { detail: location.state.detail, id: location.state.id }})
-    }
-    }
+    else
+      if (index === 1) {
+        history.push({
+          pathname: '/sprint',
+          search: location.search,
+          state: { detail: location.state.detail, id: location.state.id }
+        })
+      }
+      else
+        if (index === 2) {
+          history.push({
+            pathname: '/components',
+            search: location.search,
+            state: { detail: location.state.detail, id: location.state.id }
+          })
+        }
+
+  }
   return (
-    <ThemeProvider theme={theme}>
-    <nav className={classes.drawer}>
-      
-      <List disablePadding>
-        <ListItem className={clsx(classes.firebase, classes.item, classes.itemCategory)}>
-          Side Menu
-        </ListItem>
-        {content}
-        {categories.map(({ id, children }) => (
-          <React.Fragment key={id}>
-            <ListItem className={classes.categoryHeader}>
-              <ListItemText
-                classes={{
-                  primary: classes.categoryHeaderPrimary,
-                }}
-              >
-                {id}
-              </ListItemText>
-            </ListItem>
-            {children.map(({ id: childId, icon, active }) => (
-              <ListItem
-                key={childId}
-                button
-                className={clsx(classes.item, active && classes.itemActiveItem)}
-                onClick={() => selectedChildren(childId)}
-              >
-                <ListItemIcon className={classes.itemIcon}>{icon}</ListItemIcon>
-                <ListItemText
-                  classes={{
-                    primary: classes.itemPrimary,
-                  }}
-                >
-                  {childId}
-                </ListItemText>
-              </ListItem>
-            ))}
+    <div className={classes.root} className="left-menu-project">
+      <CssBaseline />
+      <AppBar
+        position="fixed"
+        className={clsx(classes.appBar, {
+          [classes.appBarShift]: open,
+        })}
+      >
+        <Toolbar>
+          <IconButton
+            color="inherit"
+            aria-label="open drawer"
+            onClick={handleDrawerOpen}
+            edge="start"
+            className={clsx(classes.menuButton, {
+              [classes.hide]: open,
+            })}
+          >
+            <MenuIcon />
+          </IconButton>
+        </Toolbar>
+      </AppBar>
+      <Drawer
+        variant="permanent"
+        className={clsx(classes.drawer, {
+          [classes.drawerOpen]: open,
+          [classes.drawerClose]: !open,
+        })}
+        classes={{
+          paper: clsx({
+            [classes.drawerOpen]: open,
+            [classes.drawerClose]: !open,
+          }),
+        }}
+      >
+        <div className={classes.toolbar}>
+          <IconButton onClick={handleDrawerClose}>
+            {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+          </IconButton>
+        </div>
+        <Divider />
+        <List>
+          <h2 style={open ? { color: "#597ef7", 'text-align': "center" } : { color: "#fff" }}>{location.state.detail}</h2>
+          {['Backlog', 'Active Sprints', 'Components'].map((text, index) => (
 
-            <Divider className={classes.divider} />
-          </React.Fragment>
-        ))}
-      </List>
-    </nav>
-    </ThemeProvider>
+            <ListItem button onClick={() => slectedItem(index)} key={text}>
+              {<ListItemIcon>{FunctionalIcons(index)}</ListItemIcon>}
+              <ListItemText primary={text} />
+            </ListItem>
+          ))}
+        </List>
+        <Divider />
+
+        <List>
+          {['Roadmap', 'Reports', 'Issues', 'Code', 'Deployments', 'Releases', 'On-call', 'Project pages', 'Test session'].map((text, index_unused) => (
+
+            <ListItem button key={text}>
+              {<ListItemIcon>{UnusedIcons(index_unused)}</ListItemIcon>}
+              <ListItemText primary={text} />
+            </ListItem>
+          ))}
+        </List>
+
+      </Drawer>
+
+      <main className={classes.content}>
+        <div className={classes.toolbar} />
+        {content}
+      </main>
+    </div>
+
   );
 }
-
 SideMenu.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(SideMenu);
+export default SideMenu;

@@ -199,18 +199,18 @@ function ProjectPage(props) {
     else if(location.pathname==="/backlog"){
       content= <span><backlogContent /></span>
   }
-
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
 
   return (
-    <ThemeProvider theme={theme}>
+
+    <ThemeProvider theme={theme}>  
       <div className={classes.root}>
         <CssBaseline />
-        <div className={classes.app}>
-          <main className={classes.main}>
-            {content}
+        <div className={classes.app}> 
+          <main className={classes.main}>  
+            {content}    
           </main>
           <footer className={classes.footer}>
             <Copyright />

@@ -30,6 +30,8 @@ const useStyles = makeStyles((theme) => ({
     },
     title: {
         width:"20%",
+        position:'relative',
+        left:'55px'
     },
     Logo: {
         position: 'absolute',
@@ -76,7 +78,7 @@ function NavBar(props) {
     if (location.pathname === "/") {
         content = <span></span>
     } else {
-        content = <span><Drawer open={drawerOpen} onClose={() => setDrawerOpen(false)}><SideMenu /></Drawer></span>
+      //  content = <span><Drawer open={drawerOpen} onClose={() => setDrawerOpen(false)}><SideMenu /></Drawer></span>
     }
     let value = 0
     if (location.pathname === "/projects") {
@@ -108,23 +110,6 @@ function NavBar(props) {
         </Tabs> 
         </Grid></span>
     }
-    let menuIcon=" "
-    if (location.pathname === "/"||location.pathname === "/login"||location.pathname === "/signup") {
-      menuIcon = 
-        <span>
-        </span>
-      
-    } else {
-      menuIcon = <span><IconButton
-      onClick={() => setDrawerOpen(true)}
-      edge="start"
-      className={classes.menuButton}
-      color="inherit"
-      aria-label="menu"
-    >
-      <MenuIcon />
-    </IconButton></span>
-    }
 
     let logo=" "
     if (location.pathname === "/"||location.pathname === "/login"||location.pathname === "/signup") {
@@ -139,7 +124,7 @@ function NavBar(props) {
     return (
         <AppBar position="static">
             <Toolbar>
-             {menuIcon}
+            
                 <Link href="/" color="inherit" underline="none" variant="h6" className={classes.title}>
                     Jira DC
                 </Link>

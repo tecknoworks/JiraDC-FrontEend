@@ -122,7 +122,7 @@ function AllProjectsContent(props) {
   }
 
   const rows = projects.map((project) =>
-    createData(project._id, project.name, "key", project.type, project.user_id)
+    createData(project._id, project.name, project.key, project.type, project.user_id)
   );
   let None = "None";
   let Kanban = "Kanban";
@@ -135,7 +135,8 @@ function AllProjectsContent(props) {
       search: "?name=" + name,
       state: { detail: name, id: id },
     });
-  };
+  };  
+
   return (
     <Grid container spacing={7}>
       <Grid item sm={0.3}></Grid>
