@@ -83,6 +83,7 @@ const useStyles = makeStyles((theme) => ({
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
     }),
+    top:'65px'
   },
   drawerClose: {
     transition: theme.transitions.create('width', {
@@ -93,6 +94,7 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.up('sm')]: {
       width: theme.spacing(9) + 1,
     },
+    top:'65px'
   },
   toolbar: {
     display: 'flex',
@@ -175,6 +177,21 @@ function SideMenu() {
   }
 
 
+  const chooseStyle=()=>{
+  if(location.pathname==="/backlog")
+  {
+    return [{ color: 'blue'},{ color: 'black'},{ color: 'black'}]
+  }
+  else  if(location.pathname==="/sprint")
+  {
+    return [{ color: 'black'},{ color: 'blue'},{ color: 'black'}]
+    
+  }else  if(location.pathname==="/components")
+  {
+    return [{ color: 'black'},{ color: 'black'},{ color: 'blue'}]
+    
+  }
+}
   const slectedItem = (index) => {
     if (index === 0) {
       history.push({
@@ -238,8 +255,8 @@ function SideMenu() {
         }}
       >
         <div className={classes.toolbar}>
-          <IconButton onClick={handleDrawerClose}>
-            {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+          <IconButton onClick={handleDrawerClose} style={open ? { color: 'black'} : { color: "transparent" }}>
+            {theme.direction === 'rtl' ? <ChevronRightIcon/> : <ChevronLeftIcon />}
           </IconButton>
         </div>
         <Divider />
@@ -247,7 +264,7 @@ function SideMenu() {
           <h2 style={open ? { color: "#597ef7", 'text-align': "center" } : { color: "#fff" }}>{location.state.detail}</h2>
           {['Backlog', 'Active Sprints', 'Components'].map((text, index) => (
 
-            <ListItem button onClick={() => slectedItem(index)} key={text}>
+            <ListItem button onClick={() => slectedItem(index)} key={text}  style={chooseStyle()[index]}>
               {<ListItemIcon>{FunctionalIcons(index)}</ListItemIcon>}
               <ListItemText primary={text} />
             </ListItem>

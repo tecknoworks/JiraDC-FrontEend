@@ -330,6 +330,7 @@ function StoryContentEdit(props) {
       labels: selectedLabelFinal,
       components: selectedComponentFinal,
       comments: currentIssue.comments,
+      key:currentIssue.key,
     };
     console.log(issue);
     handleComments(issue.comments);
@@ -466,6 +467,7 @@ function StoryContentEdit(props) {
       labels: props.updatedWorkItem.labels,
       components: props.updatedWorkItem.components,
       comments: props.updatedWorkItem.comments,
+      key:props.updateWorkItem.key,
     };
   };
   const updateWorkItem = () => {

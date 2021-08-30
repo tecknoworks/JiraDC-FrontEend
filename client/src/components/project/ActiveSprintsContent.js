@@ -3,23 +3,7 @@ import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import { compose, bindActionCreators } from "redux";
 import { connect } from "react-redux";
-import {
-  Grid,
-  Toolbar,
-  Button,
-  InputBase,
-  Paper,
-  List,
-  ListItem,
-  Divider,
-  Card,
-  CardContent,
-  Typography,
-  InputLabel,
-  Select,
-  MenuItem,
-  Backdrop,
-} from "@material-ui/core";
+import {Grid,Toolbar, Button,InputBase,Paper, List,ListItem,Divider, Card, CardContent, Typography,InputLabel,Select,MenuItem,Backdrop,} from "@material-ui/core";
 import { alpha, makeStyles } from "@material-ui/core/styles";
 import SearchIcon from "@material-ui/icons/Search";
 import {
@@ -86,13 +70,11 @@ const styles = (theme) => ({
     color: "#fff",
   },
   paper: {
-    width: "230px",
-    margin: "auto",
-    text: "center",
+    width: "99%",
     overflow: "hidden",
-    padding: "0px",
     "margin-bottom": "40px",
     backgroundColor: "rgb(244, 245, 247)",
+    paddingLeft:"12px"
   },
   title: {
     fontSize: 14,
@@ -495,17 +477,15 @@ function ActiveSprintContent(props) {
         alignItems="stretch"
         spacing={3}
       >
-        <Grid item sm={0.3}></Grid>
-
-        <Grid item xs={2}>
-          <Paper className={classes.paper} elevation={0}>
+        <Grid item xs={2} className="paper">
+          <Paper className={classes.paper} elevation={0} >
             <h4>To do</h4>
           </Paper>
         </Grid>
         <Grid item xs={2}>
           <Paper className={classes.paper} elevation={0}>
             <h4>In Progress</h4>
-          </Paper>
+          </Paper>  
         </Grid>
         <Grid item xs={2}>
           <Paper className={classes.paper} elevation={0}>
@@ -514,8 +494,8 @@ function ActiveSprintContent(props) {
         </Grid>
         <br></br>
       </Grid>
-
       <Grid
+
         container
         direction="row"
         justifyContent="center"
@@ -523,7 +503,6 @@ function ActiveSprintContent(props) {
         spacing={3}
         className={classes.scrollClass}
       >
-        <Grid item sm={0.3}></Grid>
 
         <DragDropContext onDragEnd={onDragEndItems}>
           {status.map((status) => (

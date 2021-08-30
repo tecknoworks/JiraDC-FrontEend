@@ -87,6 +87,9 @@ const styles = (theme) => ({
   },
   summary :{
     top:"0px",
+  },
+  buttonCreate:{
+    "text-align": "-webkit-right"
   }
 
 });
@@ -424,7 +427,7 @@ function BacklogContent(props) {
                   />
                 </div>
               </Grid>
-              <Grid item sm={2}>
+              <Grid item sm={2} className={classes.buttonCreate}>
                 <Button onClick={()=>openCreateOverlay(!show2)} variant="contained" color="primary">
                   Create Sprint
                 </Button>

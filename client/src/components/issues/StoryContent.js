@@ -231,7 +231,7 @@ function StoryContent(props) {
     return <Route path={path}>
     <ComponentContent/>
     </Route>
-    else  if(location.pathname==="/projects")
+    else  if(location.pathname==="mywork")
     return <Route path={path}>
     <ProjectPage/>
     </Route>

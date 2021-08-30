@@ -107,11 +107,11 @@ function ComponentContent(props) {
     props.getComponent();
     one = false;
   }, [one]);
-  function createData(id,name, description, user_id, project_id) {
-    return { id,name, description,  user_id, project_id };
+  function createData(id,name, description, user_id, project_id, issuesNo) {
+    return { id,name, description,  user_id, project_id ,issuesNo};
   }
   const rows = components.map((component) =>
-    createData(component._id, component.name, component.description, component.username, component.projectName, "issues")
+    createData(component._id, component.name, component.description, component.username, component.projectName,  component.issuesNo)
   );
   const handleClick = (name) =>{
     history.push({pathname: '/project',
@@ -149,7 +149,7 @@ function ComponentContent(props) {
                   inputProps={{ "aria-label": "search" }}
                 />
               </div></Grid>
-              <Grid item sm={1}>
+              <Grid>
               <Button onClick={()=>openOverlay(!show)} variant="contained" color="primary">
               Create
             </Button>
@@ -183,6 +183,7 @@ function ComponentContent(props) {
                 <TableCell align="right">Project</TableCell>
                 <TableCell align="right">Issues</TableCell>
                 <TableCell align="right"></TableCell>
+                <TableCell align="right"></TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -194,6 +195,7 @@ function ComponentContent(props) {
                   <TableCell align="right">{row.description}</TableCell>
                   <TableCell align="right">{row.user_id}</TableCell>
                   <TableCell onClick={() => handleClick(row.project_id)} style={{"cursor":'pointer'}} align="right">{row.project_id}</TableCell>
+                  <TableCell align="right">{row.issuesNo}</TableCell>
                   <TableCell align="right">{row.type}</TableCell>
                   <TableCell onClick={()=>{
                     openEditOverlay(!show1)

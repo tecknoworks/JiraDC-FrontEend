@@ -187,13 +187,13 @@ function ProjectPage(props) {
 
   let content=" "
     let location=useLocation()
-    if(location.pathname==="/projects"){
+    console.log(location.pathname)
+    if(location.pathname==="/mywork"){
         content= <span><ProjectsContent /></span>
-    }else if(location.pathname==="/allprojects"){
+    }else if(location.pathname==="/projects"){
       content= <span><AllProjectsContent /></span>
-    }else if(location.pathname==="/projects/create"){
-        content= <span><CreateProjectPage /></span>
-    }else if(location.pathname==="/projects/create/kanban"){
+    
+    }else if(location.pathname==="/kanban"){
         content= <span><KanbanTemplate /></span>
     }
     else if(location.pathname==="/backlog"){
