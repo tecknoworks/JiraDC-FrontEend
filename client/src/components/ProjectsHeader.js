@@ -56,7 +56,7 @@ function ProjectsHeader(props) {
 
   let location=useLocation()
   let value=0
-  if(location.pathname==="/projects"){
+  if(location.pathname==="/mywork"){
        value=0
     }else if(location.pathname==="/people" ){
         value=1

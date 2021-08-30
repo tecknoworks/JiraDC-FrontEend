@@ -28,31 +28,8 @@ import backlogContent from './components/project/backlogContent';
 import ActiveSprintsContent from './components/project/ActiveSprintsContent';
 import Notifications from './components/Notifications';
 import SideMenu from './components/SideMenu';
+import KanbanTemplate from './components/KanbanTemplate';
 function App(props) {
-
-  let routes=" "
-  if(props.isAuthUser){
-    routes=<span>
-        <Route path="/" exact component={PageList} />
-
-<Persistance path="/login" type="guest">
-      <LogIn />
-</Persistance>
-<Route path="/signup" component={SignUp} />
-<Route path="/projects" component={ProjectPage} />
-{/* <Route path="/allprojects" component={AllProjectsContent} /> */}
-    </span>
-  }else{
-    routes=<span>
-      <Route path="/" exact component={PageList} />
-
-<Persistance path="/login" type="guest">
-      <LogIn />
-</Persistance>
-<Route path="/signup" component={SignUp} />
-    </span>
-  }
-
 
   return (
     <Router>
@@ -65,12 +42,14 @@ function App(props) {
           <LogIn />
         </Persistance>
         <Route path="/signup" component={SignUp} />
-        <Route path="/projects" component={ProjectPage} />
-        <Route path="/allprojects" component={AllProjectsContent} />
+        <Route path="/mywork" component={ProjectPage} />
+        <Route path="/projects" component={AllProjectsContent} />
         <Route path="/project/" component={ProjectDetails} component={SideMenu} />
         <Route path="/components/" component={ComponentContent} component={SideMenu}/>
         <Route path="/backlog/" component={backlogContent} component={SideMenu}/>
         <Route path="/sprint/" component={ActiveSprintsContent} component={SideMenu} />
+        <Route path="/create" component={CreateProjectPage} />
+        <Route path="/kanban" component={KanbanTemplate} />
       </Switch>
       <Footer />
     </Router>
