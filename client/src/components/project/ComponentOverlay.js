@@ -15,7 +15,7 @@ import { Editor } from "react-draft-wysiwyg";
 import { EditorState } from "draft-js";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { createMuiTheme } from "@material-ui/core/styles";
-import { BrowserRouter as Router, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, useLocation, Link,Route, Switch } from "react-router-dom";
 import { getIssue, getLabel, getProject, postLabel } from "../../actions";
 import { getAllUsers, getPriority ,getComponent,getLinkedIssues,getSprint, postComponent} from "../../actions";
 import FormHelperText from '@material-ui/core/FormHelperText';
@@ -132,6 +132,7 @@ function ComponentOverlay(props) {
     var filp= projects.filter(function (el) {
             return el.name == location.state.detail
         })
+  const wait=ms=>new Promise(resolve => setTimeout(resolve, ms));
   const postComponent = () =>{
     const payload = {
       name: name,
@@ -141,6 +142,10 @@ function ComponentOverlay(props) {
     }
     console.log(payload)
      props.postComponent(payload);
+     wait(1*1000).then(() => {
+      props.refreshData()
+    })
+     props.closeOverlay()
   }
 
   const handleTextFieldChange = e => {
@@ -181,7 +186,14 @@ const handleTextareaChange = e => {
     console.log(e.target.value)
 
   }
+  const choosePath = () =>{
+    if(location.pathname==="/components")
+      return <Route path={path}>
+      <ComponentContent />
+      </Route>
+    }
   return (
+    <Router>
     <Box width="70%" className={classes.mainBox} height="600px">
       <Grid container spacing={3} className={classes.headerWorkItem}>
         <Grid item sm={12}>
@@ -251,15 +263,18 @@ const handleTextareaChange = e => {
       <Grid container spacing={1} className={classes.footerWorkItem}>
         <Grid item xs={10}></Grid>
         <Grid item xs={1}>
-          <Button href ={path} onClick={postComponent} variant="contained" color="primary">
+          <Button onClick={postComponent} variant="contained" color="primary">
             Create
           </Button>
         </Grid>
         <Grid item xs={1}>
-          <Button href={path} color="primary">Cancel</Button>
+          <Button onClick={props.closeOverlay} color="primary">Cancel</Button>
         </Grid>
       </Grid>
     </Box>
+    <Switch>{choosePath}
+      </Switch>
+    </Router>
   );
 }
 

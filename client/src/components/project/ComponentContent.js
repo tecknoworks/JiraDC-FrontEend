@@ -15,11 +15,11 @@ import { Divider, StepContent, Toolbar, Button } from "@material-ui/core";
 import { alpha, makeStyles } from "@material-ui/core/styles";
 import SearchIcon from "@material-ui/icons/Search";
 import InputBase from "@material-ui/core/InputBase";
-import { getComponent, postComponent } from "../../actions";
+import { getComponent, postComponent,getComponentProject } from "../../actions";
 import { Backdrop} from "@material-ui/core";
 import ComponentOverlay from "./ComponentOverlay";
 import ComponentEditOverlay from "./ComponentEditOverlay";
-import { useHistory } from 'react-router-dom';
+import { BrowserRouter as Router, Switch, useLocation,useHistory } from "react-router-dom";
 import EditIcon from '@material-ui/icons/Edit';
 const styles = (theme) => ({
   root: {
@@ -91,6 +91,7 @@ const styles = (theme) => ({
 });
 
 function ComponentContent(props) {
+  const [searchValue, setSearchValue] = useState("");
   const [show, openOverlay] = useState(false);
   const [show1, openEditOverlay] = useState(false);
   const [idComponent, setidComponent] = useState("");
@@ -101,10 +102,17 @@ function ComponentContent(props) {
   var components = props.components;
   const { classes } = props;
   const history=useHistory();
-
+  let location = useLocation();
   let one = true;
   useEffect(() => {
-    props.getComponent();
+    const payload = {
+      id: location.state.id,
+    };
+    if (payload !== {}) {
+      console.log(payload);
+      props.getComponentProject(payload);
+    }
+   
     one = false;
   }, [one]);
   function createData(id,name, description, user_id, project_id, issuesNo) {
@@ -117,6 +125,33 @@ function ComponentContent(props) {
     history.push({pathname: '/project',
     search: '?name='+name,
     state: { detail: name }})
+  }
+  const refreshData=()=>{
+  const payload = {
+    id: location.state.id,
+  };
+  if (payload !== {}) {
+    props.getComponentProject(payload);
+  }
+}
+  const closeOverlayCreateComponent =() =>{
+    openOverlay(!show)
+  }
+  const closeOverlayEditComponent =() =>{
+    openEditOverlay(!show1)
+  }
+  const handleSearch = e =>{
+    setSearchValue(e.target.value)
+  }
+  const filterWorkItems = (components) =>{
+    let finalItems=[]
+    components.map(p=>{
+      if(p.name.toUpperCase().substring(0,searchValue.length)===searchValue.toUpperCase()){
+        finalItems.push(p)
+      }
+      
+    })
+    return finalItems
   }
   return (
     <Grid container spacing={7}>
@@ -147,18 +182,21 @@ function ComponentContent(props) {
                     input: classes.inputInput,
                   }}
                   inputProps={{ "aria-label": "search" }}
+                  onChange={handleSearch}
                 />
               </div></Grid>
               <Grid>
               <Button onClick={()=>openOverlay(!show)} variant="contained" color="primary">
               Create
             </Button>
-            <Backdrop className={classes.backdrop} open={show}>
-                <ComponentOverlay/>
+            <Backdrop className={classes.backdrop} open={show} >
+                <ComponentOverlay closeOverlay={closeOverlayCreateComponent}/>
             </Backdrop>
             <Backdrop className={classes.backdrop} open={show1}>
                 {idComponent && <ComponentEditOverlay 
                 id={idComponent}
+                closeOverlay={closeOverlayEditComponent}
+                refreshData={refreshData}
                 />}
 
             </Backdrop>
@@ -187,19 +225,19 @@ function ComponentContent(props) {
               </TableRow>
             </TableHead>
             <TableBody>
-              {rows.map((row) => (
+              {filterWorkItems(components).map((row) => (
                 <TableRow  key={row.name}> 
                   <TableCell component="th" scope="row">
                     {row.name}
                   </TableCell>
                   <TableCell align="right">{row.description}</TableCell>
-                  <TableCell align="right">{row.user_id}</TableCell>
-                  <TableCell onClick={() => handleClick(row.project_id)} style={{"cursor":'pointer'}} align="right">{row.project_id}</TableCell>
+                  <TableCell align="right">{row.username}</TableCell>
+                  <TableCell onClick={() => handleClick(row.project_id)} style={{"cursor":'pointer'}} align="right">{row.projectName}</TableCell>
                   <TableCell align="right">{row.issuesNo}</TableCell>
                   <TableCell align="right">{row.type}</TableCell>
                   <TableCell onClick={()=>{
                     openEditOverlay(!show1)
-                    setidComponent(row.id)
+                    setidComponent(row._id)
                     setnameComponent(row.name)
                     setdescriptionComponent(row.description)
                     setuserId(row.user_id)
@@ -220,13 +258,14 @@ ComponentContent.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  components: state.getComponent.component,
+  components: state.getComponent.componentByProject,
 });
 
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       getComponent: getComponent,
+      getComponentProject:getComponentProject,
     },
     dispatch
   );

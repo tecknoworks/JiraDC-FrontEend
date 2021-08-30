@@ -17,6 +17,15 @@ const getComponent = () => {
         },
     });
 }
+const getComponentProject = (data) => {
+    return fetch(`${BASE_API_URL}/componentProject`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    });
+}
 
 const updateComponent = (data) => {
     return fetch(`${BASE_API_URL}/component`, {
@@ -33,4 +42,5 @@ export default {
     getComponent,
     postComponent,
     updateComponent,
+    getComponentProject,
 };

@@ -50,6 +50,7 @@ export function getWorkItem(state = getWorkItemInitialState, action) {
     case WorkItemActionsTypes.WORKITEM_GET_PROJECT_REQUEST:
           return { ...state, loading: true };
     case WorkItemActionsTypes.WORKITEM_GET_PROJECT_REQUEST_SUCCESS:
+      debugger
           return { ...state,workItemProject:action.data, loading: false };
     case WorkItemActionsTypes.WORKITEM_GET_PROJECT_REQUEST_ERROR:
           return { ...state,loading: false };

@@ -10,6 +10,10 @@ export const ComponentActionsTypes = {
     COMPONENT_GET_REQUEST_SUCCESS: 'COMPONENT_GET_REQUEST_SUCCESS',
     COMPONENT_GET_REQUEST_ERROR: 'COMPONENT_GET_REQUEST_ERROR',
 
+    COMPONENT_GET_PROJECT_REQUEST: 'COMPONENT_GET_PROJECT_REQUEST',
+    COMPONENT_GET_PROJECT_REQUEST_SUCCESS: 'COMPONENT_GET_PROJECT_REQUEST_SUCCESS',
+    COMPONENT_GET_PROJECT_REQUEST_ERROR: 'COMPONENT_GET_PROJECT_REQUEST_ERROR',
+
     COMPONENT_UPDATE_REQUEST: 'COMPONENT_UPDATE_REQUEST',
     COMPONENT_UPDATE_REQUEST_SUCCESS: 'COMPONENT_UPDATE_REQUEST_SUCCESS',
     COMPONENT_UPDATE_REQUEST_ERROR: 'COMPONENT_UPDATE_REQUEST_ERROR',
@@ -80,6 +84,38 @@ export function getComponent() {
             .then(json => dispatch(getSuccess(json)))
             .catch(error => {
                 dispatch(getError());
+                return globalErrorHandler(error);
+            });
+    };
+}
+//getComponentProject
+export function getComponentProjectBegin() {
+    return {
+        type: ComponentActionsTypes.COMPONENT_GET_PROJECT_REQUEST
+    };
+}
+
+export function getComponentProjectSuccess(data) {
+    return {
+        type: ComponentActionsTypes.COMPONENT_GET_PROJECT_REQUEST_SUCCESS,
+        data
+    };
+}
+
+export function getComponentProjectError() {
+    return {
+        type: ComponentActionsTypes.COMPONENT_GET_PROJECT_REQUEST_ERROR,
+    };
+}
+export function getComponentProject(data) {
+    return dispatch => {
+        dispatch(getComponentProjectBegin());
+
+        return ComponentRequest.getComponentProject(data)
+            .then(response => responseToJson(response))
+            .then(json => dispatch(getComponentProjectSuccess(json)))
+            .catch(error => {
+                dispatch(getComponentProjectError());
                 return globalErrorHandler(error);
             });
     };

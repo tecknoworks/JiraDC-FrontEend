@@ -6,7 +6,7 @@ import { ProjectActionsTypes, postProject, getProject , getKanbanProject,getScru
 import { IssueActionsTypes, getIssue } from './issueActions';
 import { LabelActionsTypes, getLabel, postLabel } from './labelActions';
 import { PriorityActionsTypes, getPriority } from './priorityActions';
-import { ComponentActionsTypes, getComponent, postComponent, updateComponent, userUpdateComponent} from './componentActions';
+import { ComponentActionsTypes, getComponent, postComponent, updateComponent, userUpdateComponent,getComponentProject} from './componentActions';
 import { LinkedIssuesActionsTypes, getLinkedIssues } from './linkedissuesActions';
 import {  CommentActionsTypes,postComment, putComment } from './commentActions'
 import { SprintActionsTypes,getSprint, postSprint, updateSprint, userUpdateSprint} from './sprintActions'
@@ -66,6 +66,7 @@ export {
      postComponent,
      updateComponent,
      userUpdateComponent,
+     getComponentProject,
 
     //LinkedIssues
     LinkedIssuesActionsTypes,

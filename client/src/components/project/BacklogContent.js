@@ -84,85 +84,95 @@ const styles = (theme) => ({
     width:"10%",
     "padding-top":"0px",
     "padding-bottom":"0px",
+    
+  },
+  priorityGrid:{
+    "max-width": "min-content",
   },
   summary :{
     top:"0px",
   },
+  iconPosition:{
+    "vertical-align": "top"
+  },
+  priorityIcon:{
+    "vertical-align": "text-bottom",
+  },
   buttonCreate:{
-    "text-align": "-webkit-right"
-  }
+    "text-align": "-webkit-right",
+  },
 
 });
 
-const getIssueIcon = (issue) => {
+const getIssueIcon = (issue,classes) => {
   if (issue === "Epic") {
     return (
       
-        <Epic />
+        <Epic className={classes.iconPosition}/>
       
     );
   } else if (issue === "Story") {
     return (
       
-        <Story />
+        <Story className={classes.iconPosition} />
       
     );
   } else if (issue === "Bug") {
     return (
       
-        <Bug />
+        <Bug className={classes.iconPosition}/>
       
     );
   } else if (issue === "Task") {
     return (
       
-        <Task />
+        <Task className={classes.iconPosition}/>
       
     );
   } else if (issue === "SubTask") {
     return (
       
-        <Subtask />
+        <Subtask className={classes.iconPosition} />
       
     );
   }
 
   return (
     
-      <Subtask />
+      <Subtask className={classes.iconPosition}/>
     
   );
 }
 
-const getPriorityIcon = (priority) => {
+const getPriorityIcon = (priority, classes) => {
   if (priority === "Blocker") {
     return (
       
-        <Blocker width="15" height="15" />
+        <Blocker width="15" height="15" className={classes.iconPosition, classes.priorityIcon}/>
       
     );
   } else if (priority === "Critical") {
     return (
       
-        <Critical width="15" height="15" />
+        <Critical width="15" height="15" className={classes.iconPosition, classes.priorityIcon}/>
       
     );
   } else if (priority === "Major") {
     return (
       
-        <Major width="15" height="15" />
+        <Major width="15" height="15" className={classes.iconPosition, classes.priorityIcon}/>
       
     );
   } else if (priority === "Minor") {
     return (
       
-        <Minor width="15" height="15" />
+        <Minor width="15" height="15" className={classes.iconPosition, classes.priorityIcon}/>
       
     );
   } else if (priority === "Trivial") {
     return (
       
-        <Trivial width="15" height="15" />
+        <Trivial width="15" height="15" className={classes.iconPosition, classes.priorityIcon}/>
       
     );
   }
@@ -198,11 +208,16 @@ function WorkItem({ workItem, index, classes, showClick }) {
           <div>
             <ListItem button onClick={() => showClick(workItem._id)} style={{ "cursor": 'pointer',  }} align="right" className={classes.nested, classes.workItem}> 
               <Grid container spacing={0}>
-                <Grid item xs={10} className={classes.gridItem}>
-                {getIssueIcon(workItem.issue_type)} {workItem.summary}
+                <Grid item xs={8} className={classes.gridItem}>
+                {getIssueIcon(workItem.issue_type,classes)} {workItem.summary}
                 </Grid>
-                <Grid item xs={1} className={classes.iconImage}>
-                  {getPriorityIcon(workItem.priority)}
+                <Grid item xs={2} className={classes.iconImage}>
+                {workItem.assignee}
+                
+                
+                </Grid>
+                <Grid item xs={1} className={classes.iconImage, classes.priorityGrid}>
+                {getPriorityIcon(workItem.priority,classes)}
                 </Grid>
               </Grid>
             </ListItem>
@@ -223,6 +238,7 @@ const WorkItemList = React.memo(function WorkItemList({ workItems, classes, show
 
 function BacklogContent(props) {
 
+ const [searchValue, setSearchValue] = useState("");
  const [closed, setClosed]=useState([])
  const [idWi, setIdWi] = useState("");
  const [show, openEditOverlay] = useState(false);
@@ -393,8 +409,28 @@ function BacklogContent(props) {
     openCreateOverlay(!show2)
   }
 
+const handleSearch = e =>{
+  setSearchValue(e.target.value)
+}
+const filterWorkItems = (sprint) =>{
+  let finalItems=[]
+  console.log(sprint.items)
+  sprint.items.map(i=>{
+    if(i.summary.toUpperCase().substring(0,searchValue.length)===searchValue.toUpperCase() && !sprint.closed){
+      finalItems.push(i)
+    }
+    
+  })
+  return finalItems
+}
+// useEffect(() => {
 
-
+//   console.log(props.updateWorkItem.loading)
+//   if(props.updateWorkItem.loading==false){
+//     console.log("hey")
+//     props.refreshData()
+//   }
+// }, [props.updateWorkItem.loading]);
  const isCollapsed = (id) => {
     return closed.indexOf(id) > -1
   };
@@ -424,6 +460,7 @@ function BacklogContent(props) {
                       input: classes.inputInput,
                     }}
                     inputProps={{ "aria-label": "search" }}
+                    onChange={handleSearch}
                   />
                 </div>
               </Grid>
@@ -453,7 +490,7 @@ function BacklogContent(props) {
                       </ListItem>
                       <Collapse in={!isCollapsed(sprintNames[index])} timeout="auto" unmountOnExit>
                         <List component="div" disablePadding className={classes.listItem}>
-                          <WorkItemList workItems={sprint.items} classes={classes} showClick={showClick}/>
+                          <WorkItemList workItems={filterWorkItems(sprint)} classes={classes} showClick={showClick}/>
                         </List>
                       </Collapse>
                     </List>

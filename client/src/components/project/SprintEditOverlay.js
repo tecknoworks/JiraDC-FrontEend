@@ -85,12 +85,15 @@ function SprintEditOverlay(props) {
     props.userUpdateSprint(sprint);
 
   }, [props.sprints]);
-
+const wait=ms=>new Promise(resolve => setTimeout(resolve, ms));
   const updateSprint = () => {
     const sprint = getSprintPayload(props.sprint);
     console.log(sprint)
     props.updateSprint(sprint);
-    props.refreshData()
+    
+    wait(1*1000).then(() => {
+      props.refreshData()
+    })
     props.closeOverlay()
   }
 

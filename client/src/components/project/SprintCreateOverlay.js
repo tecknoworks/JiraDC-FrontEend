@@ -117,6 +117,7 @@ function SprintCreateOverlay(props) {
     var filp= projects.filter(function (el) {
             return el.name == location.state.detail
         })
+  const wait=ms=>new Promise(resolve => setTimeout(resolve, ms));      
   const postSprint = () =>{
     const payload = {
       name: name,
@@ -125,7 +126,9 @@ function SprintCreateOverlay(props) {
     }
     console.log(payload)
     props.postSprint(payload);
-    props.refreshData()
+    wait(2*1000).then(() => {
+      props.refreshData()
+    })
     props.closeOverlay()
   }
 

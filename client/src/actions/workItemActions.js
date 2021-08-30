@@ -111,6 +111,7 @@ export function getWorkItem() {
 
 //getWorkItemProjectId
 export function getWorkItemProjectBegin() {
+    console.log("begin")
     return {
         type: WorkItemActionsTypes.WORKITEM_GET_PROJECT_REQUEST
     };
@@ -130,7 +131,10 @@ export function getWorkItemProjectError() {
 }
 
 export function getWorkItemProject(data) {
+    console.log(data)
+    debugger
     return dispatch => {
+        debugger
         dispatch(getWorkItemProjectBegin());
         return WorkItemRequest.getWorkItemProject(data)
             .then(response => responseToJson(response))
@@ -263,10 +267,11 @@ export function updateWorkItemBegin() {
     };
 }
 
-export function updateWorkItemSuccess(data) {
-   // if (refreshProject && refreshProject.isRefresh) {
-        //getWorkItemProject({});
-   // }
+export function updateWorkItemSuccess(data,refreshProject) {
+    debugger
+//    if (refreshProject && refreshProject.isRefresh) {
+//         getWorkItemProject({id:project_id});
+//    }
     return {
         type: WorkItemActionsTypes.WORKITEM_UPDATE_REQUEST_SUCCESS,
         data
@@ -278,14 +283,13 @@ export function updateWorkItemError() {
         type: WorkItemActionsTypes.WORKITEM_UPDATE_REQUEST_ERROR,
     };
 }
-export function updateWorkItem(data) {
-    //refreshProject = {isRefresh = true, projectId}
+export function updateWorkItem(data,refreshProject) {
     return dispatch => {
         dispatch(updateWorkItemBegin());
 
         return WorkItemRequest.updateWorkItem(data)
             .then(response => responseToJson(response))
-            .then(json => dispatch(updateWorkItemSuccess(json)))
+            .then(json => dispatch(updateWorkItemSuccess(json,refreshProject)))
             .catch(error => {
                 dispatch(updateWorkItemError());
                 return globalErrorHandler(error);
