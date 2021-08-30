@@ -12,6 +12,7 @@ const postComponentInitialState = {
 const getComponentInitialState = {
   loading: false,
   component: [],
+  componentByProject:[]
 };
 
 const updateComponentInitialState = {
@@ -45,6 +46,12 @@ export function getComponent(state = getComponentInitialState, action) {
       return { ...state, component: action.data, loading: false };
     case ComponentActionsTypes.COMPONENT_GET_REQUEST_ERROR:
       return { ...state, loading: false };
+      case ComponentActionsTypes.COMPONENT_GET_PROJECT_REQUEST:
+        return { ...state, loading: true };
+      case ComponentActionsTypes.COMPONENT_GET_PROJECT_REQUEST_SUCCESS:
+        return { ...state, componentByProject: action.data, loading: false };
+      case ComponentActionsTypes.COMPONENT_GET_PROJECT_REQUEST_ERROR:
+        return { ...state, loading: false };
   }
 
   return state;

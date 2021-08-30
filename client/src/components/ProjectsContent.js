@@ -90,7 +90,7 @@ function ProjectsContent(props) {
           </Typography>
         </CardContent>
         <CardActions>
-          <Button  onClick={() => handleClick(project.name, project.id)}  size="small">See project</Button>
+          <Button  onClick={() => handleClick(project.name, project._id)}  size="small">See project</Button>
         </CardActions>
         </Grid>
         </Grid>

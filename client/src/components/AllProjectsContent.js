@@ -25,7 +25,7 @@ import { alpha, makeStyles } from "@material-ui/core/styles";
 import SearchIcon from "@material-ui/icons/Search";
 import InputBase from "@material-ui/core/InputBase";
 import { AppBar } from "@material-ui/core";
-import { useHistory } from "react-router-dom";
+import { BrowserRouter as Router, Switch, useLocation ,useHistory} from "react-router-dom";
 const styles = (theme) => ({
   root: {
     width: "275px",
@@ -92,6 +92,7 @@ const styles = (theme) => ({
 });
 
 function AllProjectsContent(props) {
+  const [searchValue, setSearchValue] = useState("");
   const [type, setType] = useState("All Types");
   var projects = props.project;
   const history = useHistory();
@@ -137,6 +138,20 @@ function AllProjectsContent(props) {
     });
   };  
 
+  const handleSearch = e =>{
+    setSearchValue(e.target.value)
+  }
+  const filterWorkItems = (projects) =>{
+    let finalItems=[]
+    projects.map(p=>{
+      if(p.name.toUpperCase().substring(0,searchValue.length)===searchValue.toUpperCase()){
+        finalItems.push(p)
+      }
+      
+    })
+    return finalItems
+  }
+
   return (
     <Grid container spacing={7}>
       <Grid item sm={0.3}></Grid>
@@ -162,6 +177,7 @@ function AllProjectsContent(props) {
                     input: classes.inputInput,
                   }}
                   inputProps={{ "aria-label": "search" }}
+                  onChange={handleSearch}
                 />
               </div>
               <InputLabel id="types" defaultValue="All Types"></InputLabel>
@@ -205,9 +221,9 @@ function AllProjectsContent(props) {
               </TableRow>
             </TableHead>
             <TableBody>
-              {rows.map((row) => (
+              {filterWorkItems(projects).map((row) => (
                 <TableRow
-                  onClick={() => handleClick(row.name, row.id)}
+                  onClick={() => handleClick(row.name, row._id)}
                   key={row.name}
                 >
                   <TableCell

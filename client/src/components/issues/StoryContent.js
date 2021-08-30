@@ -18,7 +18,7 @@ import { BrowserRouter as Router, useLocation, Link,Route, Switch } from "react-
 import { EditorState, convertFromRaw, convertToRaw } from "draft-js"
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { useHistory } from 'react-router-dom';
-import { getIssue, getLabel, getProject, getWorkItem, postLabel, postWorkItem, getWorkItemEpic,} from "../../actions";
+import { getIssue, getLabel, getProject, getWorkItem, postLabel, postWorkItem, getWorkItemEpic, getWorkItemProject} from "../../actions";
 import { getAllUsers, getPriority, getComponent, getLinkedIssues, getSprint,} from "../../actions";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import BacklogContent from "../project/backlogContent";
@@ -170,6 +170,7 @@ function StoryContent(props) {
   const addLabel = (e) => {
     console.log(e.target.value);
   };
+  const wait=ms=>new Promise(resolve => setTimeout(resolve, ms));
   const handleCreate = () => {
     const payload = {
       project: projectId,
@@ -188,7 +189,16 @@ function StoryContent(props) {
     };
     console.log(payload);
     props.postWorkItem(payload);
-    history.push(path)
+    wait(1*1000).then(() => {
+      const payload = {
+        id: location.state.id,
+      };
+      if (payload !== {}) {
+        props.getWorkItemProject(payload);
+      }
+    })
+    props.closeOverlay()
+    //history.push(path)
   };
   const handleTextFieldChange = (e) => {
     console.log(e.target.value);
@@ -329,7 +339,7 @@ function StoryContent(props) {
             </Grid>
             <br></br>
             <Grid item sm={12} xs={6}>
-              <InputLabel fullWidth shrink required={true}>
+              <InputLabel fullWidth shrink>
                 Components
               </InputLabel>
               <Autocomplete
@@ -586,6 +596,7 @@ const mapDispatchToProps = (dispatch) =>
       getWorkItem: getWorkItem,
       postWorkItem: postWorkItem,
       getWorkItemEpic: getWorkItemEpic,
+      getWorkItemProject: getWorkItemProject,
     },
     dispatch
   );

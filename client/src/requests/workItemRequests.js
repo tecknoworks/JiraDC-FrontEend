@@ -1,5 +1,6 @@
 const BASE_API_URL = "http://localhost:8081";
 const getWorkItemProject = (data) => {
+    debugger
     return fetch(`${BASE_API_URL}/workItemProject`, {
         method: 'POST',
         headers: {

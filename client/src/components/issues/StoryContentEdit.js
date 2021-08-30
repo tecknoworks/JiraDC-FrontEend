@@ -468,12 +468,20 @@ function StoryContentEdit(props) {
       comments: props.updatedWorkItem.comments,
     };
   };
+  const wait=ms=>new Promise(resolve => setTimeout(resolve, ms));
   const updateWorkItem = () => {
     const payload = takeValues();
     console.log(payload);
-    props.updateWorkItem(payload);
+    const refreshDB={
+      project_id:props.updatedWorkItem.project,
+      isRefresh:true,
+    }
+    props.updateWorkItem(payload,refreshDB)
+    wait(2*1000).then(() => {
     props.refreshData()
+    })
     props.closeOverlay()
+    
     //history.push(path);
   };
 
@@ -1009,6 +1017,7 @@ StoryContentEdit.propTypes = {
 const mapStateToProps = (state) => ({
   user: state.getAllUsers.user,
   loading: state.getAllUsers.loading,
+  loadingUpdate: state.updateWorkItem.loading,
   priority: state.getPriority.priority,
   component: state.getComponent.component,
   project: state.getProject.project,

@@ -14,7 +14,7 @@ import { Editor } from "react-draft-wysiwyg";
 import { EditorState } from "draft-js";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { createMuiTheme } from "@material-ui/core/styles";
-import { BrowserRouter as Router, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, useLocation, Link,Route, Switch } from "react-router-dom";
 import { getIssue, getLabel, getProject, postLabel } from "../../actions";
 import { getAllUsers, getPriority ,getComponent,getLinkedIssues,getSprint, updateComponent, userUpdateComponent} from "../../actions";
 import { TextareaAutosize } from '@material-ui/core';
@@ -133,6 +133,7 @@ function ComponentEditOverlay(props) {
   const[description,setDescription]=useState("");
   const userData = localStorage.getItem("userData")
 
+  const wait=ms=>new Promise(resolve => setTimeout(resolve, ms));
   const updateComponent = () =>{
     const component = {
       _id: props.component._id,
@@ -143,7 +144,10 @@ function ComponentEditOverlay(props) {
     }
     console.log(component)
     props.updateComponent(component);
-    
+    wait(1*1000).then(() => {
+      props.refreshData()
+    })
+    props.closeOverlay()
   }
   const handleTextFieldChange = e => {
     const component = {
@@ -182,7 +186,16 @@ const handleTextareaChange = e => {
   // const selectedUser = users.find(it => it._id == props.component.user_id)
 
 
+  const choosePath = () =>{
+    if(location.pathname==="/components")
+      return <Route path={path}>
+      <ComponentContent />
+      </Route>
+    }
+  
+
   return (
+    <Router>
     <Box width="70%" className={classes.mainBox} height="600px">
       <Grid container spacing={3} className={classes.headerWorkItem}>
         <Grid item sm={12}>
@@ -262,22 +275,28 @@ const handleTextareaChange = e => {
       <Grid container spacing={1} className={classes.footerWorkItem}>
         <Grid item xs={10}></Grid>
         <Grid item xs={1}>
+        <Link to={path}>
           <Button
-            href={path}
             onClick={updateComponent}
             variant="contained"
             color="primary"
           >
             Save
           </Button>
+          </Link>
         </Grid>
         <Grid item xs={1}>
-          <Button href={path} color="primary">
+        <Link to={path}>
+          <Button onClick={props.closeOverlay} color="primary">
             Cancel
           </Button>
+          </Link>
         </Grid>
       </Grid>
     </Box>
+      <Switch>{choosePath}
+      </Switch>
+      </Router>
   );
 }
 

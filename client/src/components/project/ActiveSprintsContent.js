@@ -274,7 +274,8 @@ const WorkItemList = React.memo(function WorkItemList({ workItems, classes, show
 });
 
 function ActiveSprintContent(props) {
-  const [type, setType] = useState("No Sprint");
+  const [searchValue, setSearchValue] = useState("");
+  const [type, setType] = useState('');
   const [idWi, setIdWi] = useState("");
   const [show, setShow] = useState(false);
   var workItem = props.workItemProject;
@@ -371,9 +372,16 @@ function ActiveSprintContent(props) {
       props.getWorkItemProject(payload);
     }
     for (var property in workItem) workItem[property].open = true;
-
     one = false;
   }, [one]);
+  useEffect(() => {
+    for (var property in workItem) {
+      if(property!=="Backlog"){
+        setType(property)
+        break
+      }
+    }
+  }, [workItem]);
 
   const handleChange = (event) => {
     setType(event.target.value);
@@ -382,7 +390,6 @@ function ActiveSprintContent(props) {
     setShow(!show);
     setIdWi(idWi);
   };
-  var noSprint = "No Sprint";
   var itemsToDo = [];
   var itemsInProgress = [];
   var itemsDone = [];
@@ -400,7 +407,7 @@ function ActiveSprintContent(props) {
     return 0;
   };
   for (var property in workItem) {
-    if (property !== "Backlog")
+    if (property !== "Backlog" && !workItem[property].closed)
       allSprints.push(<MenuItem value={property}>{property}</MenuItem>);
     const id = property.toString();
     if (id === type) {
@@ -440,6 +447,19 @@ function ActiveSprintContent(props) {
   const closeOverlay =() =>{
     setShow(!show)
   }
+  const handleSearch = e =>{
+    setSearchValue(e.target.value)
+  }
+  const filterWorkItems = (status) =>{
+    let finalItems=[]
+    status.items.map(i=>{
+      if(i.summary.toUpperCase().substring(0,searchValue.length)===searchValue.toUpperCase()){
+        finalItems.push(i)
+      }
+      
+    })
+    return finalItems
+  }
   return (
     <div>
       <Grid container spacing={7}>
@@ -467,9 +487,10 @@ function ActiveSprintContent(props) {
                       input: classes.inputInput,
                     }}
                     inputProps={{ "aria-label": "search" }}
+                    onChange={handleSearch}
                   />
                 </div>
-                <InputLabel id="sprint" defaultValue="No sprint"></InputLabel>
+                <InputLabel id="sprint"></InputLabel>
                 <Select
                   labelId="sprint"
                   id="sprint"
@@ -479,7 +500,6 @@ function ActiveSprintContent(props) {
                     return selected;
                   }}
                 >
-                  <MenuItem value={noSprint}>{noSprint}</MenuItem>
                   {allSprints}
                 </Select>
               </Toolbar>
@@ -538,7 +558,7 @@ function ActiveSprintContent(props) {
                         className={classes.listItem}
                       >
                         <WorkItemList
-                          workItems={status.items}
+                          workItems={filterWorkItems(status)}
                           classes={classes}
                           showClick={showClick}
                           
