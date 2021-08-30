@@ -97,8 +97,10 @@ const styles = (theme) => ({
   },
   priorityIcon:{
     "vertical-align": "text-bottom",
-    
-  }
+  },
+  buttonCreate:{
+    "text-align": "-webkit-right",
+  },
 
 });
 
@@ -462,7 +464,7 @@ const filterWorkItems = (sprint) =>{
                   />
                 </div>
               </Grid>
-              <Grid item sm={2}>
+              <Grid item sm={2} className={classes.buttonCreate}>
                 <Button onClick={()=>openCreateOverlay(!show2)} variant="contained" color="primary">
                   Create Sprint
                 </Button>

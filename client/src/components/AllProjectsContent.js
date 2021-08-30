@@ -89,6 +89,9 @@ const styles = (theme) => ({
   tableprojectsheader: {
     "background-color": "#fff",
   },
+  createButton:{
+    "text-align": 'right'
+  },
 });
 
 function AllProjectsContent(props) {
@@ -132,7 +135,7 @@ function AllProjectsContent(props) {
 
   const handleClick = (name, id) => {
     history.push({
-      pathname: "/project",
+      pathname: "/sprint",
       search: "?name=" + name,
       state: { detail: name, id: id },
     });
@@ -197,8 +200,8 @@ function AllProjectsContent(props) {
               </Select>
             </Toolbar>
           </Grid>
-          <Grid item xs={2}>
-            <Button href="/projects/create" variant="contained" color="primary">
+          <Grid item xs={2} className={classes.createButton}>
+            <Button href="/create" variant="contained" color="primary">
               Create Project
             </Button>
           </Grid>

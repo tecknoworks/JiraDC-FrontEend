@@ -1,7 +1,6 @@
 body {
   background-color: #212121;
   overflow-x: hidden;
-  overflow-y: scroll;
 }
 .App-logo {
   height: 40vmin;
@@ -23,15 +22,20 @@ body {
   }
 }
 
-.hey {
-  background-color: #212121;
+.error-auth{
+  background-color: red;
+  height: auto;
+  width: auto;
+}
+.error-general{
+  background-color: red;
   height: auto;
   width: auto;
 }
 
-
 .succes {
   background-color: #70d666;
+  color: #212121;
   height: auto;
   width: auto;
 }
@@ -42,14 +46,22 @@ body {
     width: 0;
     height: 0;
     left: 0;
-
+    top: 65px;
     button.MuiIconButton-root {
-      color: #fff;
-      background-color: #597ef7;
+      color:black;
+      //background-color: white;
       border-radius: 0;
       left: -12px;
       width: 73px;
       height: 64px;
     }
   }
+}
+.paper{
+  padding-left: 0%;
+  padding-right: 0%;
+}
+.app-logo{
+  height: 40px;
+  cursor: pointer;
 }

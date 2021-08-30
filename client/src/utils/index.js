@@ -2,9 +2,9 @@ import { toast } from 'react-toastify';
 
 export function globalErrorHandler(error) {
     if (error && error.error)
-        toast.error(error.error, {className: "hey"});
+        toast.error(error.error, {className: "error-auth"});
     else
-        toast.error('An error occured!');
+        toast.error('An error occured!', {className: "error-general"});
 
     return Promise.reject(false);
 }

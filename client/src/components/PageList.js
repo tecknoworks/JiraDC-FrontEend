@@ -4,7 +4,7 @@ import { bindActionCreators, compose } from 'redux';
 import StartPage from '../images/welcome.png';
 // Material Imports
 import CircularProgress from '@material-ui/core/CircularProgress';
-import { Box, Container, Card, CardActionArea, CardMedia, CardContent, Typography, CardActions, Button, withStyles, Fab } from '@material-ui/core';
+import { Box, Container, Card, CardActionArea, CardMedia, CardContent, Typography, CardActions, Button, withStyles, Fab, Hidden } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import DeleteIcon from '@material-ui/icons/Delete';
 
@@ -58,6 +58,7 @@ const styles = (theme) => ({
     HomeContainer: {
         "padding-top": "80px",
          "overflow-x": 'hidden',
+         "overflow-y": 'hidden'
     }
 });
 
