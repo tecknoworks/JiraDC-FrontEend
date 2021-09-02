@@ -18,7 +18,7 @@ import ExpandLess from "@material-ui/icons/ExpandLess";
 import ExpandMore from "@material-ui/icons/ExpandMore";
 import { alpha, makeStyles } from "@material-ui/core/styles";
 import SearchIcon from "@material-ui/icons/Search";
-import { getWorkItemProject, getSprint, localUpdateWorkItemSprintItems, changeItemPosition, changeItemPositionBTSprints} from "../../actions";
+import { getWorkItemProject,localUpdateWorkItemSprintItems, changeItemPosition, changeItemPositionBTSprints} from "../../actions";
 import { BrowserRouter as Router, Switch, useLocation } from "react-router-dom";
 import StoryContentEdit from "../issues/StoryContentEdit";
 import SprintCreateOverlay from "./SprintCreateOverlay";
@@ -136,12 +136,6 @@ const getIssueIcon = (issue,classes) => {
       
     );
   }
-
-  return (
-    
-      <Subtask className={classes.iconPosition}/>
-    
-  );
 }
 
 const getPriorityIcon = (priority, classes) => {
@@ -178,24 +172,6 @@ const getPriorityIcon = (priority, classes) => {
   }
 }
 
-const initial = Array.from({ length: 10 }, (v, k) => k).map(k => {
-  const custom = {
-    id: `id-${k}`,
-    content: `Quote ${k}`
-  };
-
-  return custom;
-});
-
-const grid = 8;
-const reorder = (list, startIndex, endIndex) => {
-  const result = Array.from(list);
-  const [removed] = result.splice(startIndex, 1);
-  result.splice(endIndex, 0, removed);
-
-  return result;
-};
-
 function WorkItem({ workItem, index, classes, showClick }) {
   return (
     <Draggable draggableId={workItem._id} index={index} classes={classes}>
@@ -208,13 +184,14 @@ function WorkItem({ workItem, index, classes, showClick }) {
           <div>
             <ListItem button onClick={() => showClick(workItem._id)} style={{ "cursor": 'pointer',  }} align="right" className={classes.nested, classes.workItem}> 
               <Grid container spacing={0}>
-                <Grid item xs={8} className={classes.gridItem}>
+                <Grid item xs={7} className={classes.gridItem}>
                 {getIssueIcon(workItem.issue_type,classes)} {workItem.summary}
                 </Grid>
                 <Grid item xs={2} className={classes.iconImage}>
                 {workItem.assignee}
-                
-                
+                </Grid>
+                <Grid item xs={1} className={classes.iconImage}>
+                {workItem.key}
                 </Grid>
                 <Grid item xs={1} className={classes.iconImage, classes.priorityGrid}>
                 {getPriorityIcon(workItem.priority,classes)}
@@ -237,7 +214,7 @@ const WorkItemList = React.memo(function WorkItemList({ workItems, classes, show
 
 
 function BacklogContent(props) {
-
+  const wait=ms=>new Promise(resolve => setTimeout(resolve, ms));
  const [searchValue, setSearchValue] = useState("");
  const [closed, setClosed]=useState([])
  const [idWi, setIdWi] = useState("");
@@ -258,7 +235,6 @@ function BacklogContent(props) {
     };
     if (payload !== {}) {
       props.getWorkItemProject(payload);
-      props.getSprint(payload);
     }
     
     one = false;
@@ -343,9 +319,11 @@ function BacklogContent(props) {
         newArrangedItemsDestination[index].sprint_id=sprint.id
       }
 
-      debugger
       props.localUpdateWorkItemSprintItems({ id: sprint.id, items: newArrangedItemsDestination })
       props.changeItemPositionBTSprints({ id: Anothersprint.id, items: newArrangedItemsDestination })    
+      wait(1*500).then(() => {
+      props.getWorkItemProject(payload);
+      })
     }else{
     const indexSprint= sprints.indexOf(sprint)
     let newArrangedItems = []
@@ -363,6 +341,9 @@ function BacklogContent(props) {
     newArrangedItems[result.destination.index] =  removed;
     props.localUpdateWorkItemSprintItems({ id: sprint.id, items: newArrangedItems })
     props.changeItemPosition({ id: sprint.id, items: newArrangedItems })    
+    wait(1*500).then(() => {
+    props.getWorkItemProject(payload);
+    })
     }
     
   }
@@ -373,7 +354,6 @@ function BacklogContent(props) {
     };
     if (payload !== {}) {
       props.getWorkItemProject(payload);
-      props.getSprint(payload);
     }
     console.log(props.workItemProject)
   }
@@ -386,8 +366,13 @@ function BacklogContent(props) {
       id: location.state.id,
     };
     if (payload !== {}) {
-      props.getWorkItemProject(payload);
-      props.getSprint(payload);
+      console.log("heyyy")
+        props.getWorkItemProject(payload);
+        wait(2*1000).then(() => {
+          console.log("heheheh")
+         props.getWorkItemProject(payload);
+        })
+        
     }
     console.log(props.workItemProject)
   }
@@ -401,7 +386,7 @@ function BacklogContent(props) {
     };
     if (payload !== {}) {
       props.getWorkItemProject(payload);
-      props.getSprint(payload);
+      
     }
     console.log(props.workItemProject)
   }
@@ -412,9 +397,10 @@ function BacklogContent(props) {
 const handleSearch = e =>{
   setSearchValue(e.target.value)
 }
+//console.log(sprints)
+//console.log(workItem)
 const filterWorkItems = (sprint) =>{
   let finalItems=[]
-  console.log(sprint.items)
   sprint.items.map(i=>{
     if(i.summary.toUpperCase().substring(0,searchValue.length)===searchValue.toUpperCase() && !sprint.closed){
       finalItems.push(i)
@@ -423,18 +409,13 @@ const filterWorkItems = (sprint) =>{
   })
   return finalItems
 }
-// useEffect(() => {
-
-//   console.log(props.updateWorkItem.loading)
-//   if(props.updateWorkItem.loading==false){
-//     console.log("hey")
-//     props.refreshData()
-//   }
-// }, [props.updateWorkItem.loading]);
  const isCollapsed = (id) => {
     return closed.indexOf(id) > -1
   };
+
+  debugger
   return (
+    <div>
     <Grid container spacing={7}>
       <Grid item sm={0.3}></Grid>
       <Grid item sm={11}>
@@ -514,6 +495,7 @@ const filterWorkItems = (sprint) =>{
             <SprintEditOverlay id={id_Sprint} refreshData={refreshDataSprint} closeOverlay={closeOverlaySprint}/>
         </Backdrop>}
     </Grid>
+    </div>
   );
 }
 
@@ -523,14 +505,12 @@ BacklogContent.propTypes = {
 
 const mapStateToProps = (state) => ({
   workItemProject: state.getWorkItem.workItemProject,
-  sprint: state.getSprint.sprint,
 });
 
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       getWorkItemProject: getWorkItemProject,
-      getSprint: getSprint,
       localUpdateWorkItemSprintItems: localUpdateWorkItemSprintItems,
       changeItemPosition: changeItemPosition,
       changeItemPositionBTSprints: changeItemPositionBTSprints,

@@ -190,7 +190,7 @@ function ComponentContent(props) {
               Create
             </Button>
             <Backdrop className={classes.backdrop} open={show} >
-                <ComponentOverlay closeOverlay={closeOverlayCreateComponent}/>
+                <ComponentOverlay closeOverlay={closeOverlayCreateComponent}  refreshData={refreshData}/>
             </Backdrop>
             <Backdrop className={classes.backdrop} open={show1}>
                 {idComponent && <ComponentEditOverlay 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useRef } from "react";
 import PropTypes from "prop-types";
 import Grid from "@material-ui/core/Grid";
 import {withStyles,makeStyles,} from "@material-ui/core/styles";
@@ -21,6 +21,7 @@ import { getAllUsers, getPriority ,getComponent,getLinkedIssues,getSprint, postC
 import FormHelperText from '@material-ui/core/FormHelperText';
 import { Component } from "react";
 import { TextareaAutosize } from '@material-ui/core';
+import { ValidatorForm, TextValidator} from 'react-material-ui-form-validator';
 
 const defaultTheme = createMuiTheme();
 const styles = (theme) => ({});
@@ -142,10 +143,11 @@ function ComponentOverlay(props) {
     }
     console.log(payload)
      props.postComponent(payload);
-     wait(1*1000).then(() => {
+     wait(1*500).then(() => {
       props.refreshData()
     })
      props.closeOverlay()
+    console.log("heyy")
   }
 
   const handleTextFieldChange = e => {
@@ -165,8 +167,6 @@ const handleTextareaChange = e => {
     props.getSprint()
     one = false;
   }, [one]);
-  
-
   const [editorState, setEditorState] = useState(() =>
     EditorState.createEmpty()
   );
@@ -181,17 +181,13 @@ const handleTextareaChange = e => {
       {file.path} - {file.size} bytes
     </li>
   ));
-
-  const addLabel = e =>{
-    console.log(e.target.value)
-
-  }
   const choosePath = () =>{
     if(location.pathname==="/components")
       return <Route path={path}>
       <ComponentContent />
       </Route>
     }
+    const inputRef = useRef("form");
   return (
     <Router>
     <Box width="70%" className={classes.mainBox} height="600px">
@@ -200,34 +196,43 @@ const handleTextareaChange = e => {
           <h2 className={classes.header}>Create New Component</h2>
         </Grid>
       </Grid>
+      <ValidatorForm
+                ref={inputRef }
+                onSubmit={postComponent}
+                onError={errors => console.log(errors)}
+            >
+                       
       <Paper className={classes.boxStyle}>
         <Grid container spacing={3}>
           <Grid item xs={0.1}></Grid>
           <Grid item xs={11}>
             <br></br>
-            <Grid item sm={12} xs={6}>
+             <Grid item sm={12} xs={6}>
                 <InputLabel fullWidth shrink required={true}>
                     Component Name
                 </InputLabel>
-                <TextField  onChange={handleTextFieldChange}
-                    required
+                <TextValidator  onChange={handleTextFieldChange}
                     id="outlined-required"
                     variant="outlined"
+                    value={name}
                     style={{ width: 300 }}
+                    validators={['required' ]}
+                    errorMessages={['this field is required']}
                 />
-            </Grid>
+            </Grid> 
             <br></br>
             <Divider/>
             <br></br>
-            <InputLabel fullWidth shrink required={true}>
+             <InputLabel fullWidth shrink required={true}>
                Description
               </InputLabel>
-            <TextareaAutosize onChange={handleTextareaChange}
-            style={{ width: 600 , height: 100 ,"resize": "none"}}
-            maxRows={4}
+            <TextValidator onChange={handleTextareaChange}
+            id="outlined-required"
+            variant="outlined"
+            value={description}
+            validators={['required' ]}
+            errorMessages={['this field is required']}
             />
-            <br></br>
-            <Grid item sm={12} xs={6}></Grid>
             <br></br>
 
             <Grid item sm={12} xs={6}>
@@ -239,8 +244,8 @@ const handleTextareaChange = e => {
                   options={users}
                   getOptionLabel={(option) => option.username}
                   style={{ width: 300 }}
-                  required
-                  renderInput={(params) => <TextField {...params} variant="outlined" />}
+                  renderInput={(params) => <TextValidator {...params} value={username} variant="outlined" validators={['required' ]}
+                  errorMessages={['this field is required']}/>}
                   onChange={(event, value) => {setUsername(value)}}
                 />
               <br></br>
@@ -257,13 +262,13 @@ const handleTextareaChange = e => {
                 />
             </Grid>
             </Grid>
-          </Grid>
+          </Grid> 
         </Grid>
-      </Paper>
-      <Grid container spacing={1} className={classes.footerWorkItem}>
+         </Paper>
+<Grid container spacing={1} className={classes.footerWorkItem}>
         <Grid item xs={10}></Grid>
         <Grid item xs={1}>
-          <Button onClick={postComponent} variant="contained" color="primary">
+          <Button type="submit" variant="contained" color="primary">
             Create
           </Button>
         </Grid>
@@ -271,6 +276,10 @@ const handleTextareaChange = e => {
           <Button onClick={props.closeOverlay} color="primary">Cancel</Button>
         </Grid>
       </Grid>
+      </ValidatorForm>
+     
+     
+      
     </Box>
     <Switch>{choosePath}
       </Switch>

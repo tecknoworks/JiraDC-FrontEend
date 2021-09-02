@@ -26,6 +26,7 @@
     "react-dom": "^16.14.0",
     "react-draft-wysiwyg": "^1.14.7",
     "react-dropzone": "^11.3.4",
+    "react-material-ui-form-validator": "^2.1.4",
     "react-overlay-component": "^1.0.2",
     "react-overlays": "^5.1.1",
     "react-paper-button": "^1.0.4",

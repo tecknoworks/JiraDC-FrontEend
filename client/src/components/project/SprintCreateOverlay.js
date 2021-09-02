@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState , useRef} from "react";
 import PropTypes from "prop-types";
 import Grid from "@material-ui/core/Grid";
 import {withStyles,makeStyles,} from "@material-ui/core/styles";
@@ -21,6 +21,7 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import { Component } from "react";
 import { TextareaAutosize } from '@material-ui/core';
 import BacklogContent from "../project/backlogContent";
+import { ValidatorForm, TextValidator} from 'react-material-ui-form-validator';
 const defaultTheme = createMuiTheme();
 const styles = (theme) => ({});
 const BootstrapInput = withStyles((theme) => ({
@@ -126,7 +127,7 @@ function SprintCreateOverlay(props) {
     }
     console.log(payload)
     props.postSprint(payload);
-    wait(2*1000).then(() => {
+    wait(1*1000).then(() => {
       props.refreshData()
     })
     props.closeOverlay()
@@ -141,7 +142,6 @@ const handleTextareaChange = e => {
   useEffect(() => {
     props.getProject()
     props.getSprint()
-    props.postSprint()
     one = false;
   }, [one]);
   
@@ -159,17 +159,13 @@ const handleTextareaChange = e => {
       {file.path} - {file.size} bytes
     </li>
   ));
-
-  const addLabel = e =>{
-    console.log(e.target.value)
-
-  }
   const choosePath = () =>{
     if(location.pathname==="/backlog")
       return <Route path={path}>
       <BacklogContent />
       </Route>
   }
+  const inputRef = useRef("form");
   return (
     <Router>
     <Box width="70%" className={classes.mainBox} height="600px">
@@ -178,8 +174,14 @@ const handleTextareaChange = e => {
           <h2 className={classes.header}>Create New Sprint</h2>
         </Grid>
       </Grid>
-      <Paper className={classes.boxStyle}>
-        <Grid container spacing={3}>
+
+      <ValidatorForm
+                ref={inputRef }
+                onSubmit={postSprint}
+                onError={errors => console.log(errors)}
+            >
+<Paper className={classes.boxStyle}>
+<Grid container spacing={3}>
           <Grid item xs={0.1}></Grid>
           <Grid item xs={11}>
             <br></br>
@@ -187,11 +189,13 @@ const handleTextareaChange = e => {
                 <InputLabel fullWidth shrink required={true}>
                     Sprint Name
                 </InputLabel>
-                <TextField  onChange={handleTextFieldChange}
-                    required
+                <TextValidator  onChange={handleTextFieldChange}
                     id="outlined-required"
                     variant="outlined"
                     style={{ width: 300 }}
+                    value={name}
+                    validators={['required']}
+            errorMessages={['this field is required']}
                 />
             </Grid>
             <br></br>
@@ -202,14 +206,15 @@ const handleTextareaChange = e => {
             <InputLabel fullWidth shrink required={true}>
                Description
               </InputLabel>
-            <TextareaAutosize onChange={handleTextareaChange}
+            <TextValidator onChange={handleTextareaChange}
             style={{ width: 600 , height: 100 ,"resize": "none"}}
             maxRows={4}
+            variant="outlined"
+            value={description}
+            validators={['required']}
+            errorMessages={['this field is required']}
             />
-            <br></br>
-            <Grid item sm={12} xs={6}></Grid>
-            <br></br>
-            <br></br>
+
             <Grid item xs={12}>
                 <InputLabel fullWidth shrink required={false}>
                     Project
@@ -220,27 +225,30 @@ const handleTextareaChange = e => {
                     variant="outlined"
                     style={{ width: 300 }}
                     defaultValue={currentProject}
+                    
                 />
             </Grid>
-          
-          </Grid>
-        </Grid>
-      </Paper>
-      <Grid container spacing={1} className={classes.footerWorkItem}>
+            </Grid>
+            
+            </Grid>
+
+</Paper>
+
+            <Grid container spacing={1} className={classes.footerWorkItem}>
         <Grid item xs={10}></Grid>
-        <Grid item xs={1}>
-        <Link to={path}>
-          <Button onClick={postSprint} variant="contained" color="primary">
+        <Grid item xs={1}> 
+          <Button type="submit" variant="contained" color="primary">
             Create
           </Button>
-          </Link>
         </Grid>
         <Grid item xs={1}>
-        <Link to={path}>
+         <Link to={path}>
           <Button onClick={props.closeOverlay} color="primary">Cancel</Button>
           </Link>
         </Grid>
-      </Grid>
+        </Grid>
+        
+  </ValidatorForm>
     </Box>
     <Switch>{choosePath}
     </Switch>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { bindActionCreators, compose } from 'redux';
 import { connect, useDispatch, useSelector } from 'react-redux';
 import { withStyles } from '@material-ui/core';
@@ -16,6 +16,7 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { useHistory } from 'react-router-dom';
+import { ValidatorForm, TextValidator} from 'react-material-ui-form-validator';
 // Actions
 import { login } from '../actions';
 
@@ -82,6 +83,7 @@ const LogIn=(props)=> {
   const setPasswordText = event => {
     setPassword(event.target.value)
   };
+  const inputRef = useRef("form");
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
@@ -92,47 +94,64 @@ const LogIn=(props)=> {
         <Typography component="h1" variant="h5">
           Log in
         </Typography>
+        <ValidatorForm
+                ref={inputRef }
+                onSubmit={submit}
+                onError={errors => console.log(errors)}
+            >
         {/* <form className={classes.form} noValidate> */}
-          <TextField
+        <Grid container spacing={2}>
+        <Grid item xs={12}>
+          <TextValidator
+            label="Email"
             variant="outlined"
             margin="normal"
-            required
             fullWidth
             id="email"
-            label="Email Address"
             name="email"
             autoComplete="email"
             autoFocus
+            value={email}
             onChange={setEmailText}
+            validators={['isEmail','required' ]}
+            errorMessages={['email is not valid','this field is required']}
            // defaultValue={props.user.email}
           />
-          <TextField
+          </Grid>
+          <Grid item xs={12}>
+          <TextValidator
             variant="outlined"
             margin="normal"
-            required
             fullWidth
             name="password"
             label="Password"
             type="password"
             id="password"
+            value={password}
             autoComplete="current-password"
             onChange={setPasswordText}
+            validators={['required' ]}
+            errorMessages={['this field is required']}
            // defaultValue={props.user.password}
           />
+          </Grid>
+          <Grid item xs={12}  style={{"text-align-last": "center"} }>
           <FormControlLabel
             control={<Checkbox value="remember" color="primary" />}
             label="Remember me"
           />
+          </Grid>
           <Button
             type="submit"
             fullWidth
             variant="contained"
             color="primary"
             className={classes.submit}
-            onClick={() => submit()}
           >
             Log In
           </Button>
+          </Grid>
+          </ValidatorForm>
           <Grid container>
             <Grid item xs>
               <Link href="#" variant="body2">

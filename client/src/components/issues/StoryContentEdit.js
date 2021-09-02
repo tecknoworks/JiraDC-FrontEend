@@ -41,6 +41,7 @@ import { Comment, Form, Header } from "semantic-ui-react";
 import EditIcon from '@material-ui/icons/Edit';
 import BacklogContent from "../project/backlogContent";
 import ActiveSprintsContent from "../project/ActiveSprintsContent";
+import { ContactSupportOutlined } from "@material-ui/icons";
 const defaultTheme = createMuiTheme();
 const styles = (theme) => ({});
 const BootstrapInput = withStyles((theme) => ({
@@ -133,6 +134,7 @@ function StoryContentEdit(props) {
   const textMessage= useRef("")
   const [editedMessage, setEditedMessage]=useState("")
   const [commentsToShow, setCommentsToShow] = useState([]);
+  const [commitsToShow, setCommitsToShow] = useState([]);
   const [componentsId, setComponentsId] = useState("");
   const [labelsId, setLabelsId] = useState("");
   const [disabledValue, setDisabledValue] = useState(true);
@@ -254,9 +256,38 @@ function StoryContentEdit(props) {
     });
     setCommentsToShow(formattedComments);
   }
+  const handleCommits = (commitList) =>{
+    var formattedCommits= [];
+    commitList.map(c=>{
+    formattedCommits.push(
+    <a href={c.url} color="black">
+      <div>
+        
+          <Comment> 
+            <Comment.Content>
+              <Comment.Author as="a" ><b>{c.author_name}</b></Comment.Author>
+              <Comment.Metadata>
+                <div>
+                  <i>{c.dateTime.year}/{c.dateTime.month + 1}/{c.dateTime.day} - {c.dateTime.hour}:
+                  {c.dateTime.minute}</i>
+                </div>
+              </Comment.Metadata>
+              <Comment.Text>{c.message}</Comment.Text>
+            </Comment.Content>
+          </Comment>
+          <Divider />
+          
+        </div></a>
+
+    )
+    })
+    setCommitsToShow(formattedCommits)
+
+  }
   const handleComments = (commentList) => {
     var formattedComments = [];
-    setCommentsButton(<span><Form.Button
+    setCommentsButton(
+    <span><Form.Button
       onClick={() => {
         addReply();
       }}
@@ -287,7 +318,9 @@ function StoryContentEdit(props) {
     setCommentsToShow(formattedComments);
   };
   useEffect(() => {
+    console.log(props.workItem)
     const currentIssue = props.workItem.find((it) => it._id == props._id);
+    console.log(currentIssue)
     if (!currentIssue) {
       return;
     }
@@ -330,10 +363,12 @@ function StoryContentEdit(props) {
       labels: selectedLabelFinal,
       components: selectedComponentFinal,
       comments: currentIssue.comments,
+      commits:currentIssue.commits,
       key:currentIssue.key,
     };
     console.log(issue);
     handleComments(issue.comments);
+    handleCommits(issue.commits)
     if (currentIssue.description !== "") {
       setEditorState(
         EditorState.createWithContent(
@@ -343,6 +378,7 @@ function StoryContentEdit(props) {
     }
     props.userUpdateWorkItem(issue);
     console.log(path)
+
   }, [props.workItem]);
 
   const [editorState, setEditorState] = useState(() =>
@@ -467,6 +503,7 @@ function StoryContentEdit(props) {
       labels: props.updatedWorkItem.labels,
       components: props.updatedWorkItem.components,
       comments: props.updatedWorkItem.comments,
+      commits:props.updatedWorkItem.commits,
       key:props.updateWorkItem.key,
     };
   };
@@ -514,6 +551,9 @@ function StoryContentEdit(props) {
     lastComments.push(comm);
     payload.comments = lastComments;
     props.userUpdateWorkItem(payload);
+    wait(2*1000).then(() => {
+      props.refreshData()
+      })
     handleComments(lastComments);
     props.postComment(comment);
     setMessage("");
@@ -977,6 +1017,17 @@ function StoryContentEdit(props) {
                   />
                   {commentsButton}
                 </Form>
+              </Comment.Group>
+
+              <br></br>
+            </Grid>
+<br></br>
+            <Grid item xs={12}>
+              <Comment.Group>
+                <Header as="h3" dividing>
+                  Commits
+                </Header>
+                {commitsToShow}
               </Comment.Group>
 
               <br></br>

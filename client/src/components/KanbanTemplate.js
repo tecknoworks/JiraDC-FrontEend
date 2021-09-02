@@ -160,7 +160,8 @@ const styles = (theme) => ({
   paper: {
     maxWidth: 936,
     margin: "auto",
-    overflow: "hidden",
+    'overflow-y': "hidden",
+    top:'0px'
   },
   searchBar: {
     borderBottom: "1px solid rgba(0, 0, 0, 0.12)",
@@ -203,6 +204,7 @@ main: {
   flex: 1,
   padding: theme.spacing(6, 4),
   background: '#eaeff1',
+  padding:'0px'
 },
 footer: {
   padding: theme.spacing(2),
@@ -215,10 +217,17 @@ contentShift: {
   }),
   marginLeft: 0,
 },
+textInfo:{
+  "margin-bottom": "0px",
+    "align-self": "flex-end",
+}
 });
 function KanbanTemplate(props) {
 
   const[name,setName]=useState("");
+  const[owner,setOwner]=useState("");
+  const[repository,setRepository]=useState("");
+
 
   const { classes } = props;
   const userData = localStorage.getItem("userData")
@@ -227,7 +236,9 @@ function KanbanTemplate(props) {
     const payload = {
       name: name,
       type:"kanban",
-      user_id:obj.id
+      user_id:obj.id,
+      owner:owner,
+      repository:repository,
     }
      console.log(payload)
      props.postProject(payload);
@@ -235,6 +246,12 @@ function KanbanTemplate(props) {
   const handleTextFieldChange = e => {
       setName(e.target.value)
   };
+  const handleOwnerChange = e => {
+    setOwner(e.target.value)
+};
+const handleRepositoryChange = e => {
+  setRepository(e.target.value)
+};
   return (
     <ThemeProvider theme={theme}>  
       <div className={classes.root}>
@@ -243,19 +260,16 @@ function KanbanTemplate(props) {
           <main className={classes.main}>  
              
     <div>
-      <Paper className={classes.paper}>
+      <Paper className={classes.paper} >
 
-
-      <Grid container spacing={3}>
-            <Grid item xs={2}> </Grid>
-     </Grid>
 
         <Grid container spacing={3}>
             <Grid item xs={1}> </Grid>
-            <Grid item xs={4}><TextField id="standard-basic" label="Kanban"  onChange={handleTextFieldChange}/></Grid>
-            <Grid item xs={3}> </Grid>
-            <Grid item xs={2}> </Grid>
-            <Grid item xs={2}></Grid>
+            <Grid item xs={3}><TextField id="standard-basic" label="Kanban"  onChange={handleTextFieldChange}/></Grid>
+            <h4 className={classes.textInfo}><p><Grid item xs={2}>Git:</Grid></p></h4>
+            <Grid item xs={3}> <TextField id="standard-basic" label="Owner"  onChange={handleOwnerChange}/></Grid>
+            <Grid item xs={2}><TextField id="standard-basic" label="Repository"  onChange={handleRepositoryChange}/> </Grid>
+            
 
         </Grid>
 
