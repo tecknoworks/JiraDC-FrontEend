@@ -60,7 +60,7 @@ function ProjectsContent(props) {
   const history = useHistory();
   const handleClick = (name, id) => {
     history.push({
-      pathname: "/project",
+      pathname: "/sprint",
       search: "?name=" + name,
       state: { detail: name, id: id },
     });

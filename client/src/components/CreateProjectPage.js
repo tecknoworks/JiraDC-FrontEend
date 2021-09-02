@@ -195,15 +195,15 @@ function CreateProjectPage(props) {
 
   return (
   
-    <ThemeProvider theme={theme}>  
-      <div className={classes.root}>
+    <ThemeProvider theme={theme} >   
+      <div className={classes.root} >
         <CssBaseline />
         <div className={classes.app}> 
-          <main className={classes.main}>  
+          <main className={classes.main} >  
              
          
-    <Grid>
-    <div>
+    <Grid >
+    <div >
         <h2>Software development</h2>
         <p>Plan, track and release great software. Get up and running quickly with templates that suit the way your team works. Plus, integrations
             for DevOps teams that want to connect work across their entire toolchain

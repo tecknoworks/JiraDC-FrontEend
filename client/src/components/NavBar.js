@@ -205,7 +205,7 @@ function NavBar(props) {
   );
   let logo = <img src={Logo} alt="logo" className="app-logo" style={{ cursor: 'pointer' }} />
   let value = -1
-  if (location.pathname === "/projects") {
+  if (location.pathname === "/mywork") {
     value = 0
   } else if (location.pathname === "/projects") {
     value = 1

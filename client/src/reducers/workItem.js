@@ -55,6 +55,7 @@ export function getWorkItem(state = getWorkItemInitialState, action) {
     case WorkItemActionsTypes.WORKITEM_GET_PROJECT_REQUEST_ERROR:
           return { ...state,loading: false };
     case WorkItemActionsTypes.WORKITEM_LOCAL_UPDATE_SPRINT_ITEMS:
+      debugger
       const newWorkItem = Object.assign({}, state.workItemProject);
       for (let key in newWorkItem) {
         if (newWorkItem[key].id == action.data.id) {

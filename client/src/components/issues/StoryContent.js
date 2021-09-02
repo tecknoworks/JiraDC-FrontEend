@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import PropTypes from "prop-types";
 import Grid from "@material-ui/core/Grid";
 import { withStyles, makeStyles } from "@material-ui/core/styles";
@@ -18,7 +18,7 @@ import { BrowserRouter as Router, useLocation, Link,Route, Switch } from "react-
 import { EditorState, convertFromRaw, convertToRaw } from "draft-js"
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { useHistory } from 'react-router-dom';
-import { getIssue, getLabel, getProject, getWorkItem, postLabel, postWorkItem, getWorkItemEpic, getWorkItemProject} from "../../actions";
+import { getIssue, getLabel, getProject, getWorkItem, postLabel, postWorkItem, getWorkItemEpic, getWorkItemProject, getComponentProject} from "../../actions";
 import { getAllUsers, getPriority, getComponent, getLinkedIssues, getSprint,} from "../../actions";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import BacklogContent from "../project/backlogContent";
@@ -27,6 +27,7 @@ import ActiveSprintsContent from "../project/ActiveSprintsContent";
 import ComponentContent from "../project/ComponentContent";
 import ProjectPage from "../ProjectPage";
 import CreateProjectPage from "../CreateProjectPage";
+import { ValidatorForm, TextValidator} from 'react-material-ui-form-validator';
 
 const defaultTheme = createMuiTheme();
 const styles = (theme) => ({});
@@ -111,6 +112,9 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function StoryContent(props) {
+  const inputRef = useRef("form");
+  
+  const [resetKey, setResetKey] = useState(0);
   const [projectId, setProjectId] = useState("");
   const [issueTypeId, setIssueTypeId] = useState("");
   const [summary, setSummary] = useState("");
@@ -195,11 +199,45 @@ function StoryContent(props) {
       };
       if (payload !== {}) {
         props.getWorkItemProject(payload);
+        props.getComponentProject(payload);
       }
+      setResetKey(resetKey + 1);
+      setProjectId("")
+      setIssueTypeId("")
+      setSummary("")
+      setComponentsId("")
+      setDescription("")
+      setPriorityId("")
+      setLabelsId("")
+      setLinkedIssueId("")
+      setissueId("")
+      setAssigneeId("")
+      setEpicLinkId("")
+      setSprintId("")
+      setEpicName("")
+      setDisabledValue(true)
     })
     props.closeOverlay()
     //history.push(path)
   };
+  const resetValues =() =>{
+    setResetKey(resetKey + 1);
+    setProjectId("")
+    setIssueTypeId("")
+    setSummary("")
+    setComponentsId("")
+    setDescription("")
+    setPriorityId("")
+    setLabelsId("")
+    setLinkedIssueId("")
+    setissueId("")
+    setAssigneeId("")
+    setEpicLinkId("")
+    setSprintId("")
+    setEpicName("")
+    setDisabledValue(true)
+    props.closeOverlay()
+  }
   const handleTextFieldChange = (e) => {
     console.log(e.target.value);
     setSummary(e.target.value);
@@ -241,7 +279,7 @@ function StoryContent(props) {
     return <Route path={path}>
     <ComponentContent/>
     </Route>
-    else  if(location.pathname==="mywork")
+    else  if(location.pathname==="/mywork")
     return <Route path={path}>
     <ProjectPage/>
     </Route>
@@ -258,6 +296,11 @@ function StoryContent(props) {
           <h2 className={classes.header}>Create Issue</h2>
         </Grid>
       </Grid>
+      <ValidatorForm
+                ref={inputRef }
+                onSubmit={handleCreate}
+                onError={errors => console.log(errors)}
+            >
       <Paper className={classes.boxStyle}>
         <Grid container spacing={3}>
           <Grid item xs={0.1}></Grid>
@@ -272,9 +315,11 @@ function StoryContent(props) {
                 options={projects}
                 getOptionLabel={(option) => option.name}
                 style={{ width: 300 }}
+                key={resetKey}
                 required
                 renderInput={(params) => (
-                  <TextField {...params} variant="outlined" />
+                  <TextValidator {...params} variant="outlined" value={projectId} validators={['required' ]}
+                  errorMessages={['this field is required']}/>
                 )}
                 onChange={(event, value) => {
                   setProjectId(value._id);
@@ -292,8 +337,10 @@ function StoryContent(props) {
                 getOptionLabel={(option) => option.name}
                 style={{ width: 300 }}
                 required
+                key={resetKey}
                 renderInput={(params) => (
-                  <TextField {...params} variant="outlined" />
+                  <TextValidator {...params} variant="outlined" value={issueTypeId} validators={['required' ]}
+                  errorMessages={['this field is required']} />
                 )}
                 onChange={(event, value) => {
                   handleChangeIssueType(value);
@@ -313,6 +360,7 @@ function StoryContent(props) {
                   InputLabelProps={{
                     shrink: true,
                   }}
+                  value={epicName}
                   onChange={handleTextFieldEpicChange}
                 />
               </Grid>
@@ -323,10 +371,10 @@ function StoryContent(props) {
             </Grid>
             <br></br>
             <Grid item sm={12} xs={6}>
-              <TextField
+              <TextValidator
                 id="standard-full-width"
                 label="Summary"
-                required
+                //required
                 style={{ margin: 0 }}
                 fullWidth
                 variant="outlined"
@@ -334,7 +382,10 @@ function StoryContent(props) {
                 InputLabelProps={{
                   shrink: true,
                 }}
+                value={summary}
                 onChange={handleTextFieldChange}
+                validators={['required' ]}
+                errorMessages={['this field is required']}
               />
             </Grid>
             <br></br>
@@ -346,6 +397,7 @@ function StoryContent(props) {
                 multiple
                 id="combo-box-demo"
                 limitTags={1}
+                key={resetKey}
                 options={components}
                 getOptionLabel={(option) => option.name}
                 style={{ width: 300 }}
@@ -392,6 +444,7 @@ function StoryContent(props) {
               </InputLabel>
               <Autocomplete
                 id="combo-box-demo"
+                key={resetKey}
                 options={priorities}
                 getOptionLabel={(option) => option.name}
                 style={{ width: 300 }}
@@ -415,6 +468,7 @@ function StoryContent(props) {
                 id="multiple-limit-tags"
                 limitTags={1}
                 options={labels}
+                key={resetKey}
                 getOptionLabel={(option) => option.name}
                 style={{ width: 300 }}
                 renderInput={(params) => (
@@ -454,6 +508,7 @@ function StoryContent(props) {
                 options={linkedissues}
                 getOptionLabel={(option) => option.name}
                 style={{ width: 300 }}
+                key={resetKey}
                 renderInput={(params) => (
                   <TextField {...params} variant="outlined" />
                 )}
@@ -473,6 +528,7 @@ function StoryContent(props) {
                 options={workItem}
                 getOptionLabel={(option) => option.summary}
                 style={{ width: 300 }}
+                key={resetKey}
                 renderInput={(params) => (
                   <TextField {...params} variant="outlined" />
                 )}
@@ -493,6 +549,7 @@ function StoryContent(props) {
                 getOptionLabel={(option) => option.username}
                 style={{ width: 300 }}
                 required
+                key={resetKey}
                 renderInput={(params) => (
                   <TextField {...params} variant="outlined" />
                 )}
@@ -512,6 +569,7 @@ function StoryContent(props) {
                 options={workItemEpic}
                 getOptionLabel={(option) => option.summary}
                 style={{ width: 300 }}
+                key={resetKey}
                 renderInput={(params) => (
                   <TextField {...params} variant="outlined" />
                 )}
@@ -531,6 +589,7 @@ function StoryContent(props) {
                 options={sprints}
                 getOptionLabel={(option) => option.name}
                 style={{ width: 300 }}
+                key={resetKey}
                 renderInput={(params) => (
                   <TextField {...params} variant="outlined" />
                 )}
@@ -547,14 +606,16 @@ function StoryContent(props) {
       <Grid container spacing={1} className={classes.footerWorkItem}>
         <Grid item xs={10}></Grid>
         <Grid item xs={1}>
-          <Button variant="contained" color="primary" onClick={handleCreate}>
+          <Button variant="contained" color="primary" type="submit">
             Create
           </Button>
         </Grid>
+        
         <Grid item xs={1}>
-          <Button onClick={props.closeOverlay} color="primary">Cancel</Button>
+          <Button onClick={resetValues} color="primary">Cancel</Button>
         </Grid>
       </Grid>
+      </ValidatorForm>
     </Box>
      <Switch>{choosePath}
      </Switch>
@@ -597,6 +658,7 @@ const mapDispatchToProps = (dispatch) =>
       postWorkItem: postWorkItem,
       getWorkItemEpic: getWorkItemEpic,
       getWorkItemProject: getWorkItemProject,
+      getComponentProject:getComponentProject,
     },
     dispatch
   );

@@ -104,6 +104,12 @@ const styles = (theme) => ({
     zIndex: theme.zIndex.drawer + 1,
     color: "#fff",
   },
+  allPage:{
+    "overflow-y": "hidden",
+  },
+  key:{
+    paddingRight:"30px"
+  }
 });
 const getIssueIcon = (issue, classes) => {
   if (issue === "Epic") {
@@ -203,12 +209,15 @@ function WorkItem({ workItem, index, classes,showClick }) {
               <Grid container spacing={3}>
                 <Card className={classes.rootCard}>
                   <CardContent>
+
                     <Typography
                       className={classes.title}
                       color="textPrimary"
                       gutterBottom
                     >
                       {workItem.summary}
+
+                      
                     </Typography>
 
                     <Typography
@@ -218,20 +227,20 @@ function WorkItem({ workItem, index, classes,showClick }) {
                     >
                       {workItem.epic_link}
                     </Typography>
-                    <br></br>
                     <Typography
                       className={classes.title}
                       color="textSecondary"
                       gutterBottom
                     >
-                      <Grid item xs={2}>
+                      <Grid item xs={0.1}>
                         {getIssueIcon(workItem.issue_type, classes)}
                         {getPriorityIcon(workItem.priority, classes)}
                       </Grid>
-                      <Grid item xs={0.3}>
-                        {workItem.assignee}
+                      <Grid item xs={0.1}>
+                        {workItem.assignee}  <div className={classes.key}>{workItem.key}</div>
                       </Grid>
-                    </Typography>
+                      
+                  </Typography>
                   </CardContent>
                 </Card>
               </Grid>
@@ -256,6 +265,7 @@ const WorkItemList = React.memo(function WorkItemList({ workItems, classes, show
 });
 
 function ActiveSprintContent(props) {
+  const wait=ms=>new Promise(resolve => setTimeout(resolve, ms));
   const [searchValue, setSearchValue] = useState("");
   const [type, setType] = useState('');
   const [idWi, setIdWi] = useState("");
@@ -305,6 +315,9 @@ function ActiveSprintContent(props) {
       props.localUpdateWorkItemStatusItems({ sprint:destinationStatus.sprint, id: destinationStatus.id, items: newArrangedItems })
       props.changeItemStatus({ id: sourceStatus.id, items: newArrangedItems, status:newArrangedItems.status })
 
+      wait(1*500).then(() => {
+        props.getWorkItemProject(payload);
+        })
     } else {
       const indexStatus = status.indexOf(destinationStatus);
       let newArrangedItems = [];
@@ -340,6 +353,9 @@ function ActiveSprintContent(props) {
         id: destinationStatus.id,
         items: newArrangedItems,
       });
+      wait(1*500).then(() => {
+        props.getWorkItemProject(payload);
+        })
     }
     console.log(status)
 
@@ -358,7 +374,7 @@ function ActiveSprintContent(props) {
   }, [one]);
   useEffect(() => {
     for (var property in workItem) {
-      if(property!=="Backlog"){
+      if(property!=="Backlog" && !workItem[property].closed){
         setType(property)
         break
       }
@@ -443,7 +459,7 @@ function ActiveSprintContent(props) {
     return finalItems
   }
   return (
-    <div>
+    <div className={classes.allPage}>
       <Grid container spacing={7}>
         <Grid item sm={0.3}></Grid>
 
